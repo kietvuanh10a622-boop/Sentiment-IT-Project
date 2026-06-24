@@ -1,0 +1,23 @@
+============================================================
+TECHNICAL REPORT - AUTO-GENERATED RESULTS SECTION
+============================================================
+
+4. Results and Evaluation
+-------------------------
+4.1. Data Collection Results
+The web scraping module successfully crawled a total of 129 articles .
+
+4.2. Sentiment Analysis Results
+Using the NLP pipeline and translation APIs, the system analyzed the sentiment of all crawled articles. The overall average sentiment score across all articles is 0.000. The distribution of sentiment is as follows:
+- Positive Articles: 0 (0.0%)
+- Negative Articles: 0 (0.0%)
+- Neutral Articles: 129 (100.0%)
+
+4.3. Visual Aids and Charts Integration
+Please copy the generated images from the 'reports/' folder into your Word document:
+- Insert '01_source_comparison.png' to show the contrast between news sources.
+- Insert '02_sentiment_distribution.png' to illustrate the overall mood.
+- Insert '03_topic_wordcloud.png' to highlight the most frequent keywords in the news.
+
+4.4. Conclusion on Experimental Findings
+Based on the experimental findings, the general public opinion and news coverage remain largely NEUTRAL.

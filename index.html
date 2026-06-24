@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobalPulse AI Dashboard | Kiet Vu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .pulse-active { animation: pulseBorder 1.5s infinite; border-color: #3b82f6; background-color: #dbeafe; color: #2563eb; }
+        @keyframes pulseBorder { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
+        .step-done { border-color: #22c55e; background-color: #f0fdf4; color: #16a34a; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans p-6 min-h-screen">
+
+    <header class="mb-8 flex flex-col md:flex-row items-center justify-between bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900">GlobalPulse AI Dashboard</h1>
+            <p class="text-slate-500 mt-2 font-medium">Semiconductor Market Intelligence | Portfolio by Kiet Vu</p>
+        </div>
+        <button id="runBtn" onclick="runPipeline()" class="mt-4 md:mt-0 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all">
+            ▶ Khởi động Pipeline
+        </button>
+    </header>
+
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-8">
+        <h2 class="text-lg font-bold mb-6 text-slate-800 uppercase tracking-wider">Trạng thái Hệ thống (SP1-SP6)</h2>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+            <div id="step1" class="p-4 border-2 border-transparent rounded-xl bg-slate-100 text-slate-400 transition-all duration-300">
+                <div class="font-bold mb-1">SP1: Ingestion</div><div class="text-xs">Multi-threading Crawl</div>
+            </div>
+            <div id="step2" class="p-4 border-2 border-transparent rounded-xl bg-slate-100 text-slate-400 transition-all duration-300">
+                <div class="font-bold mb-1">SP2: Cleansing</div><div class="text-xs">Lambda/Filter</div>
+            </div>
+            <div id="step3" class="p-4 border-2 border-transparent rounded-xl bg-slate-100 text-slate-400 transition-all duration-300">
+                <div class="font-bold mb-1">SP3: Storage</div><div class="text-xs">SQLite Deduplication</div>
+            </div>
+            <div id="step4" class="p-4 border-2 border-transparent rounded-xl bg-slate-100 text-slate-400 transition-all duration-300">
+                <div class="font-bold mb-1">SP4: AI Sentiment</div><div class="text-xs">Gemini API</div>
+            </div>
+            <div id="step5" class="p-4 border-2 border-transparent rounded-xl bg-slate-100 text-slate-400 transition-all duration-300">
+                <div class="font-bold mb-1">SP5 & SP6</div><div class="text-xs">Analytics & Export</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultsArea" class="hidden fade-in">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Tổng số bài viết</h4>
+                <div class="text-4xl font-black text-blue-600 mb-1" id="kpiTotal">0</div>
+                <p class="text-sm text-slate-500 font-medium">VnExpress & BBC</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Chỉ số Cảm xúc TB</h4>
+                <div class="text-4xl font-black text-slate-700 mb-1" id="kpiScore">0.00</div>
+                <p class="text-sm text-slate-500 font-medium">Thang [-1.0 đến 1.0]</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Tỉ lệ Tích cực</h4>
+                <div class="text-4xl font-black text-green-600 mb-1" id="kpiPos">0%</div>
+                <p class="text-sm text-slate-500 font-medium" id="kpiPosCount">0 bài báo</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Tỉ lệ Tiêu cực</h4>
+                <div class="text-4xl font-black text-red-600 mb-1" id="kpiNeg">0%</div>
+                <p class="text-sm text-slate-500 font-medium" id="kpiNegCount">0 bài báo</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h3 class="text-xl font-bold mb-6">Phân bố cảm xúc theo Nguồn (SP5)</h3>
+                <canvas id="barChart" height="250"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center">
+                <h3 class="text-xl font-bold mb-6 self-start">Tỉ trọng Cảm xúc Tổng thể (SP5)</h3>
+                <div class="w-2/3"><canvas id="pieChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                <h3 class="text-xl font-bold">Cơ sở dữ liệu Bài viết (SQLite Mockup)</h3>
+                <div class="flex gap-3 mt-4 md:mt-0">
+                    <button onclick="exportCSV()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors">📄 Xuất CSV</button>
+                    <button onclick="exportJSON()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors">{ } Xuất JSON</button>
+                    <button onclick="exportReport()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-medium transition-colors border border-blue-200">⬇ Tải Technical Report (SP6)</button>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 uppercase text-xs font-bold tracking-wider">
+                            <th class="p-4 border-b">ID</th><th class="p-4 border-b w-1/2">Tiêu đề (Title)</th><th class="p-4 border-b">Nguồn</th><th class="p-4 border-b">Nhãn</th><th class="p-4 border-b">Điểm</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const MOCK_DATA = [
+            { id: 1, title: "TSMC ghi nhận doanh thu kỷ lục nhờ chip AI", source: "VnExpress", sentiment: "Positive", score: 0.85 },
+            { id: 2, title: "Global semiconductor supply chain faces new delays", source: "BBC News", sentiment: "Negative", score: -0.65 },
+            { id: 3, title: "Nvidia ra mắt dòng GPU Blackwell thế hệ mới", source: "VnExpress", sentiment: "Positive", score: 0.90 },
+            { id: 4, title: "Intel delays construction of Ohio mega-fab", source: "BBC News", sentiment: "Negative", score: -0.70 },
+            { id: 5, title: "Thị trường vi mạch Việt Nam thiếu hụt nhân sự", source: "VnExpress", sentiment: "Negative", score: -0.45 },
+            { id: 6, title: "Samsung plans $40 billion investment in US", source: "BBC News", sentiment: "Positive", score: 0.75 },
+            { id: 7, title: "Cổ phiếu ngành bán dẫn đồng loạt đi ngang", source: "VnExpress", sentiment: "Neutral", score: 0.05 },
+            { id: 8, title: "US tightens export controls on advanced AI chips", source: "BBC News", sentiment: "Negative", score: -0.80 },
+        ];
+
+        let stats = { total: 0, pos: 0, neg: 0, neu: 0, avg: 0 };
+
+        async function runPipeline() {
+            const btn = document.getElementById('runBtn');
+            btn.disabled = true;
+            btn.innerText = "⏳ Hệ thống đang xử lý...";
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            const steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
+            for(let i=0; i<steps.length; i++){
+                const current = document.getElementById(steps[i]);
+                current.classList.add('pulse-active');
+                await new Promise(r => setTimeout(r, 1000)); // Đợi 1 giây mô phỏng
+                current.classList.remove('pulse-active');
+                current.classList.add('step-done');
+            }
+
+            processData();
+            document.getElementById('resultsArea').classList.remove('hidden');
+            renderCharts();
+            btn.innerText = "✅ Hoàn tất";
+        }
+
+        function processData() {
+            stats.total = MOCK_DATA.length;
+            stats.pos = MOCK_DATA.filter(d => d.sentiment === 'Positive').length;
+            stats.neg = MOCK_DATA.filter(d => d.sentiment === 'Negative').length;
+            stats.neu = MOCK_DATA.filter(d => d.sentiment === 'Neutral').length;
+            stats.avg = (MOCK_DATA.reduce((sum, d) => sum + d.score, 0) / stats.total).toFixed(3);
+
+            document.getElementById('kpiTotal').innerText = stats.total;
+            document.getElementById('kpiScore').innerText = stats.avg;
+            document.getElementById('kpiPos').innerText = ((stats.pos / stats.total) * 100).toFixed(1) + "%";
+            document.getElementById('kpiPosCount').innerText = stats.pos + " bài báo";
+            document.getElementById('kpiNeg').innerText = ((stats.neg / stats.total) * 100).toFixed(1) + "%";
+            document.getElementById('kpiNegCount').innerText = stats.neg + " bài báo";
+
+            let rows = '';
+            MOCK_DATA.forEach(d => {
+                let badge = d.sentiment === 'Positive' ? 'bg-green-100 text-green-700' : d.sentiment === 'Negative' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700';
+                rows += `<tr class="border-b hover:bg-slate-50"><td class="p-4 text-slate-500">#${d.id}</td><td class="p-4 font-medium">${d.title}</td><td class="p-4">${d.source}</td><td class="p-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${badge}">${d.sentiment}</span></td><td class="p-4 font-mono">${d.score.toFixed(2)}</td></tr>`;
+            });
+            document.getElementById('tableBody').innerHTML = rows;
+        }
+
+        function renderCharts() {
+            new Chart(document.getElementById('barChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['VnExpress', 'BBC News'],
+                    datasets: [
+                        { label: 'Positive', data: [2, 1], backgroundColor: '#22c55e' },
+                        { label: 'Neutral', data: [1, 0], backgroundColor: '#64748b' },
+                        { label: 'Negative', data: [1, 3], backgroundColor: '#ef4444' }
+                    ]
+                },
+                options: { responsive: true, scales: { x: { stacked: true }, y: { stacked: true } } }
+            });
+
+            new Chart(document.getElementById('pieChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Positive', 'Neutral', 'Negative'],
+                    datasets: [{ data: [stats.pos, stats.neu, stats.neg], backgroundColor: ['#22c55e', '#64748b', '#ef4444'] }]
+                }
+            });
+        }
+
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+
+        function exportJSON() {
+            downloadFile(JSON.stringify({ date: new Date().toISOString().split('T')[0], summary: stats }, null, 2), "daily_summary.json", "application/json");
+        }
+
+        function exportCSV() {
+            let csv = "ID,Title,Source,Sentiment,Score\n" + MOCK_DATA.map(d => `${d.id},"${d.title}",${d.source},${d.sentiment},${d.score}`).join('\n');
+            downloadFile(csv, "articles_backup.csv", "text/csv");
+        }
+
+        function exportReport() {
+            let txt = `=================================================\nGLOBALPULSE AI - AUTOMATED TECHNICAL REPORT\n=================================================\n4.1. Total Articles: ${stats.total}\n4.2. Mean Sentiment Score: ${stats.avg}\nPositive: ${stats.pos} | Negative: ${stats.neg}\n`;
+            downloadFile(txt, "Technical_Report_Draft.txt", "text/plain");
+        }
+    </script>
+</body>
+</html>
