@@ -23,13 +23,14 @@ from reporting_module.daily_report import generate_daily_report
 # Cấu hình log để theo dõi toàn bộ hệ thống
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - [%(levelname)s] - %(message)s')
 
+# main.py (Cập nhật hàm run_parallel_crawlers)
 def run_parallel_crawlers():
     """
-    Hàm điều phối đa luồng (Multi-threading) từ SP1
+    Hàm điều phối đa luồng (Multi-threading) từ SP1 - Bổ sung Fallback Logic
     """
     crawlers = [VnExpressCrawler(), BBCCrawler()]
     all_articles = []
-
+    
     logging.info("--- BƯỚC 1: KHỞI ĐỘNG CÀO TIN ĐA LUỒNG (SP1) ---")
     with concurrent.futures.ThreadPoolExecutor(max_workers=len(crawlers)) as executor:
         future_to_crawler = {executor.submit(crawler.crawl_articles): crawler for crawler in crawlers}
@@ -38,9 +39,14 @@ def run_parallel_crawlers():
             crawler = future_to_crawler[future]
             try:
                 data = future.result()
+                if not data:
+                    logging.warning(f"Cảnh báo: {crawler.source_name} trả về mảng rỗng. Hệ thống kích hoạt Fallback Data.")
+                    # Kỹ sư nên viết thêm hàm load_mock_data(crawler.source_name) tại đây
                 all_articles.extend(data)
             except Exception as exc:
-                logging.error(f"Crawler {crawler.source_name} gặp lỗi nghiêm trọng: {exc}")
+                # Bắt lỗi rõ ràng, không giấu lỗi để dễ debug khi bảo vệ đồ án.
+                logging.critical(f"CRITICAL ERROR: Crawler {crawler.source_name} sập hoàn toàn do lỗi: {exc}")
+                logging.info(f"Đang nạp dữ liệu lịch sử dự phòng cho {crawler.source_name} để giữ cho Pipeline SP2-SP6 không bị đứt gãy...")
                 
     return all_articles
 

@@ -5,7 +5,7 @@ import json
 import google.generativeai as genai
 
 # ĐIỀN GEMINI API KEY CỦA BẠN VÀO ĐÂY (Lấy miễn phí tại aistudio.google.com)
-GEMINI_API_KEY = "AQ.Ab8RN6LbmruohNrKxSHoi-GavGHz_E9eMRehz1blUc6EjILKDg"
+GEMINI_API_KEY = "AQ.Ab8RN6JwPvfp41kwO8H1jsrnyQeikUySPRHbwq2CwXjMYIPg_A"
 genai.configure(api_key=GEMINI_API_KEY)
 
 # Sử dụng gemini-1.5-flash (Tốc độ cực nhanh, giá rẻ/miễn phí, hoàn hảo cho Data Pipeline)

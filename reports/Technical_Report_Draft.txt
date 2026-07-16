@@ -5,13 +5,13 @@ TECHNICAL REPORT - AUTO-GENERATED RESULTS SECTION
 4. Results and Evaluation
 -------------------------
 4.1. Data Collection Results
-The web scraping module successfully crawled a total of 129 articles .
+The web scraping module successfully crawled a total of 33 articles .
 
 4.2. Sentiment Analysis Results
-Using the NLP pipeline and translation APIs, the system analyzed the sentiment of all crawled articles. The overall average sentiment score across all articles is 0.000. The distribution of sentiment is as follows:
-- Positive Articles: 0 (0.0%)
-- Negative Articles: 0 (0.0%)
-- Neutral Articles: 129 (100.0%)
+Using the NLP pipeline and translation APIs, the system analyzed the sentiment of all crawled articles. The overall average sentiment score across all articles is -0.039. The distribution of sentiment is as follows:
+- Positive Articles: 5 (15.2%)
+- Negative Articles: 7 (21.2%)
+- Neutral Articles: 21 (63.6%)
 
 4.3. Visual Aids and Charts Integration
 Please copy the generated images from the 'reports/' folder into your Word document:

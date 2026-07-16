@@ -1,33 +1,65 @@
 # pipeline/text_processor.py
-import time
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+# Semiconductor Market Intelligence Taxonomy
+SEMICONDUCTOR_TAXONOMY = {
+    "Supply Chain & Foundry": [
+        "tsmc", "samsung", "fab", "supply chain", "intel", 
+        "foundry", "nvidia", "asml", "chuỗi cung ứng", "đúc chip"
+    ],
+    "Geopolitics & Export Control": [
+        "export control", "chips act", "geopolitics", "trade war", 
+        "cấm vận", "đạo luật chip", "địa chính trị", "thương chiến"
+    ],
+    "Technology & R&D": [
+        "euv", "packaging", "semiconductor materials", "nanometer", 
+        "r&d", "gpu", "ai chip", "vật liệu bán dẫn", "tiến trình", "vi mạch"
+    ]
+}
 
-# Decorator: Đo lường thời gian thực thi của hàm (Yêu cầu SP2)
-def timing_decorator(func):
-    def wrapper(*args, **kwargs):
-        start = time.time()
-        result = func(*args, **kwargs)
-        end = time.time()
-        logging.info(f"Hàm '{func.__name__}' chạy mất {end - start:.4f} giây.")
-        return result
-    return wrapper
+def extract_insights(article):
+    """
+    Extracts keywords from the article content/title and assigns a specific category.
+    Returns None if the article is considered noise (no relevant keywords).
+    """
+    # Combine title and content for a comprehensive search
+    content = str(article.get('content', '') + ' ' + article.get('title', '')).lower()
+    
+    found_keywords = []
+    assigned_category = "General"
 
-@timing_decorator
+    # Scan through the taxonomy to match industry keywords
+    for category, keywords in SEMICONDUCTOR_TAXONOMY.items():
+        matched = [kw for kw in keywords if kw in content]
+        if matched:
+            found_keywords.extend(matched)
+            assigned_category = category
+            break # Assign the first matched category to avoid overlap
+            
+    # Signal-to-Noise Ratio check: Drop the article if no keywords matched
+    if not found_keywords:
+        return None
+
+    # Update the article dictionary with extracted metadata
+    article['category'] = assigned_category
+    article['keywords'] = found_keywords
+    
+    return article
+
 def clean_articles_pipeline(raw_articles):
-    """Sử dụng lambda, map và filter để làm sạch dữ liệu (Yêu cầu SP2)"""
-    logging.info("Bắt đầu đường ống làm sạch dữ liệu (SP2)...")
+    """
+    Cleans and categorizes raw articles using map, filter, and lambda functions.
+    Ensures that only high-value semiconductor intelligence reaches the database.
+    """
+    logging.info(f"SP2: Starting text processing for {len(raw_articles)} raw articles...")
     
-    # Lọc: Bỏ qua các bài báo không có tiêu đề (title rỗng)
-    valid_articles = list(filter(lambda x: len(x.get('title', '').strip()) > 0, raw_articles))
+    # 1. Use map() to apply the extraction function to all articles concurrently
+    processed_articles = list(map(extract_insights, raw_articles))
     
-    # Map: Làm sạch khoảng trắng thừa và chuẩn hóa chuỗi
-    def clean_text(article):
-        article['title'] = " ".join(article['title'].split())
-        article['sentiment_score'] = None  # Chuẩn bị sẵn cột trống cho SP4 (AI)
-        return article
-        
-    cleaned_articles = list(map(clean_text, valid_articles))
-    logging.info(f"Đã làm sạch {len(cleaned_articles)} bài báo hợp lệ.")
+    # 2. Use filter() and lambda to discard noise (None values)
+    cleaned_articles = list(filter(lambda x: x is not None, processed_articles))
+    
+    noise_count = len(raw_articles) - len(cleaned_articles)
+    logging.info(f"SP2: Pipeline finished. Retained {len(cleaned_articles)} signal articles. Dropped {noise_count} noise articles.")
+    
     return cleaned_articles
