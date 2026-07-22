@@ -10,6 +10,7 @@ from crawlers.bbc import BBCCrawler
 # 2. Import các Module từ thư mục pipeline (SP2 & SP3)
 from pipeline.text_processor import clean_articles_pipeline
 from pipeline.database import initialize_database, save_articles_to_db, export_database_to_files
+from pipeline.forecasting import generate_trend_predictions
 
 # 3. Import Module AI (SP4)
 from ai_module.sentiment import apply_sentiment_analysis
@@ -75,6 +76,9 @@ def main():
     
     # BƯỚC E: Xuất file backup JSON/CSV để dự phòng (SP3)
     export_database_to_files()
+
+    # BƯỚC E2: Tạo dự đoán xu hướng NSR 7 ngày cho mỗi danh mục (SP5 Advanced)
+    generate_trend_predictions(analyzed_data, output_path='trend_predictions.json', horizon_days=7)
     
     # BƯỚC F (SP5): Phân tích dữ liệu bằng Pandas và xuất Dashboard (Matplotlib)
     generate_analytics_dashboard()

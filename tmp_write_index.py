@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+from pathlib import Path
+html = """<!DOCTYPE html>
 <html lang="vi" class="light">
 <head>
     <meta charset="UTF-8">
@@ -206,128 +207,25 @@
             localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
         });
         const MOCK_DATA = [
-            { id: 1, date: "2026-07-20", category: "Supply Chain & Foundry", title: "TSMC ghi nhận doanh thu kỷ lục nhờ chip AI", source: "VnExpress", sentiment: "Positive", score: 0.85 },
-            { id: 2, date: "2026-07-20", category: "Geopolitics & Export Control", title: "Global semiconductor supply chain faces new delays", source: "BBC", sentiment: "Negative", score: -0.65 },
-            { id: 3, date: "2026-07-21", category: "Technology & R&D", title: "Nvidia ra mắt dòng GPU Blackwell thế hệ mới", source: "VnExpress", sentiment: "Positive", score: 0.90 },
-            { id: 4, date: "2026-07-21", category: "Supply Chain & Foundry", title: "Intel delays construction of Ohio mega-fab", source: "BBC", sentiment: "Negative", score: -0.70 },
-            { id: 5, date: "2026-07-22", category: "Market Economy", title: "Thị trường vi mạch Việt Nam thiếu hụt nhân sự", source: "VnExpress", sentiment: "Negative", score: -0.45 },
-            { id: 6, date: "2026-07-22", category: "Market Economy", title: "Samsung plans $40 billion investment in US", source: "BBC", sentiment: "Positive", score: 0.75 },
-            { id: 7, date: "2026-07-23", category: "Market Economy", title: "Cổ phiếu ngành bán dẫn đồng loạt đi ngang", source: "VnExpress", sentiment: "Neutral", score: 0.05 },
-            { id: 8, date: "2026-07-23", category: "Geopolitics & Export Control", title: "US tightens export controls on advanced AI chips", source: "BBC", sentiment: "Negative", score: -0.80 }
+            { id: 1, date: "2026-07-20", category: "Supply Chain", title: "TSMC ghi nhận doanh thu kỷ lục nhờ chip AI", source: "VnExpress", sentiment: "Positive", score: 0.85 },
+            { id: 2, date: "2026-07-20", category: "Geopolitics", title: "Global semiconductor supply chain faces new delays", source: "BBC", sentiment: "Negative", score: -0.65 },
+            { id: 3, date: "2026-07-21", category: "Technology", title: "Nvidia ra mắt dòng GPU Blackwell thế hệ mới", source: "VnExpress", sentiment: "Positive", score: 0.90 },
+            { id: 4, date: "2026-07-21", category: "Supply Chain", title: "Intel delays construction of Ohio mega-fab", source: "BBC", sentiment: "Negative", score: -0.70 },
+            { id: 5, date: "2026-07-22", category: "Market", title: "Thị trường vi mạch Việt Nam thiếu hụt nhân sự", source: "VnExpress", sentiment: "Negative", score: -0.45 },
+            { id: 6, date: "2026-07-22", category: "Market", title: "Samsung plans $40 billion investment in US", source: "BBC", sentiment: "Positive", score: 0.75 },
+            { id: 7, date: "2026-07-23", category: "Market", title: "Cổ phiếu ngành bán dẫn đồng loạt đi ngang", source: "VnExpress", sentiment: "Neutral", score: 0.05 },
+            { id: 8, date: "2026-07-23", category: "Geopolitics", title: "US tightens export controls on advanced AI chips", source: "BBC", sentiment: "Negative", score: -0.80 }
         ];
-        const FORECAST_FALLBACK = {
-            'Supply Chain & Foundry': null,
-            'Geopolitics & Export Control': null,
-            'Technology & R&D': null,
-            'Market Economy': null,
-            'All': null
-        };
         let stats = { total: 0, pos: 0, neg: 0, neu: 0, avg: 0 };
         let currentFilter = 'All';
         let currentSearch = '';
         let chartInstances = {};
-        let trendPredictions = {};
         document.getElementById('currentDate').innerText = new Date().toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         updatePipelineStatus('Sẵn sàng khởi động');
-
         function updatePipelineStatus(message) {
             const status = document.getElementById('pipelineStatus');
             status.innerHTML = `<span class="status-pill bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200"><span class="bg-slate-500"></span>${message}</span>`;
         }
-
-        function dateToOrdinal(dateString) {
-            return new Date(dateString).valueOf() / 86400000;
-        }
-
-        function average(values) {
-            if (!values.length) return 0;
-            return values.reduce((sum, value) => sum + value, 0) / values.length;
-        }
-
-        async function loadTrendPredictions() {
-            try {
-                const response = await fetch('trend_predictions.json');
-                if (!response.ok) {
-                    throw new Error(`Fetch failed: ${response.status}`);
-                }
-                trendPredictions = await response.json();
-            } catch (error) {
-                console.warn('Không thể tải trend_predictions.json, dùng dự đoán nội bộ:', error);
-                trendPredictions = generateFallbackTrendPredictions();
-            }
-        }
-
-        function generateFallbackTrendPredictions() {
-            const categories = ['Supply Chain & Foundry', 'Geopolitics & Export Control', 'Technology & R&D', 'Market Economy', 'All'];
-            const fallback = {};
-            categories.forEach(category => {
-                const categoryData = computeDailyNsr(category === 'All' ? MOCK_DATA : MOCK_DATA.filter(item => item.category === category));
-                fallback[category] = {
-                    historical: categoryData,
-                    forecast: computeJsForecast(categoryData, 7)
-                };
-            });
-            return fallback;
-        }
-
-        function computeDailyNsr(data) {
-            const grouped = {};
-            data.forEach(item => {
-                const date = item.date;
-                if (!grouped[date]) {
-                    grouped[date] = { positive: 0, negative: 0, neutral: 0 };
-                }
-                if (item.sentiment === 'Positive') grouped[date].positive += 1;
-                else if (item.sentiment === 'Negative') grouped[date].negative += 1;
-                else grouped[date].neutral += 1;
-            });
-
-            return Object.entries(grouped)
-                .map(([date, totals]) => {
-                    const total = totals.positive + totals.negative + totals.neutral;
-                    return {
-                        date,
-                        nsr: total === 0 ? 0 : (totals.positive - totals.negative) / total,
-                        total: total,
-                    };
-                })
-                .sort((a, b) => a.date.localeCompare(b.date));
-        }
-
-        function computeJsForecast(historical, days) {
-            if (!historical.length) {
-                return [];
-            }
-            if (historical.length < 3) {
-                const lastNsr = historical[historical.length - 1].nsr;
-                return Array.from({ length: days }, (_, i) => {
-                    const date = new Date(historical[historical.length - 1].date);
-                    date.setDate(date.getDate() + i + 1);
-                    return { date: date.toISOString().slice(0, 10), predicted_nsr: lastNsr };
-                });
-            }
-
-            const xVals = historical.map(item => dateToOrdinal(item.date));
-            const yVals = historical.map(item => item.nsr);
-            const xMean = average(xVals);
-            const yMean = average(yVals);
-            let numerator = 0;
-            let denominator = 0;
-            for (let i = 0; i < xVals.length; i += 1) {
-                numerator += (xVals[i] - xMean) * (yVals[i] - yMean);
-                denominator += Math.pow(xVals[i] - xMean, 2);
-            }
-            const slope = denominator === 0 ? 0 : numerator / denominator;
-            const intercept = yMean - slope * xMean;
-            const lastDate = new Date(historical[historical.length - 1].date);
-            return Array.from({ length: days }, (_, i) => {
-                const future = new Date(lastDate);
-                future.setDate(future.getDate() + i + 1);
-                const pred = slope * dateToOrdinal(future.toISOString().slice(0, 10)) + intercept;
-                return { date: future.toISOString().slice(0, 10), predicted_nsr: Math.max(-1, Math.min(1, pred)) };
-            });
-        }
-
         function initFilters() {
             const categories = [...new Set(MOCK_DATA.map(d => d.category))].sort();
             const select = document.getElementById('categoryFilter');
@@ -361,7 +259,6 @@
                 el.classList.remove('pulse-active');
                 el.classList.add('step-done');
             }
-            await loadTrendPredictions();
             initFilters();
             processData();
             document.getElementById('resultsArea').classList.remove('hidden');
@@ -409,7 +306,6 @@
             destroyChart('trend');
             destroyChart('bar');
             destroyChart('pie');
-
             const dateSummary = data.reduce((acc, item) => {
                 if (!acc[item.date]) acc[item.date] = { sum: 0, count: 0 };
                 acc[item.date].sum += item.score;
@@ -417,66 +313,15 @@
                 return acc;
             }, {});
             const trendLabels = Object.keys(dateSummary).sort();
-            const trendValues = trendLabels.map(date => parseFloat((dateSummary[date].sum / dateSummary[date].count).toFixed(3)));
-
-            const categoryKey = currentFilter === 'All' ? 'All' : currentFilter;
-            const trendData = trendPredictions[categoryKey] || trendPredictions['All'] || { historical: [], forecast: [] };
-            const forecastLabels = trendData.forecast ? trendData.forecast.map(item => item.date) : [];
-            const forecastValues = trendData.forecast ? trendData.forecast.map(item => item.predicted_nsr) : [];
-            const combinedLabels = [...new Set([...trendLabels, ...forecastLabels])].sort();
-
-            const historicalMap = Object.fromEntries(trendData.historical ? trendData.historical.map(item => [item.date, item.nsr]) : []);
-            const historicalPoints = combinedLabels.map(label => historicalMap[label] ?? null);
-            const forecastPoints = combinedLabels.map(label => {
-                const forecastItem = (trendData.forecast || []).find(item => item.date === label);
-                return forecastItem ? forecastItem.predicted_nsr : null;
-            });
-
+            const trendValues = trendLabels.map(date => (dateSummary[date].sum / dateSummary[date].count).toFixed(3));
             chartInstances.trend = new Chart(document.getElementById('trendChart'), {
                 type: 'line',
                 data: {
-                    labels: combinedLabels,
-                    datasets: [
-                        {
-                            label: 'Historical NSR',
-                            data: historicalPoints,
-                            borderColor: '#0ea5e9',
-                            backgroundColor: 'rgba(14,165,233,0.18)',
-                            fill: false,
-                            tension: 0.3,
-                            pointRadius: 4,
-                            pointBackgroundColor: '#0ea5e9',
-                        },
-                        {
-                            label: '7-Day Forecast NSR',
-                            data: forecastPoints,
-                            borderColor: '#f59e0b',
-                            backgroundColor: 'rgba(245,158,11,0.15)',
-                            borderDash: [5, 5],
-                            fill: false,
-                            tension: 0.3,
-                            pointRadius: 4,
-                            pointBackgroundColor: '#f59e0b',
-                        }
-                    ]
+                    labels: trendLabels,
+                    datasets: [{ label: 'Sentiment trung bình', data: trendValues, borderColor: '#0ea5e9', backgroundColor: 'rgba(14,165,233,0.18)', fill: true, tension: 0.35, pointRadius: 4, pointBackgroundColor: '#0ea5e9' }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            min: -1,
-                            max: 1,
-                            ticks: { stepSize: 0.25 }
-                        }
-                    },
-                    plugins: {
-                        tooltip: { mode: 'index', intersect: false },
-                        legend: { position: 'bottom' }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: -1, max: 1, ticks: { stepSize: 0.5 } } } }
             });
-
             const sourceLabels = [...new Set(data.map(item => item.source))];
             const positive = sourceLabels.map(source => data.filter(item => item.source === source && item.sentiment === 'Positive').length);
             const neutral = sourceLabels.map(source => data.filter(item => item.source === source && item.sentiment === 'Neutral').length);
@@ -547,4 +392,6 @@
         }
     </script>
 </body>
-</html>
+</html>"""
+Path('index.html').write_text(html, encoding='utf-8')
+print('index.html written')

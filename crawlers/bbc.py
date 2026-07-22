@@ -1,48 +1,111 @@
-# crawlers/bbc.py
-import time
+﻿# crawlers/bbc.py
 import logging
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
+import time
+import xml.etree.ElementTree as ET
+from urllib.parse import urljoin
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from .base_crawler import BaseCrawler
 
-class BBCCrawler(BaseCrawler):  # <-- Đảm bảo viết HOA 3 chữ BBC đầu tiên
-    """Crawler cho trang động dùng Selenium"""
+class BBCCrawler(BaseCrawler):
+    """Crawler for targeted BBC RSS feeds for business, technology, and world geopolitics."""
+
+    RSS_FEEDS = [
+        ('Technology & R&D', '/news/technology/rss'),
+        ('Market Economy', '/news/business/rss'),
+        ('Geopolitics & Export Control', '/news/world/rss'),
+    ]
+
     def __init__(self):
-        super().__init__(base_url="https://www.bbc.com/news", source_name="BBC")
+        super().__init__(base_url='https://www.bbc.com', source_name='BBC')
 
     def crawl_articles(self):
-        logging.info(f"Đang thu thập: {self.source_name} (Trang động Selenium)...")
-        
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+        logging.info(f'Bắt đầu thu thập: {self.source_name} (RSS targeted feeds)')
+        candidate_articles = []
+        seen_links = set()
 
-        driver = webdriver.Chrome(options=chrome_options)
-        articles = []
+        for category, path in self.RSS_FEEDS:
+            feed_url = urljoin(self.base_url, path)
+            items = self.parse_rss_feed(feed_url, category)
+            if not items:
+                logging.warning(f'Không tải được RSS feed: {feed_url}')
+                continue
+
+            for item in items:
+                link = item.get('link')
+                if not link or link in seen_links or '/live/' in link or '/av/' in link:
+                    continue
+
+                seen_links.add(link)
+                candidate_articles.append(item)
+                if len(candidate_articles) >= 60:
+                    break
+
+            if len(candidate_articles) >= 60:
+                break
+
+        if not candidate_articles:
+            return self.load_fallback_articles()
+
+        enriched_articles = []
+        with ThreadPoolExecutor(max_workers=6) as executor:
+            future_to_article = {
+                executor.submit(self.fetch_article_metadata, article): article for article in candidate_articles[:40]
+            }
+            for future in as_completed(future_to_article):
+                try:
+                    enriched = future.result()
+                    if enriched:
+                        enriched_articles.append(enriched)
+                except Exception as exc:
+                    logging.warning(f'BBC metadata fetch failed: {exc}')
+
+        if not enriched_articles:
+            return self.load_fallback_articles()
+
+        logging.info(f'Xong {self.source_name}: {len(enriched_articles)} bài báo.')
+        return enriched_articles
+
+    def parse_rss_feed(self, feed_url, category_hint):
+        html = self.fetch_html(feed_url)
+        if not html:
+            return []
 
         try:
-            driver.get(self.base_url)
-            time.sleep(4)
-            
-            elements = driver.find_elements(By.CSS_SELECTOR, "div[data-testid='edgel-text-container'] a")
-            for el in elements:
-                title = el.text.strip()
-                link = el.get_attribute('href')
-                if title and link and link.startswith("https://"):
-                    article_data = {
-                        'title': title,
-                        'link': link,
-                        'source': self.source_name
-                    }
-                    if article_data not in articles:
-                        articles.append(article_data)
-        except Exception as e:
-            logging.error(f"Lỗi Selenium tại {self.source_name}: {e}")
-        finally:
-            driver.quit()
-            
-        logging.info(f"Xong {self.source_name}: {len(articles)} bài báo.")
-        return articles
+            root = ET.fromstring(html)
+        except ET.ParseError as exc:
+            logging.error(f'Lỗi phân tích RSS BBC: {exc}')
+            return []
+
+        items = []
+        for item in root.findall('.//item'):
+            title = (item.findtext('title') or '').strip()
+            link = (item.findtext('link') or '').strip()
+            description = (item.findtext('description') or '').strip()
+            pubdate = (item.findtext('pubDate') or '').strip()
+            if not title or not link:
+                continue
+
+            items.append({
+                'title': title,
+                'link': urljoin(self.base_url, link),
+                'content': description,
+                'date': self.parse_pubdate(pubdate),
+                'source_name': self.source_name,
+                'category_hint': category_hint,
+            })
+
+            if len(items) >= 25:
+                break
+
+        return items
+
+    @staticmethod
+    def parse_pubdate(pubdate):
+        if not pubdate:
+            return ''
+        try:
+            from email.utils import parsedate_to_datetime
+            parsed = parsedate_to_datetime(pubdate)
+            return parsed.strftime('%Y-%m-%d')
+        except Exception:
+            return ''

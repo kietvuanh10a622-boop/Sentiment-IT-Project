@@ -1,233 +1,642 @@
 [
     {
+        "id": 1,
+        "date": null,
         "title": "'Một ly sữa ba bộ quản lý, xảy ra ngộ độc dáo dác tìm người chịu trách nhiệm'",
         "link": "https://vnexpress.net/mot-ly-sua-ba-bo-quan-ly-xay-ra-ngo-doc-dao-dac-tim-nguoi-chiu-trach-nhiem-5096967.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 2,
+        "date": null,
         "title": "Khi chung cư hết hạn",
         "link": "https://vnexpress.net/khi-chung-cu-het-han-5097515.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 3,
+        "date": null,
         "title": "Bellingham và bài hát buồn mang niềm hy vọng của đội tuyển Anh",
         "link": "https://vnexpress.net/bellingham-va-bai-hat-buon-mang-niem-hy-vong-cua-doi-tuyen-anh-5097581.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 4,
+        "date": null,
         "title": "Bộ Giáo dục: Học sinh chuyên Tuyên Quang đăng ký xét tuyển 'không ảnh hưởng thí sinh khác'",
         "link": "https://vnexpress.net/bo-giao-duc-hoc-sinh-chuyen-tuyen-quang-dang-ky-xet-tuyen-khong-anh-huong-thi-sinh-khac-5097756.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 5,
+        "date": null,
         "title": "Lộ diện thay đổi của Argentina tại bán kết World Cup 2026",
         "link": "https://vnexpress.net/lo-dien-thay-doi-cua-argentina-tai-ban-ket-world-cup-2026-5097718.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.65,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 6,
+        "date": null,
         "title": "Đại sứ Mỹ thưởng thức cà phê, bắt đầu 'hành trình thú vị' ở Việt Nam",
         "link": "https://vnexpress.net/dai-su-my-thuong-thuc-ca-phe-bat-dau-hanh-trinh-thu-vi-o-viet-nam-5097642.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 7,
+        "date": null,
         "title": "TP HCM đề xuất mở rộng cầu Phú Mỹ lên ít nhất 8 làn",
         "link": "https://vnexpress.net/tp-hcm-de-xuat-mo-rong-cau-phu-my-len-it-nhat-8-lan-5097720.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 8,
+        "date": null,
         "title": "'Tây Ban Nha đã dạy Pháp một bài học bóng đá'",
         "link": "https://vnexpress.net/tay-ban-nha-da-day-phap-mot-bai-hoc-bong-da-5097643.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": -0.65,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 9,
+        "date": null,
         "title": "'Con cò bé bé' Xuân Mai tái xuất",
         "link": "https://vnexpress.net/con-co-be-be-xuan-mai-tai-xuat-5097639.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 10,
+        "date": null,
         "title": "Không báo lưu trú khi ở qua đêm nhà người thân sẽ bị phạt bao nhiêu tiền?",
         "link": "https://vnexpress.net/khong-bao-luu-tru-khi-o-qua-dem-nha-nguoi-than-se-bi-phat-bao-nhieu-tien-5097404.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 11,
+        "date": null,
         "title": "Cha mẹ khủng hoảng khi con 'rời tổ'",
         "link": "https://vnexpress.net/cha-me-khung-hoang-khi-con-roi-to-5095686.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": -0.65,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 12,
+        "date": null,
         "title": "Chung cư mini ồ ạt treo biển tìm khách thuê",
         "link": "https://vnexpress.net/chung-cu-mini-o-at-treo-bien-tim-khach-thue-5097509.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 13,
+        "date": null,
         "title": "Hơn 367.000 thí sinh bỏ xét tuyển đại học",
         "link": "https://vnexpress.net/hon-367-000-thi-sinh-bo-xet-tuyen-dai-hoc-5097420.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 14,
+        "date": null,
         "title": "Quả trầu bà được săn lùng nhờ 'trào lưu mukbang'",
         "link": "https://vnexpress.net/qua-trau-ba-duoc-san-lung-nho-trao-luu-mukbang-5097334.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": -0.65,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 15,
+        "date": null,
         "title": "Mbappe chơi tệ thế nào trước Tây Ban Nha?",
         "link": "https://vnexpress.net/mbappe-choi-te-the-nao-truoc-tay-ban-nha-5097574.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": -0.65,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 16,
+        "date": null,
         "title": "Trận bom 57 năm trước bịt kín hang Đá Sập, vùi lấp hàng chục chiến sĩ",
         "link": "https://vnexpress.net/tran-bom-57-nam-truoc-bit-kin-hang-da-sap-vui-lap-hang-chuc-chien-si-5097481.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 17,
+        "date": null,
         "title": "Tây Ban Nha hạ Pháp, lần thứ hai vào chung kết World Cup",
         "link": "https://vnexpress.net/phap-tay-ban-nha-mbappe-doi-dau-yamal-5097478-tong-thuat.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 18,
+        "date": null,
         "title": "HLV Tây Ban Nha: 'Pháp thua đội mạnh nhất thế giới'",
         "link": "https://vnexpress.net/hlv-tay-ban-nha-phap-thua-doi-manh-nhat-the-gioi-5097546.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": -0.65,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 19,
+        "date": null,
         "title": "Cách đóng tiền bản quyền khi mở nhạc trong quán cà phê",
         "link": "https://vnexpress.net/cach-dong-tien-ban-quyen-khi-mo-nhac-trong-quan-ca-phe-5097469.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 20,
+        "date": null,
         "title": "TS Vũ Thành Tự Anh: Cải cách không để phát sinh nút thắt mới",
         "link": "https://vnexpress.net/ts-vu-thanh-tu-anh-cai-cach-khong-de-phat-sinh-nut-that-moi-5090083.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 21,
+        "date": null,
         "title": "Vì sao Tây Ban Nha hưởng phạt đền dù bóng chạm tay Yamal?",
         "link": "https://vnexpress.net/vi-sao-tay-ban-nha-huong-phat-den-du-bong-cham-tay-yamal-5097522.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": -0.65,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 22,
+        "date": null,
         "title": "Mỹ tiếp tục tấn công Iran",
         "link": "https://vnexpress.net/my-tiep-tuc-tan-cong-iran-5097526.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 23,
+        "date": null,
         "title": "Loạt dự án chống ngập Hà Nội tăng tốc về đích",
         "link": "https://vnexpress.net/loat-du-an-chong-ngap-ha-noi-tang-toc-ve-dich-5097497.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.65,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 24,
+        "date": null,
         "title": "Deschamps trách trọng tài sau khi thua bán kết World Cup 2026",
         "link": "https://vnexpress.net/deschamps-trach-trong-tai-sau-khi-thua-ban-ket-world-cup-2026-5097531.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.65,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 25,
+        "date": null,
         "title": "Nút giao An Phú trễ hẹn, cửa ngõ TP HCM ra sân bay Long Thành nguy cơ ùn tắc",
         "link": "https://vnexpress.net/nut-giao-an-phu-tre-hen-cua-ngo-tp-hcm-ra-san-bay-long-thanh-nguy-co-un-tac-5097480.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 26,
+        "date": null,
         "title": "Tổng Bí thư, Chủ tịch nước: Tri ân người có công là thước đo nhân văn của chế độ",
         "link": "https://vnexpress.net/tong-bi-thu-chu-tich-nuoc-tri-an-nguoi-co-cong-la-thuoc-do-nhan-van-cua-che-do-5097686.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 28,
+        "date": null,
         "title": "Bệnh viện Ung bướu TP HCM quá tải, 1.000 người chờ mổ",
         "link": "https://vnexpress.net/benh-vien-ung-buou-tp-hcm-qua-tai-1-000-nguoi-cho-mo-5097714.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 30,
+        "date": null,
         "title": "Sở Xây dựng Hà Nội: 'Nước dâng 30 cm và quá 30 phút mới gọi là ngập úng'",
         "link": "https://vnexpress.net/so-xay-dung-ha-noi-nuoc-dang-30-cm-va-qua-30-phut-moi-goi-la-ngap-ung-5097729.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.65,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 31,
+        "date": null,
         "title": "'Hệ sinh thái cờ bạc' Fi88 - KingGroup hơn 30.000 thành viên bị triệt phá",
         "link": "https://vnexpress.net/he-sinh-thai-co-bac-fi88-kinggroup-hon-30-000-thanh-vien-bi-triet-pha-5097773.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.65,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 32,
+        "date": null,
         "title": "Mỹ siết trừng phạt dầu mỏ, tiền số của Iran",
         "link": "https://vnexpress.net/my-siet-trung-phat-dau-mo-tien-so-cua-iran-5097759.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 33,
+        "date": null,
         "title": "Đặc công huấn luyện đổ bộ từ trực thăng",
         "link": "https://vnexpress.net/dac-cong-huan-luyen-do-bo-tu-truc-thang-5096936.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 36,
+        "date": null,
         "title": "Khách đổ đến cù lao Thới Sơn ở miền Tây, xuồng ba lá quá tải",
         "link": "https://vnexpress.net/khach-do-den-cu-lao-thoi-son-o-mien-tay-xuong-ba-la-qua-tai-5097430.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": 0.0,
-        "source_name": "VnExpress"
+        "keywords": ""
     },
     {
+        "id": 40,
+        "date": null,
         "title": "Pha 'bẻ còi' gây tranh cãi ở trận Pháp thua Tây Ban Nha",
         "link": "https://vnexpress.net/pha-be-coi-gay-tranh-cai-o-tran-phap-thua-tay-ban-nha-5097635.html",
+        "source_name": "VnExpress",
         "category": "General",
         "sentiment_score": -0.65,
-        "source_name": "VnExpress"
+        "keywords": ""
+    },
+    {
+        "id": 81,
+        "date": "2026-07-20",
+        "title": "World Cup khó vực dậy ngành bia",
+        "link": "https://vnexpress.net/world-cup-kho-vuc-day-nganh-bia-5099640.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.65,
+        "keywords": "ai"
+    },
+    {
+        "id": 63,
+        "date": "2026-07-21",
+        "title": "Thưởng 20.000 euro để giữ nhân viên ở lại công ty",
+        "link": "https://vnexpress.net/thuong-20-000-euro-de-giu-nhan-vien-o-lai-cong-ty-5099808.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai, chip"
+    },
+    {
+        "id": 64,
+        "date": "2026-07-21",
+        "title": "'Nhiều doanh nghiệp nhà nước giữ hàng nghìn tỷ nhưng khó tăng trưởng'",
+        "link": "https://vnexpress.net/nhieu-doanh-nghiep-nha-nuoc-giu-hang-nghin-ty-nhung-kho-tang-truong-5100028.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.65,
+        "keywords": "ai"
+    },
+    {
+        "id": 65,
+        "date": "2026-07-21",
+        "title": "Chứng khoán xuống thấp nhất từ khi được xác nhận nâng hạng",
+        "link": "https://vnexpress.net/chung-khoan-xuong-thap-nhat-tu-khi-duoc-xac-nhan-nang-hang-5100036.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai"
+    },
+    {
+        "id": 66,
+        "date": "2026-07-21",
+        "title": "Chuyên gia Hàn Quốc trúng Jackpot hơn 100 tỷ đồng",
+        "link": "https://vnexpress.net/chuyen-gia-han-quoc-trung-jackpot-hon-100-ty-dong-5099993.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai"
+    },
+    {
+        "id": 67,
+        "date": "2026-07-21",
+        "title": "Giá USD tự do lao dốc",
+        "link": "https://vnexpress.net/gia-usd-tu-do-lao-doc-5099905.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai"
+    },
+    {
+        "id": 68,
+        "date": "2026-07-21",
+        "title": "PNJ giãn tiến độ thanh toán thu mua kim cương",
+        "link": "https://vnexpress.net/pnj-gian-tien-do-thanh-toan-thu-mua-kim-cuong-5099930.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai"
+    },
+    {
+        "id": 69,
+        "date": "2026-07-21",
+        "title": "World Cup 2026 - siêu sự kiện thể thao giúp FIFA thu chục tỷ USD",
+        "link": "https://vnexpress.net/world-cup-2026-sieu-su-kien-the-thao-giup-fifa-thu-chuc-ty-usd-5099769.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.65,
+        "keywords": "ai, hospital, sport"
+    },
+    {
+        "id": 70,
+        "date": "2026-07-21",
+        "title": "Động lực giúp Hà Tĩnh, Ninh Bình, Hải Phòng dẫn đầu tăng trưởng nửa đầu năm",
+        "link": "https://vnexpress.net/dong-luc-giup-ha-tinh-ninh-binh-hai-phong-dan-dau-tang-truong-nua-dau-nam-5098042.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.65,
+        "keywords": "ai"
+    },
+    {
+        "id": 71,
+        "date": "2026-07-21",
+        "title": "Mỹ áp thuế 50% với hàng loạt sản phẩm Canada",
+        "link": "https://vnexpress.net/my-ap-thue-50-voi-hang-loat-san-pham-canada-5099738.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai"
+    },
+    {
+        "id": 72,
+        "date": "2026-07-21",
+        "title": "Cam kết mua lại kim cương với giá 90% không còn dễ thực hiện",
+        "link": "https://vnexpress.net/cam-ket-mua-lai-kim-cuong-voi-gia-90-khong-con-de-thuc-hien-5099012.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai, trade"
+    },
+    {
+        "id": 73,
+        "date": "2026-07-21",
+        "title": "ASML - niềm hy vọng công ty nghìn tỷ đầu tiên của châu Âu",
+        "link": "https://vnexpress.net/asml-niem-hy-vong-cong-ty-nghin-ty-dau-tien-cua-chau-au-5099491.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai, chip, investment, space"
+    },
+    {
+        "id": 74,
+        "date": "2026-07-21",
+        "title": "Chứng khoán SSI cho vay kỷ lục hơn 40.000 tỷ đồng",
+        "link": "https://vnexpress.net/chung-khoan-ssi-cho-vay-ky-luc-hon-40-000-ty-dong-5099699.html",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 75,
+        "date": "2026-07-21",
+        "title": "Hãng tương ớt Cholimex bình quân mỗi ngày thu 12 tỷ đồng",
+        "link": "https://vnexpress.net/hang-tuong-ot-cholimex-binh-quan-moi-ngay-thu-12-ty-dong-5099686.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai"
+    },
+    {
+        "id": 76,
+        "date": "2026-07-21",
+        "title": "Giới trẻ Hàn Quốc 'nghẹt thở' vì giao dịch chứng khoán",
+        "link": "https://vnexpress.net/gioi-tre-han-quoc-nghet-tho-vi-giao-dich-chung-khoan-5099520.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai, finance"
+    },
+    {
+        "id": 77,
+        "date": "2026-07-21",
+        "title": "Cây xăng bị phạt 40 triệu đồng vì tự ý tăng giá",
+        "link": "https://vnexpress.net/cay-xang-bi-phat-40-trieu-dong-vi-tu-y-tang-gia-5100024.html",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": 0.65,
+        "keywords": ""
+    },
+    {
+        "id": 78,
+        "date": "2026-07-21",
+        "title": "Hơn 640 triệu cổ phiếu Ngân hàng Bản Việt chào sàn HoSE",
+        "link": "https://vnexpress.net/hon-640-trieu-co-phieu-ngan-hang-ban-viet-chao-san-hose-5099958.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai"
+    },
+    {
+        "id": 79,
+        "date": "2026-07-21",
+        "title": "Lâm Đồng sắp có nhà máy chế biến nông sản hơn 500 tỷ",
+        "link": "https://vnexpress.net/lam-dong-sap-co-nha-may-che-bien-nong-san-hon-500-ty-5099871.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai"
+    },
+    {
+        "id": 80,
+        "date": "2026-07-21",
+        "title": "Tổ hợp hội nghị, giải trí trên tầng 23 Sheraton Saigon Grand Opera Hotel",
+        "link": "https://vnexpress.net/to-hop-hoi-nghi-giai-tri-tren-tang-23-sheraton-saigon-grand-opera-hotel-5096002.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai"
+    },
+    {
+        "id": 51,
+        "date": "2026-07-22",
+        "title": "Export controls đẩy căng thẳng thị trường bán dẫn toàn cầu",
+        "link": "https://www.bbc.com/fallback-chip-export",
+        "source_name": "BBC",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "geopolitics, semiconductor"
+    },
+    {
+        "id": 52,
+        "date": "2026-07-22",
+        "title": "VN-Index mất hơn 66 điểm",
+        "link": "https://vnexpress.net/vn-index-mat-hon-66-diem-5100338.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai"
+    },
+    {
+        "id": 53,
+        "date": "2026-07-22",
+        "title": "Chủ trung tâm triển lãm lớn nhất Đông Nam Á thu gần 5 tỷ đồng mỗi ngày từ cho vay",
+        "link": "https://vnexpress.net/chu-trung-tam-trien-lam-lon-nhat-dong-nam-a-thu-gan-5-ty-dong-moi-ngay-tu-cho-vay-5100151.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai"
+    },
+    {
+        "id": 54,
+        "date": "2026-07-22",
+        "title": "Kiều hối về TP HCM giảm xuống 4 tỷ USD",
+        "link": "https://vnexpress.net/kieu-hoi-ve-tp-hcm-giam-xuong-4-ty-usd-5100333.html",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": -0.65,
+        "keywords": ""
+    },
+    {
+        "id": 55,
+        "date": "2026-07-22",
+        "title": "Ông Trump công bố lộ trình áp thuế 200% với dược phẩm vào Mỹ",
+        "link": "https://vnexpress.net/ong-trump-cong-bo-lo-trinh-ap-thue-200-voi-duoc-pham-vao-my-5100199.html",
+        "source_name": "VnExpress",
+        "category": "Culture",
+        "sentiment_score": 0.0,
+        "keywords": "art"
+    },
+    {
+        "id": 56,
+        "date": "2026-07-22",
+        "title": "Vì sao kim cương không phải là kênh đầu tư an toàn?",
+        "link": "https://vnexpress.net/vi-sao-kim-cuong-khong-phai-la-kenh-dau-tu-an-toan-5099414.html",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 57,
+        "date": "2026-07-22",
+        "title": "Giá dầu thế giới cao nhất 5 tuần",
+        "link": "https://vnexpress.net/gia-dau-the-gioi-cao-nhat-5-tuan-5100169.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai"
+    },
+    {
+        "id": 58,
+        "date": "2026-07-22",
+        "title": "Lãi suất cho vay bình quân lên 10,5% một năm",
+        "link": "https://vnexpress.net/lai-suat-cho-vay-binh-quan-len-10-5-mot-nam-5100137.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.65,
+        "keywords": "ai"
+    },
+    {
+        "id": 59,
+        "date": "2026-07-22",
+        "title": "Thịt lợn Trung Quốc ngày càng rẻ",
+        "link": "https://vnexpress.net/thit-lon-trung-quoc-ngay-cang-re-5100058.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai"
+    },
+    {
+        "id": 60,
+        "date": "2026-07-22",
+        "title": "Người kiếm tiền từ Affiliate sẽ khai, nộp thuế như thế nào?",
+        "link": "https://vnexpress.net/nguoi-kiem-tien-tu-affiliate-se-khai-nop-thue-nhu-the-nao-5099874.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai"
+    },
+    {
+        "id": 61,
+        "date": "2026-07-22",
+        "title": "Chủ quản công viên Đầm Sen lỗ lũy kế hơn 400 tỷ đồng",
+        "link": "https://vnexpress.net/chu-quan-cong-vien-dam-sen-lo-luy-ke-hon-400-ty-dong-5100115.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": -0.65,
+        "keywords": "ai"
+    },
+    {
+        "id": 62,
+        "date": "2026-07-22",
+        "title": "LPBank lãi gần 6.000 tỷ nửa đầu năm",
+        "link": "https://vnexpress.net/lpbank-lai-gan-6-000-ty-nua-dau-nam-5100136.html",
+        "source_name": "VnExpress",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "ai"
     }
 ]
