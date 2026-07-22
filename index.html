@@ -1,254 +1,305 @@
+Optimized tool selectionInspecting the current dashboard HTML and script to apply the requested UI and logic changes cleanly.
+
+Read [](file:///c%3A/Users/jason/OneDrive/Desktop/final/Project/index.html#1-1), lines 1 to 260
+
+Read [](file:///c%3A/Users/jason/OneDrive/Desktop/final/Project/index.html#260-260), lines 260 to 327
+
+```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlobalPulse AI | Semiconductor Intelligence</title>
+    <title>GlobalPulse AI Dashboard | Kiet Vu</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Cấu hình Dark Mode cho Tailwind
+        tailwind.config = { darkMode: 'class', theme: { extend: {} } }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .glass-panel { background: white; border: 1px solid #e2e8f0; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .status-pulse { animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .pulse-active { animation: pulseBorder 1.5s infinite; border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        @keyframes pulseBorder { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
+        .step-done { border-color: #22c55e; background-color: rgba(34, 197, 94, 0.1); color: #16a34a; }
     </style>
 </head>
-<body class="text-slate-800 p-4 md:p-8 min-h-screen">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans p-6 min-h-screen transition-colors duration-300">
 
-    <!-- HEADER -->
-    <header class="flex flex-col md:flex-row justify-between items-center mb-8 glass-panel p-6">
+    <header class="mb-8 flex flex-col md:flex-row items-center justify-between bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">GlobalPulse AI</h1>
-            <p class="text-sm text-slate-500 mt-1">Semiconductor Market Intelligence | Engineered by <b>Kiet Vu</b></p>
+            <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white">GlobalPulse AI Dashboard</h1>
+            <p class="text-slate-500 dark:text-slate-400 mt-2 font-medium">Semiconductor Market Intelligence | Portfolio by Kiet Vu</p>
         </div>
-        <div class="flex items-center gap-4 mt-4 md:mt-0">
-            <span id="systemStatus" class="text-sm font-medium text-slate-400 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-slate-300 inline-block"></span> System Standby
-            </span>
-            <button id="runBtn" onclick="executePipeline()" class="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all">
-                Execute SP1-SP6 Pipeline
+        <div class="flex gap-4 mt-4 md:mt-0">
+            <!-- Nút Dark Mode -->
+            <button id="themeToggle" class="p-3 bg-slate-100 dark:bg-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
+                <span class="dark:hidden">🌙</span>
+                <span class="hidden dark:block">☀️</span>
+            </button>
+            <button id="runBtn" onclick="runPipeline()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all">
+                ▶ Khởi động Pipeline
             </button>
         </div>
     </header>
 
-    <!-- PIPELINE STATUS (Minimalist Stepper) -->
-    <div class="glass-panel p-6 mb-8">
-        <div class="flex justify-between items-center text-xs font-semibold uppercase tracking-wider text-slate-400">
-            <div id="sp1" class="step transition-colors">1. Ingestion</div>
-            <div class="flex-1 border-t border-slate-200 mx-4"></div>
-            <div id="sp2" class="step transition-colors">2. Cleansing</div>
-            <div class="flex-1 border-t border-slate-200 mx-4"></div>
-            <div id="sp3" class="step transition-colors">3. Storage</div>
-            <div class="flex-1 border-t border-slate-200 mx-4"></div>
-            <div id="sp4" class="step transition-colors">4. AI Sentiment</div>
-            <div class="flex-1 border-t border-slate-200 mx-4"></div>
-            <div id="sp5" class="step transition-colors">5. Analytics</div>
+    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 mb-8 transition-colors">
+        <h2 class="text-lg font-bold mb-6 text-slate-800 dark:text-slate-200 uppercase tracking-wider">Trạng thái Hệ thống (SP1-SP6)</h2>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+            <div id="step1" class="p-4 border-2 border-transparent rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 transition-all duration-300">
+                <div class="font-bold mb-1">SP1: Ingestion</div><div class="text-xs">Multi-threading Crawl</div>
+            </div>
+            <div id="step2" class="p-4 border-2 border-transparent rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 transition-all duration-300">
+                <div class="font-bold mb-1">SP2: Cleansing</div><div class="text-xs">Lambda/Filter</div>
+            </div>
+            <div id="step3" class="p-4 border-2 border-transparent rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 transition-all duration-300">
+                <div class="font-bold mb-1">SP3: Storage</div><div class="text-xs">SQLite Deduplication</div>
+            </div>
+            <div id="step4" class="p-4 border-2 border-transparent rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 transition-all duration-300">
+                <div class="font-bold mb-1">SP4: AI Sentiment</div><div class="text-xs">Gemini API</div>
+            </div>
+            <div id="step5" class="p-4 border-2 border-transparent rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 transition-all duration-300">
+                <div class="font-bold mb-1">SP5 & SP6</div><div class="text-xs">Analytics & Export</div>
+            </div>
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD (Hidden until Pipeline runs) -->
-    <main id="dashboardArea" class="hidden fade-in space-y-8">
-        
-        <!-- KPI METRICS -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="glass-panel p-5 border-l-4 border-l-blue-500">
-                <p class="text-xs text-slate-500 font-semibold uppercase">Total Signals</p>
-                <p class="text-3xl font-bold mt-1" id="kpiTotal">0</p>
+    <div id="resultsArea" class="hidden fade-in">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Tổng số bài viết</h4>
+                <div class="text-4xl font-black text-blue-600 dark:text-blue-400 mb-1" id="kpiTotal">0</div>
+                <p class="text-sm text-slate-500 font-medium">VnExpress & BBC</p>
             </div>
-            <div class="glass-panel p-5 border-l-4 border-l-slate-700">
-                <p class="text-xs text-slate-500 font-semibold uppercase">Market Index (Avg)</p>
-                <p class="text-3xl font-bold mt-1" id="kpiScore">0.00</p>
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Chỉ số Cảm xúc TB</h4>
+                <div class="text-4xl font-black text-slate-700 dark:text-slate-200 mb-1" id="kpiScore">0.00</div>
+                <p class="text-sm text-slate-500 font-medium">Thang [-1.0 đến 1.0]</p>
             </div>
-            <div class="glass-panel p-5 border-l-4 border-l-emerald-500">
-                <p class="text-xs text-slate-500 font-semibold uppercase">Positive Sentiment</p>
-                <p class="text-3xl font-bold mt-1 text-emerald-600" id="kpiPos">0%</p>
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Tỉ lệ Tích cực</h4>
+                <div class="text-4xl font-black text-green-600 dark:text-green-400 mb-1" id="kpiPos">0%</div>
+                <p class="text-sm text-slate-500 font-medium" id="kpiPosCount">0 bài báo</p>
             </div>
-            <div class="glass-panel p-5 border-l-4 border-l-rose-500">
-                <p class="text-xs text-slate-500 font-semibold uppercase">Supply Chain Risk</p>
-                <p class="text-3xl font-bold mt-1 text-rose-600" id="kpiNeg">0%</p>
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Tỉ lệ Tiêu cực</h4>
+                <div class="text-4xl font-black text-red-600 dark:text-red-400 mb-1" id="kpiNeg">0%</div>
+                <p class="text-sm text-slate-500 font-medium" id="kpiNegCount">0 bài báo</p>
             </div>
         </div>
 
-        <!-- TREND CHART (Fixing SP5 Requirement) -->
-        <div class="glass-panel p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-sm font-bold text-slate-800 uppercase">Sentiment Trend Timeline (Time-Series)</h2>
-                <span class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-md font-semibold">SP5 Fix Applied</span>
-            </div>
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 mb-8 transition-colors">
+            <h3 class="text-xl font-bold mb-6 dark:text-white">Xu hướng Cảm xúc theo Thời gian (SP5)</h3>
             <div class="h-64 w-full"><canvas id="trendChart"></canvas></div>
         </div>
 
-        <!-- SECONDARY CHARTS -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="glass-panel p-6">
-                <h2 class="text-sm font-bold text-slate-800 uppercase mb-4">Sentiment Distribution</h2>
-                <div class="h-56 flex justify-center"><canvas id="pieChart"></canvas></div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+                <h3 class="text-xl font-bold mb-6 dark:text-white">Phân bố cảm xúc theo Nguồn (SP5)</h3>
+                <div class="h-64 w-full"><canvas id="barChart" class="h-full w-full"></canvas></div>
             </div>
-            <div class="glass-panel p-6">
-                <h2 class="text-sm font-bold text-slate-800 uppercase mb-4">Source Intelligence Volume</h2>
-                <div class="h-56"><canvas id="barChart"></canvas></div>
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col items-center transition-colors">
+                <h3 class="text-xl font-bold mb-6 self-start dark:text-white">Tỉ trọng Cảm xúc Tổng thể (SP5)</h3>
+                <div class="w-2/3"><canvas id="pieChart"></canvas></div>
             </div>
         </div>
 
-        <!-- DATABASE TABLE -->
-        <div class="glass-panel p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-sm font-bold text-slate-800 uppercase">Relational Data View (SP3/SP6)</h2>
-                <div class="flex gap-2">
-                    <button onclick="downloadCSV()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded transition">Export CSV</button>
-                    <button onclick="downloadReport()" class="text-xs bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded transition">Download Tech Report</button>
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                <div class="flex items-center gap-4">
+                    <h3 class="text-xl font-bold dark:text-white">Cơ sở dữ liệu Bài viết</h3>
+                    <select id="categoryFilter" onchange="applyFilter(this.value)" class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-semibold px-3 py-2 rounded-lg border-none focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer">
+                        <option value="All">📌 Tất cả hạng mục</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 mt-4 md:mt-0">
+                    <button onclick="exportCSV()" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-lg font-medium transition-colors">📄 Xuất CSV</button>
+                    <button onclick="exportJSON()" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-lg font-medium transition-colors">{ } Xuất JSON</button>
+                    <button onclick="exportReport()" class="bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-400 px-4 py-2 rounded-lg font-medium transition-colors border border-blue-200 dark:border-blue-800">⬇ Tải Technical Report (SP6)</button>
                 </div>
             </div>
-            <div class="overflow-x-auto max-h-96">
-                <table class="w-full text-sm text-left">
-                    <thead class="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0">
-                        <tr>
-                            <th class="px-4 py-3 font-semibold">Date</th>
-                            <th class="px-4 py-3 font-semibold w-1/2">Headline</th>
-                            <th class="px-4 py-3 font-semibold">Category</th>
-                            <th class="px-4 py-3 font-semibold text-center">Sentiment</th>
-                            <th class="px-4 py-3 font-semibold text-right">Score</th>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 uppercase text-xs font-bold tracking-wider">
+                            <th class="p-4 border-b dark:border-slate-700">Ngày</th>
+                            <th class="p-4 border-b dark:border-slate-700 w-1/2">Tiêu đề (Title)</th>
+                            <th class="p-4 border-b dark:border-slate-700">Nguồn</th>
+                            <th class="p-4 border-b dark:border-slate-700">Nhãn</th>
+                            <th class="p-4 border-b dark:border-slate-700">Điểm</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-100"></tbody>
+                    <tbody id="tableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
                 </table>
             </div>
         </div>
-    </main>
+    </div>
 
     <script>
-        // MOCK DATA: Updated to reflect Real Semiconductor Market Intelligence (Post-SP2 Cleansing)
-        const INTELLIGENCE_DATA = [
-            { date: "2026-07-10", title: "TSMC reports record revenue driven by global AI chip demand", category: "Supply Chain & Foundry", source: "VnExpress", sentiment: "Positive", score: 0.88 },
-            { date: "2026-07-11", title: "US tightens export controls on advanced semiconductor equipment", category: "Geopolitics", source: "BBC", sentiment: "Negative", score: -0.75 },
-            { date: "2026-07-12", title: "ASML faces delivery delays due to component shortages", category: "Supply Chain & Foundry", source: "BBC", sentiment: "Negative", score: -0.60 },
-            { date: "2026-07-13", title: "Samsung Electronics successfully tests new 2nm packaging tech", category: "Tech & R&D", source: "VnExpress", sentiment: "Positive", score: 0.82 },
-            { date: "2026-07-14", title: "Vietnam aims to train 50,000 semiconductor engineers by 2030", category: "Geopolitics", source: "VnExpress", sentiment: "Positive", score: 0.65 },
-            { date: "2026-07-14", title: "Global IC substrate prices remain flat amid market normalization", category: "Supply Chain & Foundry", source: "BBC", sentiment: "Neutral", score: 0.05 },
-            { date: "2026-07-15", title: "Intel considers spinning off its foundry business to reduce debt", category: "Supply Chain & Foundry", source: "BBC", sentiment: "Negative", score: -0.45 }
+        // --- DARK MODE LOGIC ---
+        const themeToggleBtn = document.getElementById('themeToggle');
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        themeToggleBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        });
+
+        // --- DATA & STATE ---
+        const MOCK_DATA = [
+            { id: 1, date: "2026-07-20", category: "Supply Chain", title: "TSMC ghi nhận doanh thu kỷ lục nhờ chip AI", source: "VnExpress", sentiment: "Positive", score: 0.85 },
+            { id: 2, date: "2026-07-20", category: "Geopolitics", title: "Global semiconductor supply chain faces new delays", source: "BBC News", sentiment: "Negative", score: -0.65 },
+            { id: 3, date: "2026-07-21", category: "Technology", title: "Nvidia ra mắt dòng GPU Blackwell thế hệ mới", source: "VnExpress", sentiment: "Positive", score: 0.90 },
+            { id: 4, date: "2026-07-21", category: "Supply Chain", title: "Intel delays construction of Ohio mega-fab", source: "BBC News", sentiment: "Negative", score: -0.70 },
+            { id: 5, date: "2026-07-22", category: "Market", title: "Thị trường vi mạch Việt Nam thiếu hụt nhân sự", source: "VnExpress", sentiment: "Negative", score: -0.45 },
+            { id: 6, date: "2026-07-22", category: "Market", title: "Samsung plans $40 billion investment in US", source: "BBC News", sentiment: "Positive", score: 0.75 },
+            { id: 7, date: "2026-07-23", category: "Market", title: "Cổ phiếu ngành bán dẫn đồng loạt đi ngang", source: "VnExpress", sentiment: "Neutral", score: 0.05 },
+            { id: 8, date: "2026-07-23", category: "Geopolitics", title: "US tightens export controls on advanced AI chips", source: "BBC News", sentiment: "Negative", score: -0.80 },
         ];
 
-        let metrics = { total: 0, pos: 0, neg: 0, neu: 0, avg: 0 };
+        let stats = { total: 0, pos: 0, neg: 0, neu: 0, avg: 0 };
+        let currentFilter = 'All';
+        let chartInstances = {};
 
-        async function executePipeline() {
+        function initFilter() {
+            const categories = [...new Set(MOCK_DATA.map(d => d.category))];
+            const select = document.getElementById('categoryFilter');
+            select.innerHTML = '<option value="All">📌 Tất cả hạng mục</option>';
+            categories.forEach(cat => {
+                select.innerHTML += `<option value="${cat}">${cat}</option>`;
+            });
+            currentFilter = 'All';
+            select.value = 'All';
+        }
+
+        function applyFilter(val) {
+            currentFilter = val;
+            processData();
+        }
+
+        async function runPipeline() {
             const btn = document.getElementById('runBtn');
-            const status = document.getElementById('systemStatus');
-            
             btn.disabled = true;
-            btn.innerHTML = "Processing Data Pipeline...";
-            btn.classList.replace('bg-slate-900', 'bg-slate-400');
-            status.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-500 status-pulse inline-block"></span> Running SP1-SP5`;
+            btn.innerText = "⏳ Hệ thống đang xử lý...";
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
 
-            // Simulate Pipeline Steps
-            const steps = ['sp1', 'sp2', 'sp3', 'sp4', 'sp5'];
-            for(let i=0; i<steps.length; i++) {
-                let el = document.getElementById(steps[i]);
-                el.classList.add('text-blue-600', 'status-pulse');
-                await new Promise(r => setTimeout(r, 600)); // Mock latency
-                el.classList.remove('status-pulse');
-                el.classList.replace('text-blue-600', 'text-emerald-500');
+            const steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
+            for(let i=0; i<steps.length; i++){
+                const current = document.getElementById(steps[i]);
+                current.classList.add('pulse-active');
+                await new Promise(r => setTimeout(r, 800));
+                current.classList.remove('pulse-active');
+                current.classList.add('step-done');
             }
 
-            status.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Pipeline Complete`;
-            btn.innerHTML = "Pipeline Executed";
-            
-            document.getElementById('dashboardArea').classList.remove('hidden');
-            processEngine();
-            drawCharts();
+            initFilter();
+            processData();
+            document.getElementById('resultsArea').classList.remove('hidden');
+            btn.innerText = "✅ Hoàn tất";
         }
 
-        function processEngine() {
-            metrics.total = INTELLIGENCE_DATA.length;
-            metrics.pos = INTELLIGENCE_DATA.filter(d => d.sentiment === 'Positive').length;
-            metrics.neg = INTELLIGENCE_DATA.filter(d => d.sentiment === 'Negative').length;
-            metrics.neu = INTELLIGENCE_DATA.filter(d => d.sentiment === 'Neutral').length;
-            metrics.avg = INTELLIGENCE_DATA.reduce((sum, d) => sum + d.score, 0) / metrics.total;
+        function processData() {
+            const filteredData = currentFilter === 'All' ? MOCK_DATA : MOCK_DATA.filter(d => d.category === currentFilter);
 
-            document.getElementById('kpiTotal').innerText = metrics.total;
-            document.getElementById('kpiScore').innerText = metrics.avg.toFixed(2);
-            document.getElementById('kpiPos').innerText = Math.round((metrics.pos / metrics.total) * 100) + "%";
-            document.getElementById('kpiNeg').innerText = Math.round((metrics.neg / metrics.total) * 100) + "%";
+            stats.total = filteredData.length;
+            stats.pos = filteredData.filter(d => d.sentiment === 'Positive').length;
+            stats.neg = filteredData.filter(d => d.sentiment === 'Negative').length;
+            stats.neu = filteredData.filter(d => d.sentiment === 'Neutral').length;
+            stats.avg = stats.total > 0 ? (filteredData.reduce((sum, d) => sum + d.score, 0) / stats.total).toFixed(3) : 0;
 
-            // Render Table
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = INTELLIGENCE_DATA.map(d => {
-                const badgeColor = d.sentiment === 'Positive' ? 'bg-emerald-100 text-emerald-700' : d.sentiment === 'Negative' ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-700';
-                return `<tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-4 py-3 text-slate-500 whitespace-nowrap">${d.date}</td>
-                    <td class="px-4 py-3 font-medium text-slate-800">${d.title}</td>
-                    <td class="px-4 py-3"><span class="px-2 py-1 bg-slate-100 rounded text-xs text-slate-600">${d.category}</span></td>
-                    <td class="px-4 py-3 text-center"><span class="px-2 py-1 rounded-full text-xs font-semibold ${badgeColor}">${d.sentiment}</span></td>
-                    <td class="px-4 py-3 text-right font-mono text-slate-600">${d.score.toFixed(2)}</td>
+            document.getElementById('kpiTotal').innerText = stats.total;
+            document.getElementById('kpiScore').innerText = stats.avg;
+            document.getElementById('kpiPos').innerText = stats.total > 0 ? ((stats.pos / stats.total) * 100).toFixed(1) + "%" : "0%";
+            document.getElementById('kpiPosCount').innerText = stats.pos + " bài báo";
+            document.getElementById('kpiNeg').innerText = stats.total > 0 ? ((stats.neg / stats.total) * 100).toFixed(1) + "%" : "0%";
+            document.getElementById('kpiNegCount').innerText = stats.neg + " bài báo";
+
+            let rows = '';
+            filteredData.forEach(d => {
+                let badge = d.sentiment === 'Positive' ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400' : d.sentiment === 'Negative' ? 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300';
+                rows += `<tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                    <td class="p-4 text-slate-500 dark:text-slate-400">${d.date}</td>
+                    <td class="p-4 font-medium dark:text-slate-200">${d.title}</td>
+                    <td class="p-4 dark:text-slate-300">${d.source}</td>
+                    <td class="p-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${badge}">${d.sentiment}</span></td>
+                    <td class="p-4 font-mono dark:text-slate-300">${d.score.toFixed(2)}</td>
                 </tr>`;
-            }).join('');
+            });
+            document.getElementById('tableBody').innerHTML = rows;
+
+            renderCharts(filteredData);
         }
 
-        function drawCharts() {
-            // Chart Defaults
-            Chart.defaults.font.family = "'Inter', sans-serif";
-            Chart.defaults.color = '#64748b';
+        function renderCharts(data) {
+            Chart.defaults.color = '#94a3b8';
 
-            // 1. Time-Series Trend Chart (SP5 Fix)
-            const trendData = INTELLIGENCE_DATA.reduce((acc, curr) => {
-                acc[curr.date] = (acc[curr.date] || {sum: 0, count: 0});
+            const destroyChart = (id) => { if(chartInstances[id]) { chartInstances[id].destroy(); } };
+
+            destroyChart('trend');
+            const trendData = data.reduce((acc, curr) => {
+                acc[curr.date] = acc[curr.date] || { sum: 0, count: 0 };
                 acc[curr.date].sum += curr.score;
                 acc[curr.date].count++;
                 return acc;
             }, {});
-            const labels = Object.keys(trendData).sort();
-            const scores = labels.map(date => trendData[date].sum / trendData[date].count);
+            const dates = Object.keys(trendData).sort();
+            const scores = dates.map(d => trendData[d].sum / trendData[d].count);
 
-            new Chart(document.getElementById('trendChart'), {
+            chartInstances['trend'] = new Chart(document.getElementById('trendChart'), {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: dates,
                     datasets: [{
-                        label: 'Market Sentiment Score',
+                        label: 'Chỉ số Cảm xúc TB',
                         data: scores,
                         borderColor: '#3b82f6',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         borderWidth: 2,
-                        tension: 0.3,
                         fill: true,
-                        pointBackgroundColor: '#1d4ed8'
+                        tension: 0.3
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: -1, max: 1 } }, plugins: { legend: { display: false } } }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: -1, max: 1 } } }
             });
 
-            // 2. Sentiment Doughnut
-            new Chart(document.getElementById('pieChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Positive', 'Neutral', 'Negative'],
-                    datasets: [{ data: [metrics.pos, metrics.neu, metrics.neg], backgroundColor: ['#10b981', '#94a3b8', '#f43f5e'], borderWidth: 0 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, cutout: '75%' }
-            });
+            destroyChart('bar');
+            const vnPos = data.filter(d => d.source === 'VnExpress' && d.sentiment === 'Positive').length;
+            const vnNeu = data.filter(d => d.source === 'VnExpress' && d.sentiment === 'Neutral').length;
+            const vnNeg = data.filter(d => d.source === 'VnExpress' && d.sentiment === 'Negative').length;
+            const bbcPos = data.filter(d => d.source === 'BBC News' && d.sentiment === 'Positive').length;
+            const bbcNeu = data.filter(d => d.source === 'BBC News' && d.sentiment === 'Neutral').length;
+            const bbcNeg = data.filter(d => d.source === 'BBC News' && d.sentiment === 'Negative').length;
+            const barCtx = document.getElementById('barChart').getContext('2d');
 
-            // 3. Source Volume Bar
-            const bbcCount = INTELLIGENCE_DATA.filter(d => d.source === 'BBC').length;
-            const vnExpressCount = INTELLIGENCE_DATA.filter(d => d.source === 'VnExpress').length;
-            
-            new Chart(document.getElementById('barChart'), {
+            chartInstances['bar'] = new Chart(barCtx, {
                 type: 'bar',
                 data: {
                     labels: ['VnExpress', 'BBC News'],
-                    datasets: [{ label: 'Articles Extracted', data: [vnExpressCount, bbcCount], backgroundColor: '#334155', borderRadius: 4 }]
+                    datasets: [
+                        { label: 'Positive', data: [vnPos, bbcPos], backgroundColor: '#22c55e' },
+                        { label: 'Neutral', data: [vnNeu, bbcNeu], backgroundColor: '#64748b' },
+                        { label: 'Negative', data: [vnNeg, bbcNeg], backgroundColor: '#ef4444' }
+                    ]
                 },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+                options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } }
+            });
+
+            destroyChart('pie');
+            chartInstances['pie'] = new Chart(document.getElementById('pieChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Positive', 'Neutral', 'Negative'],
+                    datasets: [{ data: [stats.pos, stats.neu, stats.neg], backgroundColor: ['#22c55e', '#64748b', '#ef4444'], borderWidth: 0 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
             });
         }
 
-        // Export Functions
-        function triggerDownload(content, filename, type) {
+        function downloadFile(content, filename, type) {
             const blob = new Blob([content], { type });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
@@ -256,15 +307,21 @@
             link.click();
         }
 
-        function downloadCSV() {
-            const csv = "Date,Title,Category,Source,Sentiment,Score\n" + INTELLIGENCE_DATA.map(d => `${d.date},"${d.title}",${d.category},${d.source},${d.sentiment},${d.score}`).join('\n');
-            triggerDownload(csv, "SP3_Extracted_Data.csv", "text/csv");
+        function exportJSON() {
+            downloadFile(JSON.stringify({ date: new Date().toISOString().split('T')[0], summary: stats }, null, 2), "daily_summary.json", "application/json");
         }
 
-        function downloadReport() {
-            const txt = `[GLOBALPULSE AI - TECHNICAL REPORT DRAFT]\nGenerated by Kiet Vu\n\n1. TOTAL SIGNALS: ${metrics.total}\n2. AVG SENTIMENT: ${metrics.avg.toFixed(2)}\n\nRisk Assessment:\n- Negative Signals: ${metrics.neg}\n- Positive Signals: ${metrics.pos}`;
-            triggerDownload(txt, "Technical_Report.txt", "text/plain");
+        function exportCSV() {
+            const dataToExport = currentFilter === 'All' ? MOCK_DATA : MOCK_DATA.filter(d => d.category === currentFilter);
+            let csv = "Date,Title,Category,Source,Sentiment,Score\n" + dataToExport.map(d => `${d.date},"${d.title}",${d.category},${d.source},${d.sentiment},${d.score}`).join('\n');
+            downloadFile(csv, "articles_filtered.csv", "text/csv");
+        }
+
+        function exportReport() {
+            let txt = `=================================================\nGLOBALPULSE AI - AUTOMATED TECHNICAL REPORT\n=================================================\n4.1. Total Articles Processed: ${stats.total}\n4.2. Mean Sentiment Score: ${stats.avg}\nRisk Dist: Positive: ${stats.pos} | Negative: ${stats.neg}\n`;
+            downloadFile(txt, "Technical_Report_Draft.txt", "text/plain");
         }
     </script>
 </body>
 </html>
+```
