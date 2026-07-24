@@ -1,34 +1,33 @@
 import json
 import logging
+from datetime import timedelta
+
 import numpy as np
 import pandas as pd
-from datetime import timedelta
 
 
 def calculate_daily_nsr(df):
     if df.empty:
         return pd.DataFrame(columns=['category', 'date', 'positive', 'negative', 'neutral', 'nsr'])
 
-    df['date'] = pd.to_datetime(df['date'], errors='coerce').dt.date
-    df = df.dropna(subset=['date'])
-    df['sentiment_label'] = df['sentiment_label'].fillna('Neutral')
+    frame = df.copy()
+    frame['date'] = pd.to_datetime(frame['date'], errors='coerce').dt.date
+    frame = frame.dropna(subset=['date'])
+    frame['sentiment_label'] = frame['sentiment_label'].fillna('Neutral')
 
-    def nsr(group):
-        total = len(group)
-        if total == 0:
-            return 0.0
-        pos = (group['sentiment_label'] == 'Positive').sum()
-        neg = (group['sentiment_label'] == 'Negative').sum()
-        return float(pos - neg) / total
-
-    grouped = df.groupby(['category', 'date']).apply(lambda g: pd.Series({
-        'positive': (g['sentiment_label'] == 'Positive').sum(),
-        'negative': (g['sentiment_label'] == 'Negative').sum(),
-        'neutral': (g['sentiment_label'] == 'Neutral').sum(),
-        'nsr': nsr(g)
-    })).reset_index()
-
-    return grouped
+    summary = (
+        frame.groupby(['category', 'date'])
+        .agg(
+            positive=('sentiment_label', lambda s: int((s == 'Positive').sum())),
+            negative=('sentiment_label', lambda s: int((s == 'Negative').sum())),
+            neutral=('sentiment_label', lambda s: int((s == 'Neutral').sum())),
+        )
+        .reset_index()
+    )
+    summary['total'] = summary['positive'] + summary['negative'] + summary['neutral']
+    summary['nsr'] = summary.apply(lambda row: ((row['positive'] - row['negative']) / row['total']) if row['total'] else 0.0, axis=1)
+    summary = summary[['category', 'date', 'positive', 'negative', 'neutral', 'nsr']]
+    return summary
 
 
 def forecast_category(category_df, horizon_days=14):
@@ -36,7 +35,7 @@ def forecast_category(category_df, horizon_days=14):
         return []
 
     data = category_df.sort_values('date').copy()
-    data['ordinal'] = data['date'].map(lambda d: d.toordinal())
+    data['ordinal'] = data['date'].map(lambda day: day.toordinal())
 
     if len(data) >= 3:
         x = data['ordinal'].values.reshape(-1, 1)
@@ -75,12 +74,13 @@ def generate_trend_predictions(articles, output_path='trend_predictions.json', h
         logging.warning('Forecasting skipped because DataFrame is empty.')
         return {}
 
-    if 'category' not in df.columns or 'date' not in df.columns or 'sentiment_label' not in df.columns:
+    required = {'category', 'date', 'sentiment_label'}
+    if not required.issubset(df.columns):
         logging.error('Forecasting input data missing required columns.')
         return {}
 
     daily_nsr = calculate_daily_nsr(df)
-    categories = daily_nsr['category'].unique()
+    categories = sorted(daily_nsr['category'].dropna().unique().tolist()) or ['Other']
     output = {}
 
     for category in categories:
@@ -96,8 +96,8 @@ def generate_trend_predictions(articles, output_path='trend_predictions.json', h
             'forecast': forecast
         }
 
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(output, f, ensure_ascii=False, indent=4)
+    with open(output_path, 'w', encoding='utf-8') as handle:
+        json.dump(output, handle, ensure_ascii=False, indent=4)
 
     logging.info(f'SP5 Advanced: Exported trend forecasts to {output_path}.')
     return output

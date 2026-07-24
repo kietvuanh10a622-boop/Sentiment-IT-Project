@@ -19,6 +19,7 @@
         .status-pill span { width: 0.55rem; height: 0.55rem; border-radius: 9999px; display: inline-block; }
         .bg-panel { background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); }
         .dark .bg-panel { background: rgba(15,23,42,0.84); }
+        canvas { display: block; width: 100% !important; height: 100% !important; }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans p-6 min-h-screen transition-colors duration-300">
@@ -120,10 +121,23 @@
                 <div class="flex items-center justify-between mb-5">
                     <div>
                         <h2 class="text-xl font-bold text-slate-950 dark:text-white">Xu hướng Cảm xúc theo ngày</h2>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">Tính điểm sentiment trung bình theo ngày.</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Hiển thị riêng dữ liệu lịch sử và dự báo 7 ngày.</p>
                     </div>
                 </div>
-                <div class="h-72"><canvas id="trendChart" class="h-full w-full"></canvas></div>
+                <div class="grid gap-4 lg:grid-cols-2 h-72">
+                    <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-3 flex flex-col">
+                        <div class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Historical NSR</div>
+                        <div class="flex-1 min-h-0">
+                            <canvas id="trendHistoryChart" class="h-full w-full"></canvas>
+                        </div>
+                    </div>
+                    <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-3 flex flex-col">
+                        <div class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Forecast NSR</div>
+                        <div class="flex-1 min-h-0">
+                            <canvas id="trendForecastChart" class="h-full w-full"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
                 <div class="flex items-center justify-between mb-5">
@@ -362,9 +376,9 @@
                 el.classList.add('step-done');
             }
             await loadTrendPredictions();
+            document.getElementById('resultsArea').classList.remove('hidden');
             initFilters();
             processData();
-            document.getElementById('resultsArea').classList.remove('hidden');
             updatePipelineStatus('Pipeline đã hoàn tất');
             btn.innerText = '✅ Hoàn tất';
             btn.classList.remove('opacity-70', 'cursor-not-allowed');
@@ -406,50 +420,62 @@
         }
         function renderCharts(data) {
             const destroyChart = id => { if (chartInstances[id]) chartInstances[id].destroy(); };
-            destroyChart('trend');
+            destroyChart('trendHistory');
+            destroyChart('trendForecast');
             destroyChart('bar');
             destroyChart('pie');
 
-            const dateSummary = data.reduce((acc, item) => {
-                if (!acc[item.date]) acc[item.date] = { sum: 0, count: 0 };
-                acc[item.date].sum += item.score;
-                acc[item.date].count += 1;
-                return acc;
-            }, {});
-            const trendLabels = Object.keys(dateSummary).sort();
-            const trendValues = trendLabels.map(date => parseFloat((dateSummary[date].sum / dateSummary[date].count).toFixed(3)));
-
             const categoryKey = currentFilter === 'All' ? 'All' : currentFilter;
             const trendData = trendPredictions[categoryKey] || trendPredictions['All'] || { historical: [], forecast: [] };
-            const forecastLabels = trendData.forecast ? trendData.forecast.map(item => item.date) : [];
-            const forecastValues = trendData.forecast ? trendData.forecast.map(item => item.predicted_nsr) : [];
-            const combinedLabels = [...new Set([...trendLabels, ...forecastLabels])].sort();
+            const historical = trendData.historical || [];
+            const forecast = trendData.forecast || [];
+            const historicalLabels = historical.map(item => item.date);
+            const historicalValues = historical.map(item => item.nsr);
+            const forecastLabels = forecast.map(item => item.date);
+            const forecastValues = forecast.map(item => item.predicted_nsr);
 
-            const historicalMap = Object.fromEntries(trendData.historical ? trendData.historical.map(item => [item.date, item.nsr]) : []);
-            const historicalPoints = combinedLabels.map(label => historicalMap[label] ?? null);
-            const forecastPoints = combinedLabels.map(label => {
-                const forecastItem = (trendData.forecast || []).find(item => item.date === label);
-                return forecastItem ? forecastItem.predicted_nsr : null;
-            });
-
-            chartInstances.trend = new Chart(document.getElementById('trendChart'), {
+            chartInstances.trendHistory = new Chart(document.getElementById('trendHistoryChart'), {
                 type: 'line',
                 data: {
-                    labels: combinedLabels,
+                    labels: historicalLabels,
                     datasets: [
                         {
                             label: 'Historical NSR',
-                            data: historicalPoints,
+                            data: historicalValues,
                             borderColor: '#0ea5e9',
                             backgroundColor: 'rgba(14,165,233,0.18)',
                             fill: false,
                             tension: 0.3,
                             pointRadius: 4,
                             pointBackgroundColor: '#0ea5e9',
-                        },
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            min: -1,
+                            max: 1,
+                            ticks: { stepSize: 0.25 }
+                        }
+                    },
+                    plugins: {
+                        tooltip: { mode: 'index', intersect: false },
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            chartInstances.trendForecast = new Chart(document.getElementById('trendForecastChart'), {
+                type: 'line',
+                data: {
+                    labels: forecastLabels,
+                    datasets: [
                         {
                             label: '7-Day Forecast NSR',
-                            data: forecastPoints,
+                            data: forecastValues,
                             borderColor: '#f59e0b',
                             backgroundColor: 'rgba(245,158,11,0.15)',
                             borderDash: [5, 5],

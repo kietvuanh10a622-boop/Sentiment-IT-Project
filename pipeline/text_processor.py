@@ -1,38 +1,55 @@
-﻿# pipeline/text_processor.py
+﻿import datetime
 import logging
-import datetime
 import re
+from collections import defaultdict
 
 TAXONOMY_MAP = {
-    'Supply Chain & Foundry': [
-        'semiconductor', 'chip', 'foundry', 'fabrication', 'wafer', 'tsmc', 'intel',
-        'tsmc', 'qualcomm', 'fab', 'factory', 'nvidia', 'asml', 'chipmaking', 'ic'
+    'Technology': [
+        'technology', 'tech', 'ai', 'artificial intelligence', 'chip', 'semiconductor', 'gpu', 'cpu',
+        'software', 'startup', 'innovation', 'research', 'robot', 'quantum', 'cyber', 'cloud', 'data', 'app'
     ],
-    'Geopolitics & Export Control': [
-        'geopolitics', 'export control', 'export ban', 'sanction', 'trade war',
-        'tariff', 'shipment', 'export restriction', 'us export', 'china export', 'export rules'
+    'Business': [
+        'business', 'company', 'ceo', 'merger', 'acquisition', 'executive', 'enterprise', 'retail',
+        'brand', 'investment', 'expansion', 'strategy', 'restructuring', 'supply chain', 'partner'
     ],
-    'Technology & R&D': [
-        'technology', 'research', 'innovation', 'r&d', 'ai', 'machine learning',
-        'artificial intelligence', 'processor', 'gpu', 'cpu', 'research', 'development',
-        'product launch', 'architecture'
+    'World/Geopolitics': [
+        'world', 'geopolitics', 'war', 'election', 'diplomacy', 'sanction', 'trade war', 'tariff',
+        'export', 'foreign policy', 'military', 'conflict', 'policy', 'diplomatic'
     ],
-    'Market Economy': [
-        'market', 'economy', 'investment', 'revenue', 'earnings', 'stock', 'profit',
-        'demand', 'supply', 'shortage', 'inflation', 'growth', 'sale', 'investment'
+    'Science': [
+        'science', 'scientist', 'research', 'discovery', 'space', 'biology', 'physics', 'lab', 'study',
+        'astronomy', 'genetics', 'materials', 'medical'
+    ],
+    'Economy': [
+        'economy', 'inflation', 'gdp', 'consumer', 'price', 'unemployment', 'growth', 'recession',
+        'rate', 'fiscal', 'monetary', 'market', 'financial'
+    ],
+    'Logistics': [
+        'logistics', 'shipping', 'port', 'transport', 'freight', 'warehouse', 'delivery', 'cargo',
+        'truck', 'rail', 'container', 'supply chain'
+    ],
+    'Finance': [
+        'finance', 'stock', 'bond', 'trade', 'investment', 'trading', 'earnings', 'revenue', 'profit',
+        'shareholder', 'bank', 'equity', 'market'
+    ],
+    'Energy': [
+        'energy', 'oil', 'gas', 'renewable', 'electricity', 'battery', 'grid', 'coal', 'nuclear', 'hydrogen'
+    ],
+    'Healthcare': [
+        'healthcare', 'health', 'medical', 'pharma', 'vaccine', 'hospital', 'drug', 'patient', 'clinic'
+    ],
+    'Environment': [
+        'environment', 'climate', 'emissions', 'green', 'sustainability', 'carbon', 'weather', 'pollution', 'forest'
     ],
 }
 
-STRICT_CATEGORIES = list(TAXONOMY_MAP.keys())
-
 KEEP_KEYWORDS = set(sum(TAXONOMY_MAP.values(), []))
-
-FALLBACK_CATEGORY = None
-
 DATE_PATTERNS = [
     r'(\d{4}-\d{2}-\d{2})',
     r'(\d{2}/\d{2}/\d{4})',
+    r'(\d{1,2}/\d{1,2}/\d{2,4})',
     r'([A-Za-z]{3,9} \d{1,2}, \d{4})',
+    r'([A-Za-z]{3,9} \d{1,2} \d{4})',
 ]
 
 
@@ -70,22 +87,23 @@ def normalize_date(value):
 
 def categorize_article(article):
     text = ' '.join([str(article.get('title', '')), str(article.get('content', ''))]).lower()
-    scores = {category: 0 for category in TAXONOMY_MAP}
+    scores = defaultdict(int)
 
     for category, terms in TAXONOMY_MAP.items():
         for term in terms:
             if term in text:
+                scores[category] += 2 if ' ' in term else 1
+
+    category_hint = str(article.get('category_hint') or '').lower()
+    if category_hint:
+        for category in TAXONOMY_MAP:
+            if category.lower() in category_hint:
                 scores[category] += 1
 
-    if all(score == 0 for score in scores.values()):
-        return None
+    if not scores:
+        return 'Other'
 
     return max(scores, key=scores.get)
-
-
-def is_relevant_article(article):
-    text = ' '.join([str(article.get('title', '')), str(article.get('content', ''))]).lower()
-    return any(keyword in text for keyword in KEEP_KEYWORDS)
 
 
 def extract_keywords(article):
@@ -113,25 +131,20 @@ def clean_articles_pipeline(raw_articles):
 
         cleaned = {
             'title': ' '.join(title.split()),
-            'link': raw.get('link', '').strip(),
+            'link': str(raw.get('link', '') or '').strip(),
             'content': content,
             'source_name': raw.get('source_name') or raw.get('source') or 'Unknown',
             'date': normalize_date(raw.get('date')),
-            'category': None,
+            'category': 'Other',
+            'category_hint': raw.get('category_hint') or '',
             'sentiment_score': raw.get('sentiment_score', 0.0),
             'sentiment_label': raw.get('sentiment_label', 'Neutral'),
             'keywords': []
         }
 
-        if not is_relevant_article(cleaned):
-            continue
-
         cleaned['category'] = categorize_article(cleaned)
-        if not cleaned['category']:
-            continue
-
         cleaned['keywords'] = extract_keywords(cleaned)
         cleaned_articles.append(cleaned)
 
-    logging.info(f'SP2: Pipeline finished. Cleaned {len(cleaned_articles)} relevant semiconductor/tech articles.')
+    logging.info(f'SP2: Pipeline finished. Cleaned {len(cleaned_articles)} articles into dynamic taxonomy buckets.')
     return cleaned_articles

@@ -1,20 +1,18 @@
-import time
 import logging
-import concurrent.futures
-from abc import ABC, abstractmethod
-import requests
-from bs4 import BeautifulSoup
-import json
 import os
 import re
+import time
 import datetime
+import json
+from abc import ABC, abstractmethod
+from urllib.parse import urljoin, urlparse
 
-# Cấu hình logging để theo dõi tiến độ
+import requests
+from bs4 import BeautifulSoup
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - [%(levelname)s] - %(message)s')
 
-# ==========================================
-# BƯỚC 1: LỚP TRỪU TƯỢNG (ABSTRACT BASE CLASS)
-# ==========================================
+
 class BaseCrawler(ABC):
     FALLBACK_CACHE = {
         "VnExpress": [
@@ -23,7 +21,8 @@ class BaseCrawler(ABC):
                 "link": "https://vnexpress.net/fallback-tsmc",
                 "source_name": "VnExpress",
                 "date": datetime.datetime.utcnow().strftime("%Y-%m-%d"),
-                "content": "TSMC mở rộng năng lực sản xuất chip AI nhằm đáp ứng nhu cầu toàn cầu." 
+                "content": "TSMC mở rộng năng lực sản xuất chip AI nhằm đáp ứng nhu cầu toàn cầu.",
+                "category_hint": "Technology"
             }
         ],
         "BBC": [
@@ -32,47 +31,68 @@ class BaseCrawler(ABC):
                 "link": "https://www.bbc.com/fallback-chip-export",
                 "source_name": "BBC",
                 "date": datetime.datetime.utcnow().strftime("%Y-%m-%d"),
-                "content": "BBC fallback story about export controls and semiconductor geopolitics."
+                "content": "BBC fallback story about export controls and semiconductor geopolitics.",
+                "category_hint": "World/Geopolitics"
             }
         ]
     }
 
     def __init__(self, base_url, source_name):
-        self.base_url = base_url
+        self.base_url = base_url.rstrip('/')
         self.source_name = source_name
 
-    def fetch_html(self, url):
-        """Hàm dùng chung để tải mã HTML cho các trang tĩnh"""
-        try:
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36'
-            }
-            response = requests.get(url, headers=headers, timeout=15)
-            response.raise_for_status()
-            return response.text
-        except requests.exceptions.RequestException as e:
-            logging.error(f"Lỗi tải HTML từ {url}: {e}")
+    def build_headers(self):
+        return {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Referer': self.base_url,
+        }
+
+    def fetch_html(self, url, timeout=20, retries=3):
+        if not url:
             return None
+        last_error = None
+        for attempt in range(retries):
+            try:
+                response = requests.get(url, headers=self.build_headers(), timeout=timeout, allow_redirects=True)
+                if response.status_code in {403, 429, 500, 502, 503, 504} and attempt < retries - 1:
+                    wait_time = (attempt + 1) * 2.0
+                    logging.warning(f"Transient HTTP {response.status_code} for {url}; retrying in {wait_time}s")
+                    time.sleep(wait_time)
+                    continue
+                response.raise_for_status()
+                return response.text
+            except requests.exceptions.Timeout as exc:
+                last_error = exc
+                if attempt < retries - 1:
+                    time.sleep((attempt + 1) * 1.5)
+                    continue
+            except requests.exceptions.RequestException as exc:
+                last_error = exc
+                if attempt < retries - 1:
+                    time.sleep((attempt + 1) * 1.5)
+                    continue
+        logging.warning(f"Unable to fetch HTML from {url}: {last_error}")
+        return None
 
     def load_fallback_articles(self):
-        """Load fallback articles when scraping fails."""
         cached = self.FALLBACK_CACHE.get(self.source_name, [])
         if cached:
-            logging.warning(f"Sử dụng dữ liệu dự phòng cho {self.source_name}: {len(cached)} bài.")
+            logging.warning(f"Using fallback data for {self.source_name}: {len(cached)} articles")
             return [dict(item) for item in cached]
 
         fallback_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'fallback_cache.json')
         if os.path.exists(fallback_path):
             try:
-                with open(fallback_path, 'r', encoding='utf-8') as f:
-                    raw = json.load(f)
+                with open(fallback_path, 'r', encoding='utf-8') as handle:
+                    raw = json.load(handle)
                     return [article for article in raw if article.get('source_name') == self.source_name]
-            except Exception as e:
-                logging.error(f"Không đọc được fallback_cache.json: {e}")
+            except Exception as exc:
+                logging.error(f"Unable to read fallback_cache.json: {exc}")
         return []
 
     def parse_published_date(self, soup, fallback_date=None):
-        """Extract a published date from article markup, with safe fallback."""
         fallback_date = fallback_date or datetime.datetime.utcnow().strftime('%Y-%m-%d')
         date_candidates = []
         for selector, attr in [
@@ -80,13 +100,14 @@ class BaseCrawler(ABC):
             ('meta[name="pubdate"]', 'content'),
             ('meta[name="publish-date"]', 'content'),
             ('meta[name="DC.date.issued"]', 'content'),
+            ('meta[name="date"]', 'content'),
             ('time[datetime]', 'datetime'),
             ('span.date', 'datetime'),
-            ('meta[name="date"]', 'content')
+            ('p[data-datetime]', 'data-datetime'),
         ]:
-            el = soup.select_one(selector)
-            if el and el.get(attr):
-                date_candidates.append(el.get(attr).strip())
+            element = soup.select_one(selector)
+            if element and element.get(attr):
+                date_candidates.append(element.get(attr).strip())
 
         if not date_candidates:
             return fallback_date
@@ -100,24 +121,76 @@ class BaseCrawler(ABC):
                 parsed = datetime.datetime.fromisoformat(candidate)
                 return parsed.strftime('%Y-%m-%d')
             except Exception:
-                continue
+                pass
+            try:
+                parsed = datetime.datetime.strptime(candidate, '%d/%m/%Y')
+                return parsed.strftime('%Y-%m-%d')
+            except Exception:
+                pass
+            try:
+                parsed = datetime.datetime.strptime(candidate, '%B %d, %Y')
+                return parsed.strftime('%Y-%m-%d')
+            except Exception:
+                pass
 
         return fallback_date
 
     def extract_article_content(self, soup):
-        """Extract the article body text from common semantic containers."""
         for selector in ['article', 'div.story-body', 'div.article-body', 'main', 'section']:
             node = soup.select_one(selector)
             if node:
-                paragraphs = [p.get_text(' ', strip=True) for p in node.find_all('p')]
+                paragraphs = [paragraph.get_text(' ', strip=True) for paragraph in node.find_all('p') if paragraph.get_text(' ', strip=True)]
                 if paragraphs:
                     return ' '.join(paragraphs)
 
         description = soup.select_one('meta[name="description"]') or soup.select_one('meta[property="og:description"]')
-        return description.get('content', '').strip() if description and description.get('content') else ''
+        if description and description.get('content'):
+            return description.get('content', '').strip()
+        return ''
+
+    def is_article_link(self, link):
+        if not link:
+            return False
+        parsed = urlparse(link)
+        if parsed.scheme and parsed.scheme not in {'http', 'https'}:
+            return False
+        if any(token in link for token in ('mailto:', 'tel:', 'javascript:', '#')):
+            return False
+        if '/video/' in link or '/live/' in link or '/av/' in link:
+            return False
+        return True
+
+    def normalize_link(self, href, page_url):
+        if not href:
+            return ''
+        if href.startswith('/'):
+            return urljoin(self.base_url, href)
+        if href.startswith('http'):
+            return href
+        return urljoin(page_url, href)
+
+    def extract_article_links_from_html(self, html, page_url, limit=12):
+        if not html:
+            return []
+        soup = BeautifulSoup(html, 'html.parser')
+        anchors = []
+        seen = set()
+        for anchor in soup.find_all('a', href=True):
+            href = self.normalize_link(anchor.get('href', '').strip(), page_url)
+            if not self.is_article_link(href) or href in seen:
+                continue
+            text = ' '.join(anchor.get_text(' ', strip=True).split())
+            if not text:
+                text = anchor.get('title', '')
+            if not text:
+                continue
+            seen.add(href)
+            anchors.append({'title': text, 'link': href})
+            if len(anchors) >= limit:
+                break
+        return anchors
 
     def fetch_article_metadata(self, article):
-        """Enrich raw article metadata with date and content."""
         link = article.get('link')
         if not link:
             return article
@@ -134,5 +207,4 @@ class BaseCrawler(ABC):
 
     @abstractmethod
     def crawl_articles(self):
-        """Bắt buộc các class con phải định nghĩa cách cào bài"""
         pass
