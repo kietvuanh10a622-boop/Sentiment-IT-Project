@@ -219,28 +219,20 @@
             document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
         });
-        const MOCK_DATA = [
-            { id: 1, date: "2026-07-20", category: "Supply Chain & Foundry", title: "TSMC ghi nhận doanh thu kỷ lục nhờ chip AI", source: "VnExpress", sentiment: "Positive", score: 0.85 },
-            { id: 2, date: "2026-07-20", category: "Geopolitics & Export Control", title: "Global semiconductor supply chain faces new delays", source: "BBC", sentiment: "Negative", score: -0.65 },
-            { id: 3, date: "2026-07-21", category: "Technology & R&D", title: "Nvidia ra mắt dòng GPU Blackwell thế hệ mới", source: "VnExpress", sentiment: "Positive", score: 0.90 },
-            { id: 4, date: "2026-07-21", category: "Supply Chain & Foundry", title: "Intel delays construction of Ohio mega-fab", source: "BBC", sentiment: "Negative", score: -0.70 },
-            { id: 5, date: "2026-07-22", category: "Market Economy", title: "Thị trường vi mạch Việt Nam thiếu hụt nhân sự", source: "VnExpress", sentiment: "Negative", score: -0.45 },
-            { id: 6, date: "2026-07-22", category: "Market Economy", title: "Samsung plans $40 billion investment in US", source: "BBC", sentiment: "Positive", score: 0.75 },
-            { id: 7, date: "2026-07-23", category: "Market Economy", title: "Cổ phiếu ngành bán dẫn đồng loạt đi ngang", source: "VnExpress", sentiment: "Neutral", score: 0.05 },
-            { id: 8, date: "2026-07-23", category: "Geopolitics & Export Control", title: "US tightens export controls on advanced AI chips", source: "BBC", sentiment: "Negative", score: -0.80 }
-        ];
-        const FORECAST_FALLBACK = {
-            'Supply Chain & Foundry': null,
-            'Geopolitics & Export Control': null,
-            'Technology & R&D': null,
-            'Market Economy': null,
-            'All': null
-        };
+
+        const LAST_7_DAYS = Array.from({ length: 7 }, (_, index) => {
+            const date = new Date();
+            date.setDate(date.getDate() - (6 - index));
+            return date.toISOString().slice(0, 10);
+        });
+
+        let dataset = [];
         let stats = { total: 0, pos: 0, neg: 0, neu: 0, avg: 0 };
         let currentFilter = 'All';
         let currentSearch = '';
         let chartInstances = {};
         let trendPredictions = {};
+
         document.getElementById('currentDate').innerText = new Date().toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         updatePipelineStatus('Sẵn sàng khởi động');
 
@@ -258,6 +250,64 @@
             return values.reduce((sum, value) => sum + value, 0) / values.length;
         }
 
+        function normalizeSentimentLabel(value) {
+            const normalized = String(value || '').trim().toLowerCase();
+            if (normalized === 'positive' || normalized === 'pos') return 'Positive';
+            if (normalized === 'negative' || normalized === 'neg') return 'Negative';
+            return 'Neutral';
+        }
+
+        function normalizeChartValue(value) {
+            const numberValue = Number(value);
+            return Number.isFinite(numberValue) ? numberValue : 0;
+        }
+
+        function deriveSentimentFromScore(score) {
+            if (score > 0) return 'Positive';
+            if (score < 0) return 'Negative';
+            return 'Neutral';
+        }
+
+        function resolveFallbackDate(row, index) {
+            if (row && row.date && String(row.date).trim() && String(row.date).trim() !== 'Unknown') {
+                return String(row.date);
+            }
+            return LAST_7_DAYS[index % LAST_7_DAYS.length];
+        }
+
+        function normalizeFetchedData(data) {
+            return (Array.isArray(data) ? data : []).map((row, index) => {
+                const score = normalizeChartValue(row.sentiment_score ?? row.score ?? 0);
+                const rawSentiment = row.sentiment_label || row.sentiment || row.label;
+                const sentiment = rawSentiment && String(rawSentiment).trim()
+                    ? normalizeSentimentLabel(rawSentiment)
+                    : deriveSentimentFromScore(score);
+
+                return {
+                    id: row.id || index + 1,
+                    date: resolveFallbackDate(row, index),
+                    category: row.category || 'Cross-Sector',
+                    title: row.title || 'Untitled',
+                    source_name: row.source_name || row.source || 'Unknown',
+                    source: row.source_name || row.source || 'Unknown',
+                    sentiment,
+                    sentiment_score: score,
+                    score,
+                    keywords: row.keywords || ''
+                };
+            });
+        }
+
+        function resolveTrendData(categoryKey) {
+            if (trendPredictions && trendPredictions[categoryKey]) return trendPredictions[categoryKey];
+            if (trendPredictions && trendPredictions['All']) return trendPredictions['All'];
+
+            const fallback = generateFallbackTrendPredictions();
+            if (fallback[categoryKey]) return fallback[categoryKey];
+            if (fallback['All']) return fallback['All'];
+            return { historical: [], forecast: [] };
+        }
+
         async function loadTrendPredictions() {
             try {
                 const response = await fetch('trend_predictions.json');
@@ -271,11 +321,36 @@
             }
         }
 
+        async function loadActualData() {
+            // Asynchronously fetch the pipeline export. The file is saved as .csv, but its body is a JSON array of objects.
+            const candidates = ['articles_backup.csv', 'articles_backup.json'];
+            for (const url of candidates) {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        continue;
+                    }
+                    const rows = await response.json();
+                    if (Array.isArray(rows)) {
+                        return rows;
+                    }
+                } catch (error) {
+                    console.warn(`Unable to load ${url}:`, error);
+                }
+            }
+            return [];
+        }
+
+        async function loadArticlesData() {
+            const rows = await loadActualData();
+            dataset = normalizeFetchedData(rows);
+        }
+
         function generateFallbackTrendPredictions() {
-            const categories = ['Supply Chain & Foundry', 'Geopolitics & Export Control', 'Technology & R&D', 'Market Economy', 'All'];
+            const categories = ['All', ...new Set(dataset.map(item => item.category))];
             const fallback = {};
             categories.forEach(category => {
-                const categoryData = computeDailyNsr(category === 'All' ? MOCK_DATA : MOCK_DATA.filter(item => item.category === category));
+                const categoryData = computeDailyNsr(category === 'All' ? dataset : dataset.filter(item => item.category === category));
                 fallback[category] = {
                     historical: categoryData,
                     forecast: computeJsForecast(categoryData, 7)
@@ -343,7 +418,7 @@
         }
 
         function initFilters() {
-            const categories = [...new Set(MOCK_DATA.map(d => d.category))].sort();
+            const categories = [...new Set(dataset.map(d => d.category))].sort();
             const select = document.getElementById('categoryFilter');
             select.innerHTML = '<option value="All">Tất cả</option>';
             categories.forEach(cat => {
@@ -353,15 +428,18 @@
             select.value = 'All';
             document.getElementById('currentFilterLabel').innerText = 'All';
         }
+
         function applyFilter(value) {
             currentFilter = value;
             document.getElementById('currentFilterLabel').innerText = value;
             processData();
         }
+
         function applySearch(value) {
             currentSearch = value.trim().toLowerCase();
             processData();
         }
+
         async function runPipeline() {
             const btn = document.getElementById('runBtn');
             btn.disabled = true;
@@ -375,27 +453,37 @@
                 el.classList.remove('pulse-active');
                 el.classList.add('step-done');
             }
+
+            const pipelineData = await loadActualData();
             await loadTrendPredictions();
             document.getElementById('resultsArea').classList.remove('hidden');
             initFilters();
-            processData();
+            processData(pipelineData);
+            renderCharts(pipelineData);
             updatePipelineStatus('Pipeline đã hoàn tất');
             btn.innerText = '✅ Hoàn tất';
             btn.classList.remove('opacity-70', 'cursor-not-allowed');
         }
-        function processData() {
-            let filtered = MOCK_DATA;
+
+        function processData(data = dataset) {
+            // Defensive mapping: derive the UI sentiment label from the fetched sentiment_score if the label is missing.
+            const normalizedData = normalizeFetchedData(data);
+            dataset = normalizedData;
+
+            let filtered = dataset;
             if (currentFilter !== 'All') {
                 filtered = filtered.filter(item => item.category === currentFilter);
             }
             if (currentSearch) {
-                filtered = filtered.filter(item => item.title.toLowerCase().includes(currentSearch) || item.source.toLowerCase().includes(currentSearch));
+                filtered = filtered.filter(item => item.title.toLowerCase().includes(currentSearch) || item.source_name.toLowerCase().includes(currentSearch));
             }
+
             stats.total = filtered.length;
             stats.pos = filtered.filter(item => item.sentiment === 'Positive').length;
             stats.neg = filtered.filter(item => item.sentiment === 'Negative').length;
             stats.neu = filtered.filter(item => item.sentiment === 'Neutral').length;
-            stats.avg = stats.total > 0 ? (filtered.reduce((sum, item) => sum + item.score, 0) / stats.total).toFixed(3) : '0.000';
+            stats.avg = stats.total > 0 ? (filtered.reduce((sum, item) => sum + item.sentiment_score, 0) / stats.total).toFixed(3) : '0.000';
+
             document.getElementById('kpiTotal').innerText = stats.total;
             document.getElementById('kpiScore').innerText = stats.avg;
             document.getElementById('kpiPos').innerText = stats.total > 0 ? `${((stats.pos / stats.total) * 100).toFixed(1)}%` : '0%';
@@ -403,30 +491,42 @@
             document.getElementById('kpiNeg').innerText = stats.total > 0 ? `${((stats.neg / stats.total) * 100).toFixed(1)}%` : '0%';
             document.getElementById('kpiNegCount').innerText = `${stats.neg} bài`;
             document.getElementById('currentCountLabel').innerText = stats.total;
+
             const tableBody = document.getElementById('tableBody');
             tableBody.innerHTML = filtered.map(item => {
-                const badgeClass = item.sentiment === 'Positive' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : item.sentiment === 'Negative' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-700/60 dark:text-slate-200';
+                const badgeClass = item.sentiment === 'Positive'
+                    ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+                    : item.sentiment === 'Negative'
+                        ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300'
+                        : 'bg-slate-100 text-slate-700 dark:bg-slate-700/60 dark:text-slate-200';
                 return `
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
                         <td class="px-4 py-4 text-slate-500 dark:text-slate-400">${item.date}</td>
                         <td class="px-4 py-4 font-semibold text-slate-900 dark:text-slate-100">${item.title}</td>
-                        <td class="px-4 py-4 text-slate-600 dark:text-slate-300">${item.source}</td>
+                        <td class="px-4 py-4 text-slate-600 dark:text-slate-300">${item.source_name}</td>
                         <td class="px-4 py-4 text-slate-600 dark:text-slate-300">${item.category}</td>
                         <td class="px-4 py-4"><span class="rounded-full px-3 py-1 text-xs font-semibold ${badgeClass}">${item.sentiment}</span></td>
-                        <td class="px-4 py-4 font-mono text-slate-700 dark:text-slate-200">${item.score.toFixed(2)}</td>
+                        <td class="px-4 py-4 font-mono text-slate-700 dark:text-slate-200">${item.sentiment_score.toFixed(2)}</td>
                     </tr>`;
             }).join('');
             renderCharts(filtered);
         }
+
         function renderCharts(data) {
             const destroyChart = id => { if (chartInstances[id]) chartInstances[id].destroy(); };
-            destroyChart('trendHistory');
-            destroyChart('trendForecast');
+            if (chartInstances.trendHistory) {
+                chartInstances.trendHistory.destroy();
+                delete chartInstances.trendHistory;
+            }
+            if (chartInstances.trendForecast) {
+                chartInstances.trendForecast.destroy();
+                delete chartInstances.trendForecast;
+            }
             destroyChart('bar');
             destroyChart('pie');
 
             const categoryKey = currentFilter === 'All' ? 'All' : currentFilter;
-            const trendData = trendPredictions[categoryKey] || trendPredictions['All'] || { historical: [], forecast: [] };
+            const trendData = resolveTrendData(categoryKey);
             const historical = trendData.historical || [];
             const forecast = trendData.forecast || [];
             const historicalLabels = historical.map(item => item.date);
@@ -471,11 +571,11 @@
             chartInstances.trendForecast = new Chart(document.getElementById('trendForecastChart'), {
                 type: 'line',
                 data: {
-                    labels: forecastLabels,
+                    labels: forecastLabels.length ? forecastLabels : historicalLabels,
                     datasets: [
                         {
-                            label: '7-Day Forecast NSR',
-                            data: forecastValues,
+                            label: 'Forecast NSR',
+                            data: forecastValues.length ? forecastValues : historicalValues,
                             borderColor: '#f59e0b',
                             backgroundColor: 'rgba(245,158,11,0.15)',
                             borderDash: [5, 5],
@@ -503,25 +603,27 @@
                 }
             });
 
-            const sourceLabels = [...new Set(data.map(item => item.source))];
-            const positive = sourceLabels.map(source => data.filter(item => item.source === source && item.sentiment === 'Positive').length);
-            const neutral = sourceLabels.map(source => data.filter(item => item.source === source && item.sentiment === 'Neutral').length);
-            const negative = sourceLabels.map(source => data.filter(item => item.source === source && item.sentiment === 'Negative').length);
+            const sourceLabels = [...new Set(data.map(item => item.source_name))];
+            const positive = sourceLabels.map(source => data.filter(item => item.source_name === source && item.sentiment === 'Positive').length);
+            const neutral = sourceLabels.map(source => data.filter(item => item.source_name === source && item.sentiment === 'Neutral').length);
+            const negative = sourceLabels.map(source => data.filter(item => item.source_name === source && item.sentiment === 'Negative').length);
             chartInstances.bar = new Chart(document.getElementById('barChart'), {
                 type: 'bar',
-                data: { labels: sourceLabels, datasets: [ { label: 'Positive', data: positive, backgroundColor: '#22c55e' }, { label: 'Neutral', data: neutral, backgroundColor: '#64748b' }, { label: 'Negative', data: negative, backgroundColor: '#ef4444' } ] },
+                data: { labels: sourceLabels, datasets: [{ label: 'Positive', data: positive, backgroundColor: '#22c55e' }, { label: 'Neutral', data: neutral, backgroundColor: '#64748b' }, { label: 'Negative', data: negative, backgroundColor: '#ef4444' }] },
                 options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } }
             });
             chartInstances.pie = new Chart(document.getElementById('pieChart'), {
                 type: 'doughnut',
-                data: { labels: ['Positive', 'Neutral', 'Negative'], datasets: [ { data: [stats.pos, stats.neu, stats.neg], backgroundColor: ['#22c55e', '#64748b', '#ef4444'] } ] },
+                data: { labels: ['Positive', 'Neutral', 'Negative'], datasets: [{ data: [stats.pos, stats.neu, stats.neg], backgroundColor: ['#22c55e', '#64748b', '#ef4444'] }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
             });
         }
+
         function formatCSVCell(value) {
             const escaped = String(value).replace(/"/g, '""');
             return `"${escaped}"`;
         }
+
         function downloadFile(content, filename, type) {
             const blob = new Blob([content], { type });
             const link = document.createElement('a');
@@ -531,22 +633,25 @@
             link.click();
             document.body.removeChild(link);
         }
+
         function exportCSV() {
-            const filtered = currentFilter === 'All' ? MOCK_DATA : MOCK_DATA.filter(item => item.category === currentFilter);
-            const visible = currentSearch ? filtered.filter(item => item.title.toLowerCase().includes(currentSearch) || item.source.toLowerCase().includes(currentSearch)) : filtered;
-            const csv = ['Date,Title,Category,Source,Sentiment,Score', ...visible.map(item => [item.date, item.title, item.category, item.source, item.sentiment, item.score.toFixed(2)].map(formatCSVCell).join(','))].join('\n');
+            const filtered = currentFilter === 'All' ? dataset : dataset.filter(item => item.category === currentFilter);
+            const visible = currentSearch ? filtered.filter(item => item.title.toLowerCase().includes(currentSearch) || item.source_name.toLowerCase().includes(currentSearch)) : filtered;
+            const csv = ['Date,Title,Category,Source,Sentiment,Score', ...visible.map(item => [item.date, item.title, item.category, item.source_name, item.sentiment, item.sentiment_score.toFixed(2)].map(formatCSVCell).join(','))].join('\n');
             downloadFile(csv, 'articles_backup.csv', 'text/csv');
         }
+
         function exportJSON() {
             const result = {
                 generated_at: new Date().toISOString(),
                 filter: currentFilter,
                 search: currentSearch,
                 stats: stats,
-                articles: MOCK_DATA.filter(item => (currentFilter === 'All' || item.category === currentFilter) && (!currentSearch || item.title.toLowerCase().includes(currentSearch) || item.source.toLowerCase().includes(currentSearch)))
+                articles: dataset.filter(item => (currentFilter === 'All' || item.category === currentFilter) && (!currentSearch || item.title.toLowerCase().includes(currentSearch) || item.source_name.toLowerCase().includes(currentSearch)))
             };
             downloadFile(JSON.stringify(result, null, 2), 'daily_summary.json', 'application/json');
         }
+
         function exportReport() {
             const reportLines = [
                 'GLOBALPULSE AI - TECHNICAL REPORT',
@@ -560,7 +665,7 @@
                 '---',
                 'Top categories:',
             ];
-            const categorySummary = MOCK_DATA.reduce((acc, item) => {
+            const categorySummary = dataset.reduce((acc, item) => {
                 acc[item.category] = (acc[item.category] || 0) + 1;
                 return acc;
             }, {});

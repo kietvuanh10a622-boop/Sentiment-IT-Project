@@ -1,9 +1,10 @@
-import logging
-import os
-import re
-import time
 import datetime
 import json
+import logging
+import os
+import random
+import re
+import time
 from abc import ABC, abstractmethod
 from urllib.parse import urljoin, urlparse
 
@@ -17,22 +18,38 @@ class BaseCrawler(ABC):
     FALLBACK_CACHE = {
         "VnExpress": [
             {
-                "title": "TSMC mở rộng năng lực sản xuất chip AI",
+                "title": "TSMC expands advanced packaging and AI chip capacity",
                 "link": "https://vnexpress.net/fallback-tsmc",
                 "source_name": "VnExpress",
                 "date": datetime.datetime.utcnow().strftime("%Y-%m-%d"),
-                "content": "TSMC mở rộng năng lực sản xuất chip AI nhằm đáp ứng nhu cầu toàn cầu.",
-                "category_hint": "Technology"
+                "content": "TSMC expands advanced packaging and AI chip capacity to meet rising global demand.",
+                "category_hint": "Semiconductor Supply Chain"
+            },
+            {
+                "title": "Vietnam attracts new electronics investment amid export growth",
+                "link": "https://vnexpress.net/fallback-vietnam-electronics",
+                "source_name": "VnExpress",
+                "date": datetime.datetime.utcnow().strftime("%Y-%m-%d"),
+                "content": "Vietnam attracts new electronics investment as manufacturers diversify supply chains.",
+                "category_hint": "Logistics"
             }
         ],
         "BBC": [
             {
-                "title": "Export controls đẩy căng thẳng thị trường bán dẫn toàn cầu",
+                "title": "Export controls reshape the global semiconductor supply chain",
                 "link": "https://www.bbc.com/fallback-chip-export",
                 "source_name": "BBC",
                 "date": datetime.datetime.utcnow().strftime("%Y-%m-%d"),
-                "content": "BBC fallback story about export controls and semiconductor geopolitics.",
-                "category_hint": "World/Geopolitics"
+                "content": "BBC fallback article about export controls and semiconductor geopolitics.",
+                "category_hint": "Geopolitics"
+            },
+            {
+                "title": "Energy transition and battery investment accelerate across Europe",
+                "link": "https://www.bbc.com/fallback-energy-transition",
+                "source_name": "BBC",
+                "date": datetime.datetime.utcnow().strftime("%Y-%m-%d"),
+                "content": "Europe accelerates battery and renewable investment to support the energy transition.",
+                "category_hint": "Energy & Climate"
             }
         ]
     }
@@ -40,25 +57,32 @@ class BaseCrawler(ABC):
     def __init__(self, base_url, source_name):
         self.base_url = base_url.rstrip('/')
         self.source_name = source_name
+        self.session = requests.Session()
+        self.session.headers.update(self.build_headers())
 
     def build_headers(self):
         return {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+            'User-Agent': random.choice([
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15',
+                'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36'
+            ]),
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.9',
             'Referer': self.base_url,
+            'Upgrade-Insecure-Requests': '1',
         }
 
-    def fetch_html(self, url, timeout=20, retries=3):
+    def fetch_html(self, url, timeout=20, retries=4, backoff=1.5):
         if not url:
             return None
         last_error = None
         for attempt in range(retries):
             try:
-                response = requests.get(url, headers=self.build_headers(), timeout=timeout, allow_redirects=True)
+                response = self.session.get(url, timeout=timeout, allow_redirects=True)
                 if response.status_code in {403, 429, 500, 502, 503, 504} and attempt < retries - 1:
-                    wait_time = (attempt + 1) * 2.0
-                    logging.warning(f"Transient HTTP {response.status_code} for {url}; retrying in {wait_time}s")
+                    wait_time = backoff * (attempt + 1)
+                    logging.warning(f"Transient HTTP {response.status_code} for {url}; retrying in {wait_time:.1f}s")
                     time.sleep(wait_time)
                     continue
                 response.raise_for_status()
@@ -66,12 +90,12 @@ class BaseCrawler(ABC):
             except requests.exceptions.Timeout as exc:
                 last_error = exc
                 if attempt < retries - 1:
-                    time.sleep((attempt + 1) * 1.5)
+                    time.sleep(backoff * (attempt + 1))
                     continue
             except requests.exceptions.RequestException as exc:
                 last_error = exc
                 if attempt < retries - 1:
-                    time.sleep((attempt + 1) * 1.5)
+                    time.sleep(backoff * (attempt + 1))
                     continue
         logging.warning(f"Unable to fetch HTML from {url}: {last_error}")
         return None
@@ -104,6 +128,7 @@ class BaseCrawler(ABC):
             ('time[datetime]', 'datetime'),
             ('span.date', 'datetime'),
             ('p[data-datetime]', 'data-datetime'),
+            ('div[class*="date"]', 'datetime'),
         ]:
             element = soup.select_one(selector)
             if element and element.get(attr):
@@ -113,35 +138,30 @@ class BaseCrawler(ABC):
             return fallback_date
 
         for candidate in date_candidates:
-            candidate = candidate.split('T')[0]
-            match = re.search(r'(\d{4}-\d{2}-\d{2})', candidate)
+            normalized = candidate.split('T')[0]
+            match = re.search(r'(\d{4}-\d{2}-\d{2})', normalized)
             if match:
                 return match.group(1)
+            for fmt in ('%d/%m/%Y', '%d/%m/%y', '%B %d, %Y', '%b %d, %Y', '%Y/%m/%d'):
+                try:
+                    parsed = datetime.datetime.strptime(normalized, fmt)
+                    return parsed.strftime('%Y-%m-%d')
+                except Exception:
+                    continue
             try:
-                parsed = datetime.datetime.fromisoformat(candidate)
+                parsed = datetime.datetime.fromisoformat(normalized)
                 return parsed.strftime('%Y-%m-%d')
             except Exception:
-                pass
-            try:
-                parsed = datetime.datetime.strptime(candidate, '%d/%m/%Y')
-                return parsed.strftime('%Y-%m-%d')
-            except Exception:
-                pass
-            try:
-                parsed = datetime.datetime.strptime(candidate, '%B %d, %Y')
-                return parsed.strftime('%Y-%m-%d')
-            except Exception:
-                pass
-
+                continue
         return fallback_date
 
     def extract_article_content(self, soup):
-        for selector in ['article', 'div.story-body', 'div.article-body', 'main', 'section']:
+        for selector in ['article', 'div.story-body', 'div.article-body', 'main', 'section', 'div[class*="content"]']:
             node = soup.select_one(selector)
             if node:
-                paragraphs = [paragraph.get_text(' ', strip=True) for paragraph in node.find_all('p') if paragraph.get_text(' ', strip=True)]
+                paragraphs = [p.get_text(' ', strip=True) for p in node.find_all('p') if p.get_text(' ', strip=True)]
                 if paragraphs:
-                    return ' '.join(paragraphs)
+                    return ' '.join(paragraphs[:20])
 
         description = soup.select_one('meta[name="description"]') or soup.select_one('meta[property="og:description"]')
         if description and description.get('content'):
@@ -156,20 +176,21 @@ class BaseCrawler(ABC):
             return False
         if any(token in link for token in ('mailto:', 'tel:', 'javascript:', '#')):
             return False
-        if '/video/' in link or '/live/' in link or '/av/' in link:
+        if '/video/' in link or '/live/' in link or '/av/' in link or '/gallery/' in link:
             return False
         return True
 
     def normalize_link(self, href, page_url):
         if not href:
             return ''
+        href = href.strip()
         if href.startswith('/'):
             return urljoin(self.base_url, href)
         if href.startswith('http'):
             return href
         return urljoin(page_url, href)
 
-    def extract_article_links_from_html(self, html, page_url, limit=12):
+    def extract_article_links_from_html(self, html, page_url, category_hint, limit=16):
         if not html:
             return []
         soup = BeautifulSoup(html, 'html.parser')
@@ -182,10 +203,10 @@ class BaseCrawler(ABC):
             text = ' '.join(anchor.get_text(' ', strip=True).split())
             if not text:
                 text = anchor.get('title', '')
-            if not text:
+            if not text or len(text) < 4:
                 continue
             seen.add(href)
-            anchors.append({'title': text, 'link': href})
+            anchors.append({'title': text, 'link': href, 'category_hint': category_hint})
             if len(anchors) >= limit:
                 break
         return anchors

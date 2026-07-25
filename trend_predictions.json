@@ -1,0 +1,192 @@
+{
+    "Business": {
+        "historical": [
+            {
+                "date": "2026-07-24",
+                "nsr": 0.0
+            }
+        ],
+        "forecast": [
+            {
+                "date": "2026-07-25",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-26",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-27",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-28",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-29",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-30",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-31",
+                "predicted_nsr": 0.0
+            }
+        ]
+    },
+    "Healthcare": {
+        "historical": [
+            {
+                "date": "2026-07-24",
+                "nsr": 0.0
+            }
+        ],
+        "forecast": [
+            {
+                "date": "2026-07-25",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-26",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-27",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-28",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-29",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-30",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-31",
+                "predicted_nsr": 0.0
+            }
+        ]
+    },
+    "Logistics": {
+        "historical": [
+            {
+                "date": "2026-07-24",
+                "nsr": 0.0
+            }
+        ],
+        "forecast": [
+            {
+                "date": "2026-07-25",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-26",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-27",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-28",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-29",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-30",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-31",
+                "predicted_nsr": 0.0
+            }
+        ]
+    },
+    "Science": {
+        "historical": [
+            {
+                "date": "2026-07-24",
+                "nsr": 0.125
+            }
+        ],
+        "forecast": [
+            {
+                "date": "2026-07-25",
+                "predicted_nsr": 0.125
+            },
+            {
+                "date": "2026-07-26",
+                "predicted_nsr": 0.125
+            },
+            {
+                "date": "2026-07-27",
+                "predicted_nsr": 0.125
+            },
+            {
+                "date": "2026-07-28",
+                "predicted_nsr": 0.125
+            },
+            {
+                "date": "2026-07-29",
+                "predicted_nsr": 0.125
+            },
+            {
+                "date": "2026-07-30",
+                "predicted_nsr": 0.125
+            },
+            {
+                "date": "2026-07-31",
+                "predicted_nsr": 0.125
+            }
+        ]
+    },
+    "Technology": {
+        "historical": [
+            {
+                "date": "2026-07-24",
+                "nsr": 0.0
+            }
+        ],
+        "forecast": [
+            {
+                "date": "2026-07-25",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-26",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-27",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-28",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-29",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-30",
+                "predicted_nsr": 0.0
+            },
+            {
+                "date": "2026-07-31",
+                "predicted_nsr": 0.0
+            }
+        ]
+    }
+}

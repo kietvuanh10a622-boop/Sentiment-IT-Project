@@ -14,6 +14,7 @@ def calculate_daily_nsr(df):
     frame['date'] = pd.to_datetime(frame['date'], errors='coerce').dt.date
     frame = frame.dropna(subset=['date'])
     frame['sentiment_label'] = frame['sentiment_label'].fillna('Neutral')
+    frame['category'] = frame['category'].fillna('Supply Chain').astype(str)
 
     summary = (
         frame.groupby(['category', 'date'])
@@ -30,7 +31,7 @@ def calculate_daily_nsr(df):
     return summary
 
 
-def forecast_category(category_df, horizon_days=14):
+def forecast_category(category_df, horizon_days=7):
     if category_df.empty:
         return []
 
@@ -53,8 +54,8 @@ def forecast_category(category_df, horizon_days=14):
         return forecasts
 
     last_nsr = float(data['nsr'].iloc[-1])
-    forecasts = []
     last_date = data['date'].max()
+    forecasts = []
     for i in range(1, horizon_days + 1):
         future_date = last_date + timedelta(days=i)
         forecasts.append({
@@ -64,7 +65,7 @@ def forecast_category(category_df, horizon_days=14):
     return forecasts
 
 
-def generate_trend_predictions(articles, output_path='trend_predictions.json', horizon_days=14):
+def generate_trend_predictions(articles, output_path='trend_predictions.json', horizon_days=7):
     if not articles:
         logging.warning('No articles available for trend forecasting.')
         return {}
@@ -80,7 +81,7 @@ def generate_trend_predictions(articles, output_path='trend_predictions.json', h
         return {}
 
     daily_nsr = calculate_daily_nsr(df)
-    categories = sorted(daily_nsr['category'].dropna().unique().tolist()) or ['Other']
+    categories = sorted(daily_nsr['category'].dropna().unique().tolist()) or ['Supply Chain']
     output = {}
 
     for category in categories:
@@ -95,6 +96,23 @@ def generate_trend_predictions(articles, output_path='trend_predictions.json', h
             'historical': historical,
             'forecast': forecast
         }
+
+    output['All'] = {
+        'historical': [
+            {'date': row['date'].strftime('%Y-%m-%d'), 'nsr': float(row['nsr'])}
+            for _, row in daily_nsr.groupby('date', as_index=False).agg(nsr=('nsr', 'mean')).sort_values('date').iterrows()
+        ],
+        'forecast': forecast_category(
+            daily_nsr.groupby('date', as_index=False).agg(
+                category=('category', lambda s: 'All'),
+                positive=('positive', 'sum'),
+                negative=('negative', 'sum'),
+                neutral=('neutral', 'sum'),
+                nsr=('nsr', 'mean')
+            ).assign(date=lambda frame: pd.to_datetime(frame['date']).dt.date),
+            horizon_days=horizon_days
+        )
+    }
 
     with open(output_path, 'w', encoding='utf-8') as handle:
         json.dump(output, handle, ensure_ascii=False, indent=4)

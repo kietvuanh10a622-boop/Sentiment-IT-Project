@@ -63,3 +63,27 @@ id,date,title,link,source_name,category,sentiment_score,keywords
 60,2026-07-22,"Người kiếm tiền từ Affiliate sẽ khai, nộp thuế như thế nào?",https://vnexpress.net/nguoi-kiem-tien-tu-affiliate-se-khai-nop-thue-nhu-the-nao-5099874.html,VnExpress,Technology,0.0,ai
 61,2026-07-22,Chủ quản công viên Đầm Sen lỗ lũy kế hơn 400 tỷ đồng,https://vnexpress.net/chu-quan-cong-vien-dam-sen-lo-luy-ke-hon-400-ty-dong-5100115.html,VnExpress,Technology,-0.65,ai
 62,2026-07-22,LPBank lãi gần 6.000 tỷ nửa đầu năm,https://vnexpress.net/lpbank-lai-gan-6-000-ty-nua-dau-nam-5100136.html,VnExpress,Technology,0.0,ai
+82,2026-07-24,"Thứ sáu, 24/7/2026",https://vnexpress.net/lich-van-nien,VnExpress,Business,0.0,
+83,2026-07-24,Thế giới,https://vnexpress.net/the-gioi,VnExpress,Business,0.0,
+84,2026-07-24,Hà Nội,https://vnexpress.net/chu-de/thanh-pho-ha-noi-2056,VnExpress,Business,0.0,
+85,2026-07-24,Mới nhất,https://vnexpress.net/tin-tuc-24h,VnExpress,Business,0.0,
+86,2026-07-24,Kinh doanh,https://vnexpress.net/kinh-doanh,VnExpress,Business,0.0,
+87,2026-07-24,Thời sự,https://vnexpress.net/thoi-su,VnExpress,Business,0.0,
+88,2026-07-24,Báo VnExpress - Báo tiếng Việt nhiều người xem nhất,https://vnexpress.net/,VnExpress,Business,0.0,
+89,2026-07-24,International,https://e.vnexpress.net/,VnExpress,Business,0.0,
+90,2026-07-24,TP HCM,https://vnexpress.net/chu-de/thanh-pho-ho-chi-minh-2091,VnExpress,Business,0.0,
+91,2026-07-24,VnE-GO,https://vnexpress.net/vne-go,VnExpress,Business,0.0,
+92,2026-07-24,Khoa học công nghệ,https://vnexpress.net/khoa-hoc-cong-nghe,VnExpress,Business,0.0,
+93,2026-07-24,Góc nhìn,https://vnexpress.net/goc-nhin,VnExpress,Business,0.0,
+94,2026-07-24,Travel,https://www.bbc.com/travel,BBC,Science,0.0,
+95,2026-07-24,Business,https://www.bbc.com/business,BBC,Business,0.0,business
+96,2026-07-24,British Broadcasting Corporation,https://www.bbc.com/,BBC,Science,0.0,
+97,2026-07-24,Sport,https://www.bbc.com/sport,BBC,Logistics,0.0,port
+98,2026-07-24,Technology,https://www.bbc.com/technology,BBC,Technology,0.0,"tech, technology"
+99,2026-07-24,Earth,https://www.bbc.com/future-planet,BBC,Science,0.0,
+100,2026-07-24,Arts,https://www.bbc.com/arts,BBC,Science,0.0,
+101,2026-07-24,News,https://www.bbc.com/news,BBC,Science,0.65,
+102,2026-07-24,Culture,https://www.bbc.com/culture,BBC,Science,0.0,
+103,2026-07-24,Health,https://www.bbc.com/health,BBC,Healthcare,0.0,health
+104,2026-07-24,Audio,https://www.bbc.com/audio,BBC,Science,0.0,
+105,2026-07-24,Video,https://www.bbc.com/video,BBC,Science,0.0,

@@ -638,5 +638,245 @@
         "category": "Technology",
         "sentiment_score": 0.0,
         "keywords": "ai"
+    },
+    {
+        "id": 82,
+        "date": "2026-07-24",
+        "title": "Thứ sáu, 24/7/2026",
+        "link": "https://vnexpress.net/lich-van-nien",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 83,
+        "date": "2026-07-24",
+        "title": "Thế giới",
+        "link": "https://vnexpress.net/the-gioi",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 84,
+        "date": "2026-07-24",
+        "title": "Hà Nội",
+        "link": "https://vnexpress.net/chu-de/thanh-pho-ha-noi-2056",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 85,
+        "date": "2026-07-24",
+        "title": "Mới nhất",
+        "link": "https://vnexpress.net/tin-tuc-24h",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 86,
+        "date": "2026-07-24",
+        "title": "Kinh doanh",
+        "link": "https://vnexpress.net/kinh-doanh",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 87,
+        "date": "2026-07-24",
+        "title": "Thời sự",
+        "link": "https://vnexpress.net/thoi-su",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 88,
+        "date": "2026-07-24",
+        "title": "Báo VnExpress - Báo tiếng Việt nhiều người xem nhất",
+        "link": "https://vnexpress.net/",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 89,
+        "date": "2026-07-24",
+        "title": "International",
+        "link": "https://e.vnexpress.net/",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 90,
+        "date": "2026-07-24",
+        "title": "TP HCM",
+        "link": "https://vnexpress.net/chu-de/thanh-pho-ho-chi-minh-2091",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 91,
+        "date": "2026-07-24",
+        "title": "VnE-GO",
+        "link": "https://vnexpress.net/vne-go",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 92,
+        "date": "2026-07-24",
+        "title": "Khoa học công nghệ",
+        "link": "https://vnexpress.net/khoa-hoc-cong-nghe",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 93,
+        "date": "2026-07-24",
+        "title": "Góc nhìn",
+        "link": "https://vnexpress.net/goc-nhin",
+        "source_name": "VnExpress",
+        "category": "Business",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 94,
+        "date": "2026-07-24",
+        "title": "Travel",
+        "link": "https://www.bbc.com/travel",
+        "source_name": "BBC",
+        "category": "Science",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 95,
+        "date": "2026-07-24",
+        "title": "Business",
+        "link": "https://www.bbc.com/business",
+        "source_name": "BBC",
+        "category": "Business",
+        "sentiment_score": 0.0,
+        "keywords": "business"
+    },
+    {
+        "id": 96,
+        "date": "2026-07-24",
+        "title": "British Broadcasting Corporation",
+        "link": "https://www.bbc.com/",
+        "source_name": "BBC",
+        "category": "Science",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 97,
+        "date": "2026-07-24",
+        "title": "Sport",
+        "link": "https://www.bbc.com/sport",
+        "source_name": "BBC",
+        "category": "Logistics",
+        "sentiment_score": 0.0,
+        "keywords": "port"
+    },
+    {
+        "id": 98,
+        "date": "2026-07-24",
+        "title": "Technology",
+        "link": "https://www.bbc.com/technology",
+        "source_name": "BBC",
+        "category": "Technology",
+        "sentiment_score": 0.0,
+        "keywords": "tech, technology"
+    },
+    {
+        "id": 99,
+        "date": "2026-07-24",
+        "title": "Earth",
+        "link": "https://www.bbc.com/future-planet",
+        "source_name": "BBC",
+        "category": "Science",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 100,
+        "date": "2026-07-24",
+        "title": "Arts",
+        "link": "https://www.bbc.com/arts",
+        "source_name": "BBC",
+        "category": "Science",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 101,
+        "date": "2026-07-24",
+        "title": "News",
+        "link": "https://www.bbc.com/news",
+        "source_name": "BBC",
+        "category": "Science",
+        "sentiment_score": 0.65,
+        "keywords": ""
+    },
+    {
+        "id": 102,
+        "date": "2026-07-24",
+        "title": "Culture",
+        "link": "https://www.bbc.com/culture",
+        "source_name": "BBC",
+        "category": "Science",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 103,
+        "date": "2026-07-24",
+        "title": "Health",
+        "link": "https://www.bbc.com/health",
+        "source_name": "BBC",
+        "category": "Healthcare",
+        "sentiment_score": 0.0,
+        "keywords": "health"
+    },
+    {
+        "id": 104,
+        "date": "2026-07-24",
+        "title": "Audio",
+        "link": "https://www.bbc.com/audio",
+        "source_name": "BBC",
+        "category": "Science",
+        "sentiment_score": 0.0,
+        "keywords": ""
+    },
+    {
+        "id": 105,
+        "date": "2026-07-24",
+        "title": "Video",
+        "link": "https://www.bbc.com/video",
+        "source_name": "BBC",
+        "category": "Science",
+        "sentiment_score": 0.0,
+        "keywords": ""
     }
 ]

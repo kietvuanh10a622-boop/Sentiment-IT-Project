@@ -1,9 +1,8 @@
-# pipeline/database.py
-import os
-import sqlite3
-import logging
 import csv
 import json
+import logging
+import os
+import sqlite3
 
 DB_FILENAME = 'news_database.db'
 CSV_BACKUP = 'articles_backup.csv'
@@ -11,11 +10,12 @@ JSON_BACKUP = 'articles_backup.json'
 
 
 def get_database_path():
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), '..', DB_FILENAME))
+    """Get absolute path to database file, ensuring consistent location regardless of working directory."""
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_dir, DB_FILENAME)
 
 
 def initialize_database():
-    """Initialize SQLite schema for Sources, Articles, Keywords, and relations."""
     db_path = get_database_path()
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -37,10 +37,20 @@ def initialize_database():
             date TEXT,
             category TEXT,
             sentiment_score REAL,
+            sentiment_label TEXT,
             source_id INTEGER,
             FOREIGN KEY (source_id) REFERENCES Sources(id)
         )
     ''')
+
+    cursor.execute("PRAGMA table_info(Articles)")
+    columns = {row[1] for row in cursor.fetchall()}
+    if 'sentiment_score' not in columns:
+        cursor.execute('ALTER TABLE Articles ADD COLUMN sentiment_score REAL')
+    if 'sentiment_label' not in columns:
+        cursor.execute('ALTER TABLE Articles ADD COLUMN sentiment_label TEXT')
+    if 'source_id' not in columns:
+        cursor.execute('ALTER TABLE Articles ADD COLUMN source_id INTEGER')
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS Keywords (
@@ -65,7 +75,6 @@ def initialize_database():
 
 
 def save_articles_to_db(articles):
-    """Persist articles and keyword relations in SQLite."""
     db_path = get_database_path()
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -78,8 +87,8 @@ def save_articles_to_db(articles):
             cursor.execute('INSERT OR IGNORE INTO Sources (name) VALUES (?)', (source_name,))
 
             cursor.execute('''
-                INSERT OR IGNORE INTO Articles (title, link, content, date, category, sentiment_score, source_id)
-                VALUES (?, ?, ?, ?, ?, ?, (SELECT id FROM Sources WHERE name = ?))
+                INSERT OR IGNORE INTO Articles (title, link, content, date, category, sentiment_score, sentiment_label, source_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, (SELECT id FROM Sources WHERE name = ?))
             ''', (
                 article.get('title'),
                 article.get('link'),
@@ -87,6 +96,7 @@ def save_articles_to_db(articles):
                 article.get('date'),
                 article.get('category'),
                 article.get('sentiment_score', 0.0),
+                article.get('sentiment_label', 'Neutral'),
                 source_name,
             ))
 
@@ -107,8 +117,8 @@ def save_articles_to_db(articles):
                     continue
                 kw_id = kw_row[0]
                 cursor.execute('INSERT OR IGNORE INTO Article_Keyword (article_id, keyword_id) VALUES (?, ?)', (article_id, kw_id))
-        except sqlite3.Error as e:
-            logging.error(f'SP3 SQLite error for article {article.get("link")}: {e}')
+        except sqlite3.Error as exc:
+            logging.error(f'SP3 SQLite error for article {article.get("link")}: {exc}')
 
     conn.commit()
     conn.close()
@@ -116,7 +126,6 @@ def save_articles_to_db(articles):
 
 
 def export_database_to_files():
-    """Export normalized CSV and JSON backups from SQLite."""
     db_path = get_database_path()
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -130,6 +139,7 @@ def export_database_to_files():
             Sources.name as source_name,
             Articles.category,
             Articles.sentiment_score,
+            Articles.sentiment_label,
             COALESCE(group_concat(Keywords.word, ', '), '') as keywords
         FROM Articles
         LEFT JOIN Sources ON Articles.source_id = Sources.id
@@ -142,7 +152,7 @@ def export_database_to_files():
     rows = cursor.fetchall()
     conn.close()
 
-    fieldnames = ['id', 'date', 'title', 'link', 'source_name', 'category', 'sentiment_score', 'keywords']
+    fieldnames = ['id', 'date', 'title', 'link', 'source_name', 'category', 'sentiment_score', 'sentiment_label', 'keywords']
     backup_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
     if not rows:
@@ -157,7 +167,15 @@ def export_database_to_files():
         writer.writerow(fieldnames)
         writer.writerows(rows)
 
-    records = [dict(zip(fieldnames, row)) for row in rows]
+    records = []
+    for row in rows:
+        record = dict(zip(fieldnames, row))
+        if not record.get('date'):
+            record['date'] = 'Unknown'
+        if not record.get('category'):
+            record['category'] = 'Supply Chain'
+        records.append(record)
+
     with open(json_path, 'w', encoding='utf-8') as json_file:
         json.dump(records, json_file, ensure_ascii=False, indent=4)
 
