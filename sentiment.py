@@ -9,7 +9,7 @@ try:
 except ImportError:  # pragma: no cover - environment-dependent
     genai = None
 
-# Sử dụng biến môi trường để tránh hardcode secret và giữ pipeline an toàn khi không có API key.
+# Use environment variables to avoid hardcoded secrets and keep the pipeline safe when no API key is available.
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '').strip()
 MODEL_NAME = os.getenv('GEMINI_MODEL_NAME', 'gemini-1.5-flash')
 
@@ -26,7 +26,7 @@ else:
 
 
 def call_gemini_sentiment_api(text_to_analyze):
-    """Gọi Gemini API khi SDK và API key sẵn sàng; nếu không thì trả về None để dùng fallback."""
+    """Call the Gemini API when the SDK and API key are available; otherwise return None to use fallback logic."""
     if genai is None or not GEMINI_API_KEY:
         return None
 
@@ -37,13 +37,13 @@ def call_gemini_sentiment_api(text_to_analyze):
         )
 
         prompt = f"""
-        Bạn là một chuyên gia phân tích thị trường công nghệ và bán dẫn.
-        Hãy phân tích cảm xúc (sentiment) của tiêu đề bài báo sau đây.
-        Trả về đúng định dạng JSON với 2 key sau, không kèm giải thích gì thêm:
-        - "label": Chỉ chọn 1 trong 3 chữ "Positive", "Negative", hoặc "Neutral".
-        - "score": Điểm số (float) từ -1.0 đến 1.0.
+        You are an expert in technology and semiconductor market analysis.
+        Analyze the sentiment of the following article title.
+        Return the JSON payload with exactly these 2 keys and no extra explanation:
+        - "label": Choose exactly one of "Positive", "Negative", or "Neutral".
+        - "score": A float from -1.0 to 1.0.
 
-        Tiêu đề báo: "{text_to_analyze}"
+        Article title: "{text_to_analyze}"
         """
 
         response = model.generate_content(prompt)
@@ -69,18 +69,18 @@ def call_gemini_sentiment_api(text_to_analyze):
 
 
 def _keyword_fallback_sentiment(text):
-    """Fallback nội bộ cho trường hợp API không khả dụng; tối ưu cho pipeline không-server."""
+    """Internal fallback when the API is unavailable; optimized for a non-server pipeline."""
     if not text:
         return {"score": 0.0, "label": "Neutral"}
 
     lower_text = text.lower()
     positive_words = [
         'surge', 'growth', 'profit', 'up', 'build', 'new', 'innovation', 'invest', 'revenue',
-        'tăng', 'lãi', 'đột phá', 'phát triển', 'xây', 'thành công', 'mở rộng'
+        'increase', 'gain', 'breakthrough', 'develop', 'expand', 'success'
     ]
     negative_words = [
         'drop', 'fall', 'shortage', 'crisis', 'down', 'loss', 'delay', 'cut', 'ban', 'risk',
-        'giảm', 'lỗ', 'khủng hoảng', 'cấm', 'thiếu hụt', 'ảnh hưởng', 'sụt'
+        'decline', 'decrease', 'impact', 'restrict'
     ]
 
     pos_count = sum(1 for word in positive_words if word in lower_text)
@@ -101,7 +101,7 @@ def _keyword_fallback_sentiment(text):
 
 
 def get_sentiment(text, source_name):
-    """Hàm xử lý chính; ưu tiên Gemini khi có sẵn, còn lại dùng fallback keyword-based."""
+    """Main processing function; prioritize Gemini when available, otherwise use keyword-based fallback."""
     if not text:
         return {"score": 0.0, "label": "Neutral"}
 
@@ -122,14 +122,14 @@ def get_sentiment(text, source_name):
 
 
 def apply_sentiment_analysis(articles):
-    """Nhận danh sách bài báo, áp dụng phân tích cảm xúc với fallback an toàn."""
-    logging.info('--- BƯỚC C2: KẾT NỐI GOOGLE GEMINI 1.5 API ---')
+    """Receive a list of articles and apply sentiment analysis with safe fallback logic."""
+    logging.info('--- STEP C2: CONNECT TO GOOGLE GEMINI 1.5 API ---')
     analyzed_articles = []
 
     total_articles = len(articles)
     for index, article in enumerate(articles):
         if (index + 1) % 5 == 0 or index == 0:
-            logging.info(f'Đang gửi bài {index + 1}/{total_articles} lên Google AI Cloud...')
+            logging.info(f'Sending article {index + 1}/{total_articles} to Google AI Cloud...')
 
         text_to_analyze = article.get('title', '')
         source_name = article.get('source_name', 'Unknown')
@@ -139,9 +139,9 @@ def apply_sentiment_analysis(articles):
         article['sentiment_label'] = sentiment_result['label']
         analyzed_articles.append(article)
 
-        # Giảm độ trễ cho pipeline để tránh kéo dài thời gian chạy khi dữ liệu lớn.
+        # Reduce pipeline delay to avoid slowing down the run when the dataset is large.
         if total_articles > 50:
             time.sleep(0.25)
 
-    logging.info('--- HOÀN THÀNH GỌI GEMINI API ---')
+    logging.info('--- GEMINI API CALL COMPLETED ---')
     return analyzed_articles

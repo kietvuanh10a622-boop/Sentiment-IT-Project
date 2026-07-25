@@ -6,7 +6,7 @@ from base_crawler import BaseCrawler
 
 
 class BBCCrawler(BaseCrawler):
-    """Crawler chuyên biệt cho BBC về công nghệ, kinh doanh và thế giới."""
+    """Specialized crawler for BBC technology, business, and world news."""
 
     ROUTES = [
         ('Technology', '/news/technology'),

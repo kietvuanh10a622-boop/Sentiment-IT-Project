@@ -43,8 +43,8 @@ class BackendPipelineTests(unittest.TestCase):
 
         crawler = DummyCrawler(base_url='https://vnexpress.net', source_name='VnExpress')
         html = '''<html><body>
-            <a href="/technology-science">Khoa học công nghệ</a>
-            <a href="https://vnexpress.net/gioi-chuyen-gia-noi-gi-khi-moonshot-bi-to-chung-cat-ai-my-5101167.html">Crawl thử bài báo VnExpress</a>
+            <a href="/technology-science">Technology science</a>
+            <a href="https://vnexpress.net/gioi-chuyen-gia-noi-gi-khi-moonshot-bi-to-chung-cat-ai-my-5101167.html">Try crawling a VnExpress article</a>
             <a href="https://www.bbc.com/news/technology-5101445">BBC article example</a>
         </body></html>'''
         anchors = crawler.extract_article_links_from_html(html, 'https://vnexpress.net/cong-nghe', 'Technology', limit=10)

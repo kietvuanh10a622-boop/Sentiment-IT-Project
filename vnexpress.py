@@ -5,7 +5,7 @@ from base_crawler import BaseCrawler
 
 
 class VnExpressCrawler(BaseCrawler):
-    """Crawler chuyên biệt cho VnExpress về công nghệ, kinh doanh và thế giới."""
+    """Specialized crawler for VnExpress technology, business, and world news."""
 
     ROUTES = [
         ('Technology', '/cong-nghe'),
