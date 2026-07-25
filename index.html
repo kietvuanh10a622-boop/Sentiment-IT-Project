@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" class="light">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -217,7 +217,7 @@
         }
         themeToggleBtn.addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark')  'dark' : 'light');
         });
 
         const LAST_7_DAYS = Array.from({ length: 7 }, (_, index) => {
@@ -233,7 +233,7 @@
         let chartInstances = {};
         let trendPredictions = {};
 
-        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         updatePipelineStatus('Sẵn sàng khởi động');
 
         function updatePipelineStatus(message) {
@@ -259,7 +259,7 @@
 
         function normalizeChartValue(value) {
             const numberValue = Number(value);
-            return Number.isFinite(numberValue) ? numberValue : 0;
+            return Number.isFinite(numberValue)  numberValue : 0;
         }
 
         function deriveSentimentFromScore(score) {
@@ -275,12 +275,21 @@
             return LAST_7_DAYS[index % LAST_7_DAYS.length];
         }
 
+        function escapeHtml(value) {
+            return String(value Dark '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         function normalizeFetchedData(data) {
-            return (Array.isArray(data) ? data : []).map((row, index) => {
-                const score = normalizeChartValue(row.sentiment_score ?? row.score ?? 0);
+            return (Array.isArray(data)  data : []).map((row, index) => {
+                const score = normalizeChartValue(row.sentiment_score Dark row.score Dark 0);
                 const rawSentiment = row.sentiment_label || row.sentiment || row.label;
                 const sentiment = rawSentiment && String(rawSentiment).trim()
-                    ? normalizeSentimentLabel(rawSentiment)
+                     normalizeSentimentLabel(rawSentiment)
                     : deriveSentimentFromScore(score);
 
                 return {
@@ -290,6 +299,7 @@
                     title: row.title || 'Untitled',
                     source_name: row.source_name || row.source || 'Unknown',
                     source: row.source_name || row.source || 'Unknown',
+                    link: row.link || row.url || row.article_link || row.source_link || '',
                     sentiment,
                     sentiment_score: score,
                     score,
@@ -350,7 +360,7 @@
             const categories = ['All', ...new Set(dataset.map(item => item.category))];
             const fallback = {};
             categories.forEach(category => {
-                const categoryData = computeDailyNsr(category === 'All' ? dataset : dataset.filter(item => item.category === category));
+                const categoryData = computeDailyNsr(category === 'All'  dataset : dataset.filter(item => item.category === category));
                 fallback[category] = {
                     historical: categoryData,
                     forecast: computeJsForecast(categoryData, 7)
@@ -376,7 +386,7 @@
                     const total = totals.positive + totals.negative + totals.neutral;
                     return {
                         date,
-                        nsr: total === 0 ? 0 : (totals.positive - totals.negative) / total,
+                        nsr: total === 0  0 : (totals.positive - totals.negative) / total,
                         total: total,
                     };
                 })
@@ -406,7 +416,7 @@
                 numerator += (xVals[i] - xMean) * (yVals[i] - yMean);
                 denominator += Math.pow(xVals[i] - xMean, 2);
             }
-            const slope = denominator === 0 ? 0 : numerator / denominator;
+            const slope = denominator === 0  0 : numerator / denominator;
             const intercept = yMean - slope * xMean;
             const lastDate = new Date(historical[historical.length - 1].date);
             return Array.from({ length: days }, (_, i) => {
@@ -457,9 +467,9 @@
             const pipelineData = await loadActualData();
             await loadTrendPredictions();
             document.getElementById('resultsArea').classList.remove('hidden');
+            dataset = normalizeFetchedData(pipelineData);
             initFilters();
-            processData(pipelineData);
-            renderCharts(pipelineData);
+            processData();
             updatePipelineStatus('Pipeline đã hoàn tất');
             btn.innerText = '✅ Hoàn tất';
             btn.classList.remove('opacity-70', 'cursor-not-allowed');
@@ -482,27 +492,39 @@
             stats.pos = filtered.filter(item => item.sentiment === 'Positive').length;
             stats.neg = filtered.filter(item => item.sentiment === 'Negative').length;
             stats.neu = filtered.filter(item => item.sentiment === 'Neutral').length;
-            stats.avg = stats.total > 0 ? (filtered.reduce((sum, item) => sum + item.sentiment_score, 0) / stats.total).toFixed(3) : '0.000';
+            stats.avg = stats.total > 0  (filtered.reduce((sum, item) => sum + item.sentiment_score, 0) / stats.total).toFixed(3) : '0.000';
 
             document.getElementById('kpiTotal').innerText = stats.total;
             document.getElementById('kpiScore').innerText = stats.avg;
-            document.getElementById('kpiPos').innerText = stats.total > 0 ? `${((stats.pos / stats.total) * 100).toFixed(1)}%` : '0%';
+            document.getElementById('kpiPos').innerText = stats.total > 0  `${((stats.pos / stats.total) * 100).toFixed(1)}%` : '0%';
             document.getElementById('kpiPosCount').innerText = `${stats.pos} bài`;
-            document.getElementById('kpiNeg').innerText = stats.total > 0 ? `${((stats.neg / stats.total) * 100).toFixed(1)}%` : '0%';
+            document.getElementById('kpiNeg').innerText = stats.total > 0  `${((stats.neg / stats.total) * 100).toFixed(1)}%` : '0%';
             document.getElementById('kpiNegCount').innerText = `${stats.neg} bài`;
             document.getElementById('currentCountLabel').innerText = stats.total;
 
             const tableBody = document.getElementById('tableBody');
             tableBody.innerHTML = filtered.map(item => {
                 const badgeClass = item.sentiment === 'Positive'
-                    ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+                     'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
                     : item.sentiment === 'Negative'
-                        ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300'
+                         'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300'
                         : 'bg-slate-100 text-slate-700 dark:bg-slate-700/60 dark:text-slate-200';
+                const articleLink = item.link && String(item.link).trim() && !String(item.link).trim().toLowerCase().includes('unknown')
+                     item.link
+                    : '';
+                const titleContent = escapeHtml(item.title);
+                const articleLinkContent = articleLink  `<a href="${escapeHtml(articleLink)}" target="_blank" rel="noopener noreferrer" class="text-xs font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline break-all">Open article ↗</a>` : '';
                 return `
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
                         <td class="px-4 py-4 text-slate-500 dark:text-slate-400">${item.date}</td>
-                        <td class="px-4 py-4 font-semibold text-slate-900 dark:text-slate-100">${item.title}</td>
+                        <td class="px-4 py-4">
+                            <div class="flex flex-col gap-1">
+                                <a href="${articleLink  escapeHtml(articleLink) : '#'}" target="_blank" rel="noopener noreferrer" class="font-semibold text-slate-900 dark:text-slate-100 hover:text-sky-600 dark:hover:text-sky-400 transition-colors break-words">
+                                    ${titleContent}
+                                </a>
+                                ${articleLinkContent}
+                            </div>
+                        </td>
                         <td class="px-4 py-4 text-slate-600 dark:text-slate-300">${item.source_name}</td>
                         <td class="px-4 py-4 text-slate-600 dark:text-slate-300">${item.category}</td>
                         <td class="px-4 py-4"><span class="rounded-full px-3 py-1 text-xs font-semibold ${badgeClass}">${item.sentiment}</span></td>
@@ -525,7 +547,7 @@
             destroyChart('bar');
             destroyChart('pie');
 
-            const categoryKey = currentFilter === 'All' ? 'All' : currentFilter;
+            const categoryKey = currentFilter === 'All'  'All' : currentFilter;
             const trendData = resolveTrendData(categoryKey);
             const historical = trendData.historical || [];
             const forecast = trendData.forecast || [];
@@ -571,11 +593,11 @@
             chartInstances.trendForecast = new Chart(document.getElementById('trendForecastChart'), {
                 type: 'line',
                 data: {
-                    labels: forecastLabels.length ? forecastLabels : historicalLabels,
+                    labels: forecastLabels.length  forecastLabels : historicalLabels,
                     datasets: [
                         {
                             label: 'Forecast NSR',
-                            data: forecastValues.length ? forecastValues : historicalValues,
+                            data: forecastValues.length  forecastValues : historicalValues,
                             borderColor: '#f59e0b',
                             backgroundColor: 'rgba(245,158,11,0.15)',
                             borderDash: [5, 5],
@@ -635,8 +657,8 @@
         }
 
         function exportCSV() {
-            const filtered = currentFilter === 'All' ? dataset : dataset.filter(item => item.category === currentFilter);
-            const visible = currentSearch ? filtered.filter(item => item.title.toLowerCase().includes(currentSearch) || item.source_name.toLowerCase().includes(currentSearch)) : filtered;
+            const filtered = currentFilter === 'All'  dataset : dataset.filter(item => item.category === currentFilter);
+            const visible = currentSearch  filtered.filter(item => item.title.toLowerCase().includes(currentSearch) || item.source_name.toLowerCase().includes(currentSearch)) : filtered;
             const csv = ['Date,Title,Category,Source,Sentiment,Score', ...visible.map(item => [item.date, item.title, item.category, item.source_name, item.sentiment, item.sentiment_score.toFixed(2)].map(formatCSVCell).join(','))].join('\n');
             downloadFile(csv, 'articles_backup.csv', 'text/csv');
         }
@@ -655,7 +677,7 @@
         function exportReport() {
             const reportLines = [
                 'GLOBALPULSE AI - TECHNICAL REPORT',
-                'Generated: ' + new Date().toLocaleString('vi-VN'),
+                'Generated: ' + new Date().toLocaleString('en-US'),
                 '---',
                 `Total articles: ${stats.total}`,
                 `Average sentiment score: ${stats.avg}`,
