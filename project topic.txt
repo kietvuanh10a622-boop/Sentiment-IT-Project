@@ -6,10 +6,10 @@ J26/02 (Group7): (a bit harder) Nhận diện khuôn mặt (camera)
 + dấu vân tay (fingerprint)
 
 SE25/1(Group3): (basic) phát triển chatbox 24/7 (user-user/bot-user)
--> (final/extra-harder) AI bot(advanced AI)-user
+-> (final/extra-harder) AI bot (advanced AI) - user
 
 -------
-non-AI foundations
+Non-AI foundations
 
 TEC004/01: thu thập và phân tích dữ liệu nhà đất
 
@@ -19,4 +19,4 @@ TEC004/03: Job Market Intelligence System for IT Industry in Vietnam
 
 TEC004/04: PTT Forum Trend Analyzer & Discussion Mining System
 
-TEC004/05(AI basic)(Group2): University Course Performance Tracker&Grade Prediction System
+TEC004/05(AI basic)(Group2): University Course Performance Tracker & Grade Prediction System

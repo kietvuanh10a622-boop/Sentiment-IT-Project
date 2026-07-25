@@ -1,6 +1,6 @@
 from pathlib import Path
 html = """<!DOCTYPE html>
-<html lang="vi" class="light">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -204,7 +204,7 @@ html = """<!DOCTYPE html>
         }
         themeToggleBtn.addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark')  'dark' : 'light');
         });
         const MOCK_DATA = [
             { id: 1, date: "2026-07-20", category: "Supply Chain", title: "TSMC ghi nhận doanh thu kỷ lục nhờ chip AI", source: "VnExpress", sentiment: "Positive", score: 0.85 },
@@ -278,17 +278,17 @@ html = """<!DOCTYPE html>
             stats.pos = filtered.filter(item => item.sentiment === 'Positive').length;
             stats.neg = filtered.filter(item => item.sentiment === 'Negative').length;
             stats.neu = filtered.filter(item => item.sentiment === 'Neutral').length;
-            stats.avg = stats.total > 0 ? (filtered.reduce((sum, item) => sum + item.score, 0) / stats.total).toFixed(3) : '0.000';
+            stats.avg = stats.total > 0  (filtered.reduce((sum, item) => sum + item.score, 0) / stats.total).toFixed(3) : '0.000';
             document.getElementById('kpiTotal').innerText = stats.total;
             document.getElementById('kpiScore').innerText = stats.avg;
-            document.getElementById('kpiPos').innerText = stats.total > 0 ? `${((stats.pos / stats.total) * 100).toFixed(1)}%` : '0%';
+            document.getElementById('kpiPos').innerText = stats.total > 0  `${((stats.pos / stats.total) * 100).toFixed(1)}%` : '0%';
             document.getElementById('kpiPosCount').innerText = `${stats.pos} bài`;
-            document.getElementById('kpiNeg').innerText = stats.total > 0 ? `${((stats.neg / stats.total) * 100).toFixed(1)}%` : '0%';
+            document.getElementById('kpiNeg').innerText = stats.total > 0  `${((stats.neg / stats.total) * 100).toFixed(1)}%` : '0%';
             document.getElementById('kpiNegCount').innerText = `${stats.neg} bài`;
             document.getElementById('currentCountLabel').innerText = stats.total;
             const tableBody = document.getElementById('tableBody');
             tableBody.innerHTML = filtered.map(item => {
-                const badgeClass = item.sentiment === 'Positive' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : item.sentiment === 'Negative' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-700/60 dark:text-slate-200';
+                const badgeClass = item.sentiment === 'Positive'  'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : item.sentiment === 'Negative'  'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-700/60 dark:text-slate-200';
                 return `
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
                         <td class="px-4 py-4 text-slate-500 dark:text-slate-400">${item.date}</td>
@@ -351,8 +351,8 @@ html = """<!DOCTYPE html>
             document.body.removeChild(link);
         }
         function exportCSV() {
-            const filtered = currentFilter === 'All' ? MOCK_DATA : MOCK_DATA.filter(item => item.category === currentFilter);
-            const visible = currentSearch ? filtered.filter(item => item.title.toLowerCase().includes(currentSearch) || item.source.toLowerCase().includes(currentSearch)) : filtered;
+            const filtered = currentFilter === 'All'  MOCK_DATA : MOCK_DATA.filter(item => item.category === currentFilter);
+            const visible = currentSearch  filtered.filter(item => item.title.toLowerCase().includes(currentSearch) || item.source.toLowerCase().includes(currentSearch)) : filtered;
             const csv = ['Date,Title,Category,Source,Sentiment,Score', ...visible.map(item => [item.date, item.title, item.category, item.source, item.sentiment, item.score.toFixed(2)].map(formatCSVCell).join(','))].join('\n');
             downloadFile(csv, 'articles_backup.csv', 'text/csv');
         }

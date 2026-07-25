@@ -2,14 +2,12 @@ import concurrent.futures
 import logging
 import time
 
-from ai_module.sentiment import apply_sentiment_analysis
-from analytics_module.dashboard import generate_analytics_dashboard
-from crawlers.bbc import BBCCrawler
-from crawlers.vnexpress import VnExpressCrawler
-from pipeline.database import export_database_to_files, initialize_database, save_articles_to_db
-from pipeline.forecasting import generate_trend_predictions
-from pipeline.text_processor import clean_articles_pipeline
-from reporting_module.daily_report import generate_daily_report
+from sentiment import apply_sentiment_analysis
+from bbc import BBCCrawler
+from vnexpress import VnExpressCrawler
+from database import export_database_to_files, initialize_database, save_articles_to_db
+from forecasting import generate_trend_predictions
+from text_processor import clean_articles_pipeline
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - [%(levelname)s] - %(message)s')
 
@@ -20,7 +18,7 @@ def run_parallel_crawlers():
 
     logging.info('--- STEP 1: STARTING PARALLEL INGESTION ---')
     with concurrent.futures.ThreadPoolExecutor(max_workers=len(crawlers)) as executor:
-        future_to_crawler = {executor.submit(crawler.crawl_articles): crawler for crawler in crawlers}
+        future_to_crawler = {executor.submit(crawler.crawl_articles, max_age_days=2): crawler for crawler in crawlers}
         for future in concurrent.futures.as_completed(future_to_crawler):
             crawler = future_to_crawler[future]
             try:
@@ -38,7 +36,7 @@ def main():
     start_time = time.time()
     logging.info('========== STARTING NEWS AGGREGATOR PIPELINE ==========')
 
-    initialize_database()
+    initialize_database(clear_existing=True)
     raw_data = run_parallel_crawlers()
 
     if not raw_data:
@@ -50,8 +48,6 @@ def main():
     save_articles_to_db(analyzed_data)
     export_database_to_files()
     generate_trend_predictions(analyzed_data, output_path='trend_predictions.json', horizon_days=14)
-    generate_analytics_dashboard()
-    generate_daily_report()
 
     end_time = time.time()
     logging.info(f'========== PIPELINE COMPLETED IN {end_time - start_time:.2f} SECONDS ==========')
