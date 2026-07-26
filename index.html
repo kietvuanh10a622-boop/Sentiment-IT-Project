@@ -359,10 +359,21 @@
 
             const tableBody = document.getElementById('tableBody');
             tableBody.innerHTML = filtered.map(item => {
+                const rawLink = item.link && String(item.link).trim();
+                const sourceText = `${item.source_name || item.source || ''}`.toLowerCase();
+                const isBlockedBbcLink = !!rawLink && (rawLink.includes('bbc.co.uk') || rawLink.includes('bbc.com') || sourceText.includes('bbc'));
+
+                // Use Google Translate as a UI-side proxy to bypass BBC link blocking in Vietnam.
+                const articleUrl = isBlockedBbcLink
+                    ? `https://translate.google.com/translate?sl=en&tl=vi&u=${encodeURIComponent(rawLink)}`
+                    : rawLink || '#';
+
                 const badgeClass = item.sentiment === 'Positive' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : item.sentiment === 'Negative' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-700/60 dark:text-slate-200';
-                const articleLink = item.link && String(item.link).trim() && !String(item.link).trim().toLowerCase().includes('unknown') ? item.link : '';
+                const articleLink = rawLink && !rawLink.toLowerCase().includes('unknown') ? articleUrl : '';
                 const titleContent = escapeHtml(item.title);
-                const articleLinkContent = articleLink ? `<a href="${escapeHtml(articleLink)}" target="_blank" rel="noopener noreferrer" class="text-xs font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline break-all">Open article ↗</a>` : '';
+                const articleLinkContent = articleLink
+                    ? `<a href="${escapeHtml(articleLink)}" target="_blank" rel="noopener noreferrer" class="text-xs font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline break-all">Open article ↗</a>`
+                    : '';
                 return `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors"><td class="px-4 py-4 text-slate-500 dark:text-slate-400">${item.date}</td><td class="px-4 py-4"><div class="flex flex-col gap-1"><a href="${articleLink ? escapeHtml(articleLink) : '#'}" target="_blank" rel="noopener noreferrer" class="font-semibold text-slate-900 dark:text-slate-100 hover:text-sky-600 dark:hover:text-sky-400 transition-colors break-words">${titleContent}</a>${articleLinkContent}</div></td><td class="px-4 py-4 text-slate-600 dark:text-slate-300">${escapeHtml(item.source_name)}</td><td class="px-4 py-4 text-slate-600 dark:text-slate-300">${escapeHtml(item.category)}</td><td class="px-4 py-4"><span class="rounded-full px-3 py-1 text-xs font-semibold ${badgeClass}">${item.sentiment}</span></td><td class="px-4 py-4 font-mono text-slate-700 dark:text-slate-200">${item.sentiment_score.toFixed(2)}</td></tr>`;
             }).join('');
             renderCharts(filtered);
