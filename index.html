@@ -1,415 +1,556 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en" class="h-full">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GlobalPulse AI Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: {} } };
-    </script>
-    <style>
-        .fade-in { animation: fadeIn 0.45s ease-out forwards; opacity: 0; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-        .pulse-active { animation: pulseBorder 1.5s infinite; border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.08); }
-        @keyframes pulseBorder { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.35); } 70% { box-shadow: 0 0 0 14px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
-        .step-done { border-color: #22c55e; background-color: rgba(34, 197, 94, 0.12); color: #166534; }
-        .status-pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.8rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; }
-        .status-pill span { width: 0.55rem; height: 0.55rem; border-radius: 9999px; display: inline-block; }
-        canvas { display: block; width: 100% !important; height: 100% !important; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlobalPulse AI • Semiconductor Intelligence</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { boxShadow: { soft: '0 20px 45px -20px rgba(15, 23, 42, 0.25)' } } }
+    };
+  </script>
+  <style>
+    :root { color-scheme: light; }
+    .dark { color-scheme: dark; }
+    body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .panel {
+      border-radius: 1.5rem;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 20px 45px -20px rgba(15, 23, 42, 0.25);
+      backdrop-filter: blur(8px);
+    }
+    .dark .panel {
+      border-color: rgba(30, 41, 59, 0.95);
+      background: rgba(15, 23, 42, 0.92);
+    }
+    .soft-grid { background-image: linear-gradient(to right, rgba(15,23,42,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(15,23,42,0.03) 1px, transparent 1px); background-size: 24px 24px; }
+    .modal-enter { opacity: 0; transform: translateY(18px) scale(0.98); }
+    .modal-enter-active { opacity: 1; transform: translateY(0) scale(1); }
+    .modal-exit { opacity: 1; transform: translateY(0) scale(1); }
+    .modal-exit-active { opacity: 0; transform: translateY(16px) scale(0.98); }
+    .slider-card { transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease; }
+    .slider-card:hover { transform: translateY(-2px); box-shadow: 0 18px 36px -20px rgba(37, 99, 235, 0.4); }
+    canvas { display: block; width: 100% !important; height: 100% !important; }
+  </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans p-6 min-h-screen transition-colors duration-300">
-    <header class="mb-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl p-6">
-        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+<body class="min-h-screen bg-slate-100 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
+  <div class="flex min-h-screen">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 hidden w-72 flex-col border-r border-slate-800 bg-slate-950 px-6 py-6 text-slate-200 lg:flex">
+      <div class="flex items-center gap-3">
+        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-500/15 text-lg font-semibold text-sky-400">GP</div>
+        <div>
+          <p class="text-lg font-semibold tracking-tight">GlobalPulse AI</p>
+          <p class="text-xs uppercase tracking-[0.3em] text-slate-400">Semiconductor OS</p>
+        </div>
+      </div>
+
+      <nav class="mt-8 space-y-1">
+        <button class="flex w-full items-center gap-3 rounded-2xl bg-slate-800/80 px-4 py-3 text-sm font-semibold text-white"><span>◉</span> Dashboard</button>
+        <button class="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Insights</button>
+        <button class="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Market Signals</button>
+        <button class="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Risk Alerts</button>
+        <button class="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Integrations</button>
+      </nav>
+
+      <div class="mt-auto space-y-3 border-t border-slate-800 pt-5 text-sm">
+        <button class="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-slate-300 hover:bg-slate-800/70 hover:text-white">⚙ Settings</button>
+        <button class="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-slate-300 hover:bg-slate-800/70 hover:text-white">❓ Help Center</button>
+        <div class="flex items-center gap-3 rounded-2xl bg-slate-900/70 px-4 py-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-indigo-500 text-sm font-semibold text-white">KV</div>
+          <div>
+            <p class="font-semibold text-white">Kiet Vu</p>
+            <p class="text-xs text-slate-400">Principal Analyst</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="flex-1 lg:ml-72">
+      <header class="border-b border-slate-200 bg-white/80 px-4 py-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/80 lg:px-8">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3 lg:hidden">
+            <button id="mobileMenuBtn" class="rounded-2xl border border-slate-300 p-2.5 text-slate-700 dark:border-slate-700 dark:text-slate-200">☰</button>
+            <div class="text-sm font-semibold">GlobalPulse AI</div>
+          </div>
+          <div class="flex flex-1 flex-wrap items-center gap-3">
+            <label class="flex flex-1 items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+              <span>🔎</span>
+              <input id="searchInput" type="text" placeholder="Search market signals..." class="w-full bg-transparent outline-none" />
+            </label>
+            <label class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+              <select id="rangeSelect" class="bg-transparent outline-none">
+                <option>Monthly</option>
+                <option selected>Q3 2026</option>
+                <option>YTD</option>
+              </select>
+            </label>
+            <button id="themeToggle" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">☀︎ Theme</button>
+            <button class="rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-500">+ Export Report</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="soft-grid min-h-screen px-4 py-6 lg:px-8 lg:py-8">
+        <section class="mb-6 grid gap-4 xl:grid-cols-[1.35fr_0.65fr]">
+          <div class="panel overflow-hidden p-6">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Executive Overview</p>
+                <h1 class="mt-2 text-3xl font-semibold tracking-tight">Semiconductor market intelligence at a glance</h1>
+              </div>
+              <div class="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-300">Live • 14 Signals</div>
+            </div>
+            <div class="mt-6 grid gap-4 md:grid-cols-3">
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/70">
+                <p class="text-sm text-slate-500">Overall Market Sentiment</p>
+                <div class="mt-3 flex items-end justify-between">
+                  <div>
+                    <div class="text-3xl font-semibold">+72%</div>
+                    <div class="mt-2 text-sm font-medium text-emerald-600">↑ 12% vs last month</div>
+                  </div>
+                  <div class="h-14 w-20"><canvas id="miniSentimentChart"></canvas></div>
+                </div>
+              </div>
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/70">
+                <p class="text-sm text-slate-500">Signals Collected</p>
+                <div class="mt-3 flex items-end justify-between">
+                  <div>
+                    <div class="text-3xl font-semibold">1,248</div>
+                    <div class="mt-2 text-sm font-medium text-sky-600">↑ 8.3% this week</div>
+                  </div>
+                  <div class="h-14 w-20"><canvas id="miniSignalsChart"></canvas></div>
+                </div>
+              </div>
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/70">
+                <p class="text-sm text-slate-500">AI Risk Insights</p>
+                <div class="mt-3 flex items-end justify-between">
+                  <div>
+                    <div class="text-3xl font-semibold">89</div>
+                    <div class="mt-2 text-sm font-medium text-amber-600">↑ 4.7% this week</div>
+                  </div>
+                  <div class="h-14 w-20"><canvas id="miniRiskChart"></canvas></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Signal Mix</p>
+                <h2 class="mt-1 text-xl font-semibold">Opportunity vs Risk</h2>
+              </div>
+              <div class="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">Balanced</div>
+            </div>
+            <div class="mt-4 h-56"><canvas id="donutChart"></canvas></div>
+          </div>
+        </section>
+
+        <section class="mb-6 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+          <div class="panel p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Sentiment Trend</p>
+                <h2 class="mt-1 text-xl font-semibold">Volume by sentiment over the last 12 months</h2>
+              </div>
+              <div class="text-sm text-slate-500">Updated 2h ago</div>
+            </div>
+            <div class="mt-6 h-80"><canvas id="trendBarChart"></canvas></div>
+          </div>
+
+          <div class="panel p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Drill-down</p>
+                <h2 class="mt-1 text-xl font-semibold">High priority disruptions</h2>
+              </div>
+            </div>
+            <div class="mt-4 space-y-3">
+              <button data-issue="tsmc-yield" class="slider-card flex w-full items-start justify-between rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left dark:border-slate-800 dark:bg-slate-950/70">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">TSMC Yield Issues</p>
+                  <p class="mt-1 text-sm text-slate-500">Advanced nodes under pressure after EUV tool delays.</p>
+                </div>
+                <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-900/25 dark:text-amber-300">High Risk</span>
+              </button>
+              <button data-issue="export-controls" class="slider-card flex w-full items-start justify-between rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left dark:border-slate-800 dark:bg-slate-950/70">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Export Controls</p>
+                  <p class="mt-1 text-sm text-slate-500">Geopolitical restrictions tightening shipping lanes.</p>
+                </div>
+                <span class="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700 dark:bg-rose-900/25 dark:text-rose-300">Critical</span>
+              </button>
+              <button data-issue="samsung-capacity" class="slider-card flex w-full items-start justify-between rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left dark:border-slate-800 dark:bg-slate-950/70">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Samsung Capacity</p>
+                  <p class="mt-1 text-sm text-slate-500">Foundry expansion pacing slower than expected.</p>
+                </div>
+                <span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700 dark:bg-sky-900/25 dark:text-sky-300">Watch</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel overflow-hidden p-6">
+          <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
-                <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Sentiment · Aggregation · Technical Intelligence</p>
-                <h1 class="mt-3 text-4xl font-extrabold tracking-tight">GlobalPulse AI Command Center</h1>
-                <p class="mt-3 max-w-2xl text-slate-600 dark:text-slate-300">Track multilingual news flows, analyze sentiment, and generate automated reports for the semiconductor industry.</p>
+              <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Source Performance</p>
+              <h2 class="mt-1 text-xl font-semibold">Multichannel source health and distribution</h2>
             </div>
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <button id="themeToggle" class="inline-flex items-center justify-center rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-4 py-3 text-slate-700 dark:text-slate-200 transition hover:bg-slate-200 dark:hover:bg-slate-700">
-                    <span class="dark:hidden">🌙</span>
-                    <span class="hidden dark:inline">☀️</span>
-                    <span class="ml-2 text-sm font-semibold">Theme</span>
-                </button>
-                <button id="runBtn" onclick="runPipeline()" class="inline-flex items-center justify-center rounded-2xl bg-sky-600 px-5 py-3 text-white shadow-lg hover:bg-sky-700 transition font-semibold">Start Pipeline</button>
-            </div>
-        </div>
-        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-5 shadow-sm">
-                <div class="text-sm font-semibold text-slate-500 dark:text-slate-400">Current Date</div>
-                <div id="currentDate" class="mt-2 text-xl font-bold"></div>
-            </div>
-            <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-5 shadow-sm">
-                <div class="text-sm font-semibold text-slate-500 dark:text-slate-400">Pipeline Status</div>
-                <div id="pipelineStatus" class="mt-2 flex flex-wrap gap-2"></div>
-            </div>
-            <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-5 shadow-sm">
-                <div class="text-sm font-semibold text-slate-500 dark:text-slate-400">Data Sources</div>
-                <div class="mt-2 flex flex-wrap gap-2">
-                    <span class="status-pill bg-blue-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200"><span class="bg-sky-500"></span>VnExpress</span>
-                    <span class="status-pill bg-slate-100 text-slate-700 dark:bg-slate-800/80 dark:text-slate-300"><span class="bg-slate-500"></span>BBC</span>
-                </div>
-            </div>
-        </div>
-    </header>
+          </div>
+          <div class="mt-6 overflow-x-auto">
+            <table class="min-w-full text-left text-sm">
+              <thead class="border-b border-slate-200 text-xs uppercase tracking-[0.25em] text-slate-400 dark:border-slate-800">
+                <tr>
+                  <th class="pb-3 pr-4 font-semibold">Source</th>
+                  <th class="pb-3 pr-4 font-semibold">Momentum</th>
+                  <th class="pb-3 pr-4 font-semibold">Sentiment mix</th>
+                  <th class="pb-3 pr-4 font-semibold">Coverage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b border-slate-100 text-slate-600 dark:border-slate-800 dark:text-slate-300">
+                  <td class="py-4 pr-4 font-semibold text-slate-900 dark:text-slate-100">VnExpress</td>
+                  <td class="py-4 pr-4"><div class="h-2.5 w-28 rounded-full bg-slate-200 dark:bg-slate-800"><div class="h-2.5 w-[76%] rounded-full bg-emerald-500"></div></div></td>
+                  <td class="py-4 pr-4"><div class="flex items-center gap-2"><span class="h-2.5 w-10 rounded-full bg-emerald-500"></span><span class="h-2.5 w-5 rounded-full bg-slate-400"></span><span class="h-2.5 w-6 rounded-full bg-rose-500"></span></div></td>
+                  <td class="py-4 pr-4">38 articles</td>
+                </tr>
+                <tr class="border-b border-slate-100 text-slate-600 dark:border-slate-800 dark:text-slate-300">
+                  <td class="py-4 pr-4 font-semibold text-slate-900 dark:text-slate-100">BBC</td>
+                  <td class="py-4 pr-4"><div class="h-2.5 w-28 rounded-full bg-slate-200 dark:bg-slate-800"><div class="h-2.5 w-[62%] rounded-full bg-sky-500"></div></div></td>
+                  <td class="py-4 pr-4"><div class="flex items-center gap-2"><span class="h-2.5 w-8 rounded-full bg-emerald-500"></span><span class="h-2.5 w-7 rounded-full bg-slate-400"></span><span class="h-2.5 w-8 rounded-full bg-rose-500"></span></div></td>
+                  <td class="py-4 pr-4">24 articles</td>
+                </tr>
+                <tr class="text-slate-600 dark:text-slate-300">
+                  <td class="py-4 pr-4 font-semibold text-slate-900 dark:text-slate-100">Reuters</td>
+                  <td class="py-4 pr-4"><div class="h-2.5 w-28 rounded-full bg-slate-200 dark:bg-slate-800"><div class="h-2.5 w-[83%] rounded-full bg-violet-500"></div></div></td>
+                  <td class="py-4 pr-4"><div class="flex items-center gap-2"><span class="h-2.5 w-9 rounded-full bg-emerald-500"></span><span class="h-2.5 w-5 rounded-full bg-slate-400"></span><span class="h-2.5 w-6 rounded-full bg-rose-500"></span></div></td>
+                  <td class="py-4 pr-4">19 articles</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
 
-    <section class="mb-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl p-6">
-        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-            <div>
-                <h2 class="text-xl font-bold">Processing Workflow</h2>
-                <p class="mt-2 text-slate-500 dark:text-slate-400">SP1 to SP6 are shown as a visual workflow.</p>
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full lg:w-auto">
-                <div id="step1" class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4 text-center transition"><div class="text-sm font-semibold">SP1</div><div class="text-xs text-slate-500 dark:text-slate-400">Ingestion</div></div>
-                <div id="step2" class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4 text-center transition"><div class="text-sm font-semibold">SP2</div><div class="text-xs text-slate-500 dark:text-slate-400">Cleansing</div></div>
-                <div id="step3" class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4 text-center transition"><div class="text-sm font-semibold">SP3</div><div class="text-xs text-slate-500 dark:text-slate-400">Storage</div></div>
-                <div id="step4" class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4 text-center transition"><div class="text-sm font-semibold">SP4</div><div class="text-xs text-slate-500 dark:text-slate-400">AI Sentiment</div></div>
-                <div id="step5" class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4 text-center transition"><div class="text-sm font-semibold">SP5</div><div class="text-xs text-slate-500 dark:text-slate-400">Analytics</div></div>
-                <div id="step6" class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4 text-center transition"><div class="text-sm font-semibold">SP6</div><div class="text-xs text-slate-500 dark:text-slate-400">Export</div></div>
-            </div>
+  <div id="modalOverlay" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm">
+    <div id="modalPanel" class="absolute inset-y-0 right-0 flex w-full max-w-6xl flex-col bg-white shadow-2xl transition-all duration-300 dark:bg-slate-950">
+      <div class="flex items-center justify-between border-b border-slate-200 px-6 py-5 dark:border-slate-800">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Disruption Explorer</p>
+          <h3 id="modalTitle" class="mt-1 text-2xl font-semibold"></h3>
         </div>
-    </section>
+        <button id="closeModalBtn" class="rounded-full border border-slate-300 p-2 text-slate-600 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">✕</button>
+      </div>
+      <div class="flex-1 overflow-y-auto px-6 py-6">
+        <div class="grid gap-4 md:grid-cols-3">
+          <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900/30 dark:bg-emerald-900/15">
+            <p class="text-sm text-emerald-700 dark:text-emerald-300">Positive</p>
+            <p id="kpiPositive" class="mt-2 text-3xl font-semibold">0</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/70">
+            <p class="text-sm text-slate-600 dark:text-slate-300">Neutral</p>
+            <p id="kpiNeutral" class="mt-2 text-3xl font-semibold">0</p>
+          </div>
+          <div class="rounded-2xl border border-rose-200 bg-rose-50 p-4 dark:border-rose-900/30 dark:bg-rose-900/15">
+            <p class="text-sm text-rose-700 dark:text-rose-300">Negative</p>
+            <p id="kpiNegative" class="mt-2 text-3xl font-semibold">0</p>
+          </div>
+        </div>
 
-    <section id="resultsArea" class="hidden fade-in">
-        <div class="grid gap-6 lg:grid-cols-4 mb-8">
-            <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm"><p class="text-sm uppercase tracking-[0.25em] text-slate-400">Total Articles</p><p id="kpiTotal" class="text-4xl font-extrabold mt-4">0</p><p class="mt-2 text-slate-500">VnExpress + BBC</p></div>
-            <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm"><p class="text-sm uppercase tracking-[0.25em] text-slate-400">Average Sentiment</p><p id="kpiScore" class="text-4xl font-extrabold mt-4">0.00</p><p class="mt-2 text-slate-500">Average value between -1 and 1</p></div>
-            <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm"><p class="text-sm uppercase tracking-[0.25em] text-slate-400">Positive</p><p id="kpiPos" class="text-4xl font-extrabold mt-4 text-emerald-600">0%</p><p id="kpiPosCount" class="mt-2 text-slate-500">0 articles</p></div>
-            <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm"><p class="text-sm uppercase tracking-[0.25em] text-slate-400">Negative</p><p id="kpiNeg" class="text-4xl font-extrabold mt-4 text-red-600">0%</p><p id="kpiNegCount" class="mt-2 text-slate-500">0 articles</p></div>
+        <div class="mt-6 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+          <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/70">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Net Sentiment Rate</p>
+                <h4 class="mt-1 text-xl font-semibold">30-day trend</h4>
+              </div>
+            </div>
+            <div class="mt-5 h-80"><canvas id="modalLineChart"></canvas></div>
+          </div>
+          <div class="space-y-4">
+            <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/70">
+              <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Impact Breakdown</p>
+              <div class="mt-4 grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
+                <div class="h-28"><canvas id="radialSupply"></canvas></div>
+                <div class="h-28"><canvas id="radialPrice"></canvas></div>
+                <div class="h-28"><canvas id="radialLogistics"></canvas></div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="grid gap-6 xl:grid-cols-3 mb-8">
-            <div class="xl:col-span-2 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
-                <h2 class="text-xl font-bold mb-5">Daily Sentiment Trend</h2>
-                <div class="grid gap-4 lg:grid-cols-2 h-72">
-                    <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-3 flex flex-col"><div class="text-sm font-semibold mb-2">Historical NSR</div><div class="flex-1 min-h-0"><canvas id="trendHistoryChart"></canvas></div></div>
-                    <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-3 flex flex-col"><div class="text-sm font-semibold mb-2">Forecast NSR</div><div class="flex-1 min-h-0"><canvas id="trendForecastChart"></canvas></div></div>
-                </div>
-            </div>
-            <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
-                <h2 class="text-xl font-bold mb-5">Sentiment Distribution</h2>
-                <div class="h-72"><canvas id="pieChart"></canvas></div>
-            </div>
-        </div>
-        <div class="grid gap-6 lg:grid-cols-2 mb-8">
-            <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
-                <h2 class="text-xl font-bold mb-5">Source Comparison</h2>
-                <div class="h-72"><canvas id="barChart"></canvas></div>
-            </div>
-            <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm space-y-4">
-                <div><h2 class="text-xl font-bold">Filter Options</h2><p class="text-sm text-slate-500">Filter by category and search headlines.</p></div>
-                <div class="grid gap-4">
-                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">Category</label>
-                    <select id="categoryFilter" onchange="applyFilter(this.value)" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"><option value="All">All</option></select>
-                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">Search Headlines</label>
-                    <input id="searchInput" type="text" oninput="applySearch(this.value)" placeholder="Enter keywords..." class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100" />
-                </div>
-                <div class="grid grid-cols-1 gap-3 pt-3">
-                    <button onclick="exportCSV()" class="w-full rounded-2xl bg-emerald-600 px-4 py-3 text-white font-semibold hover:bg-emerald-500 transition">Export CSV</button>
-                    <button onclick="exportJSON()" class="w-full rounded-2xl bg-sky-600 px-4 py-3 text-white font-semibold hover:bg-sky-500 transition">Export JSON</button>
-                    <button onclick="exportReport()" class="w-full rounded-2xl bg-violet-600 px-4 py-3 text-white font-semibold hover:bg-violet-500 transition">Download Technical Report</button>
-                </div>
-            </div>
-        </div>
-        <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
-            <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between mb-4">
-                <div><h2 class="text-xl font-bold">Article Database</h2><p class="text-sm text-slate-500">A list of analyzed articles that can be exported to CSV or JSON.</p></div>
-                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                    <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-3 text-slate-700 dark:text-slate-300">Filter: <span class="font-semibold" id="currentFilterLabel">All</span></div>
-                    <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-3 text-slate-700 dark:text-slate-300">Results: <span class="font-semibold" id="currentCountLabel">0</span></div>
-                </div>
-            </div>
-            <div class="overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-800">
-                <table class="min-w-full border-collapse text-left text-sm">
-                    <thead class="bg-slate-50 text-slate-600 dark:bg-slate-950 dark:text-slate-300 uppercase text-xs tracking-[0.2em] font-semibold"><tr><th class="px-4 py-4">Date</th><th class="px-4 py-4">Title</th><th class="px-4 py-4">Source</th><th class="px-4 py-4">Category</th><th class="px-4 py-4">Sentiment</th><th class="px-4 py-4">Score</th></tr></thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
-                </table>
-            </div>
-        </div>
-    </section>
 
-    <script>
-        const themeToggleBtn = document.getElementById('themeToggle');
-        const themeStorage = localStorage.getItem('theme');
-        if (themeStorage === 'dark' || (!themeStorage && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-        themeToggleBtn.addEventListener('click', () => {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        <div class="mt-6 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+          <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/70">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Signal Samples</p>
+                <h4 class="mt-1 text-xl font-semibold">Raw article excerpts</h4>
+              </div>
+            </div>
+            <div id="accordionList" class="mt-5 space-y-3"></div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/70">
+            <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">AI Copilot</p>
+            <div class="mt-4 rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
+              <p id="chatResponse" class="leading-6">Ask for a strategic outlook or mitigation plan for this disruption.</p>
+            </div>
+            <form id="chatForm" class="mt-4 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+              <input id="chatInput" type="text" placeholder="Ask AI about this disruption..." class="flex-1 bg-transparent px-3 py-2 outline-none" />
+              <button class="rounded-xl bg-sky-600 px-3 py-2 text-white">↗</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const chartTheme = {
+      line: { borderColor: '#2563eb', bg: 'rgba(37, 99, 235, 0.14)' },
+      positive: '#10b981',
+      neutral: '#64748b',
+      negative: '#ef4444',
+      grid: 'rgba(148, 163, 184, 0.2)'
+    };
+
+    const MOCK_DATA = {
+      'tsmc-yield': {
+        title: 'Geopolitics & Export Control Summary',
+        positive: 18,
+        neutral: 12,
+        negative: 9,
+        trend: [0.41, 0.47, 0.52, 0.38, 0.71, 0.66, 0.59, 0.63, 0.67, 0.71, 0.68, 0.74],
+        labels: ['Oct 1', 'Oct 2', 'Oct 3', 'Oct 4', 'Oct 5', 'Oct 6', 'Oct 7', 'Oct 8', 'Oct 9', 'Oct 10', 'Oct 11', 'Oct 12'],
+        notes: ['Oct 2: 75 high-risk signals', 'Oct 5: export license review', 'Oct 9: fab capacity watchlist'],
+        breakdown: { supply: 68, price: 54, logistics: 72 },
+        samples: [
+          { title: 'TSMC defers advanced packaging expansion', excerpt: 'Executives cited equipment bottlenecks and supply chain pressure from tightening export controls.' },
+          { title: 'Intel delays Ohio mega-fab', excerpt: 'Analysts expect the delay to strengthen TSMC’s bargaining position in high-performance compute.' },
+          { title: 'Foundry clients raise inventory buffers', excerpt: 'Customers are preparing for prolonged lead times and tighter allocation windows.' }
+        ]
+      },
+      'export-controls': {
+        title: 'Export Control Escalation',
+        positive: 9,
+        neutral: 14,
+        negative: 21,
+        trend: [0.18, 0.24, 0.16, 0.22, 0.13, 0.07, -0.04, -0.11, -0.09, -0.06, -0.03, 0.01],
+        labels: ['Oct 1', 'Oct 2', 'Oct 3', 'Oct 4', 'Oct 5', 'Oct 6', 'Oct 7', 'Oct 8', 'Oct 9', 'Oct 10', 'Oct 11', 'Oct 12'],
+        notes: ['Oct 3: customs review backlog', 'Oct 8: EUV export restriction update', 'Oct 12: OEM shipment re-route'],
+        breakdown: { supply: 78, price: 62, logistics: 84 },
+        samples: [
+          { title: 'China export rules tighten semiconductor equipment flows', excerpt: 'Industry sources report fresh restrictions affecting advanced packaging equipment routes.' },
+          { title: 'Freight lanes rerouted near Taiwan Strait', excerpt: 'Logistics teams are adjusting transshipment plans after rapid policy changes.' }
+        ]
+      },
+      'samsung-capacity': {
+        title: 'Samsung Foundry Capacity Watch',
+        positive: 14,
+        neutral: 11,
+        negative: 6,
+        trend: [0.33, 0.41, 0.47, 0.38, 0.49, 0.55, 0.61, 0.58, 0.64, 0.69, 0.72, 0.74],
+        labels: ['Oct 1', 'Oct 2', 'Oct 3', 'Oct 4', 'Oct 5', 'Oct 6', 'Oct 7', 'Oct 8', 'Oct 9', 'Oct 10', 'Oct 11', 'Oct 12'],
+        notes: ['Oct 4: production ramp-up stable', 'Oct 8: demand confidence rebounding', 'Oct 12: packaging capacity improving'],
+        breakdown: { supply: 42, price: 38, logistics: 48 },
+        samples: [
+          { title: 'Samsung increases 3nm capacity guidance', excerpt: 'The foundry announced additional tooling to support high-volume production in late Q4.' },
+          { title: 'Customers diversify wafer allocation', excerpt: 'Several customers are shifting orders to hedge against regional bottlenecks.' }
+        ]
+      }
+    };
+
+    let modalCharts = {};
+
+    function initTheme() {
+      const saved = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'dark' || (!saved && prefersDark)) document.documentElement.classList.add('dark');
+      else document.documentElement.classList.remove('dark');
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+
+    function destroyCharts() {
+      Object.values(modalCharts).forEach(chart => chart?.destroy());
+      modalCharts = {};
+    }
+
+    function openModal(issueId) {
+      const issue = MOCK_DATA[issueId];
+      if (!issue) return;
+      document.getElementById('modalTitle').textContent = issue.title;
+      document.getElementById('kpiPositive').textContent = issue.positive;
+      document.getElementById('kpiNeutral').textContent = issue.neutral;
+      document.getElementById('kpiNegative').textContent = issue.negative;
+      document.getElementById('modalOverlay').classList.remove('hidden');
+      document.getElementById('modalOverlay').classList.add('flex');
+      requestAnimationFrame(() => {
+        document.getElementById('modalPanel').classList.remove('translate-x-full');
+        document.getElementById('modalPanel').classList.add('translate-x-0');
+      });
+      renderModalCharts(issue);
+      renderAccordion(issue.samples);
+    }
+
+    function closeModal() {
+      document.getElementById('modalPanel').classList.remove('translate-x-0');
+      document.getElementById('modalPanel').classList.add('translate-x-full');
+      setTimeout(() => {
+        document.getElementById('modalOverlay').classList.add('hidden');
+        document.getElementById('modalOverlay').classList.remove('flex');
+      }, 220);
+      destroyCharts();
+    }
+
+    function renderAccordion(samples) {
+      const container = document.getElementById('accordionList');
+      container.innerHTML = samples.map((item, index) => `
+        <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+          <button class="flex w-full items-center justify-between text-left" data-index="${index}">
+            <span class="font-semibold text-slate-900 dark:text-slate-100">${item.title}</span>
+            <span class="text-slate-400">▾</span>
+          </button>
+          <div class="mt-3 hidden text-sm leading-6 text-slate-600 dark:text-slate-300" data-panel="${index}">${item.excerpt}</div>
+        </div>
+      `).join('');
+
+      container.querySelectorAll('button').forEach(button => {
+        button.addEventListener('click', () => {
+          const panel = container.querySelector(`[data-panel="${button.dataset.index}"]`);
+          panel.classList.toggle('hidden');
         });
+      });
+    }
 
-        const LAST_7_DAYS = Array.from({ length: 7 }, (_, index) => {
-            const date = new Date();
-            date.setDate(date.getDate() - (6 - index));
-            return date.toISOString().slice(0, 10);
+    function renderModalCharts(issue) {
+      destroyCharts();
+
+      modalCharts.line = new Chart(document.getElementById('modalLineChart'), {
+        type: 'line',
+        data: {
+          labels: issue.labels,
+          datasets: [{
+            label: 'NSR',
+            data: issue.trend,
+            borderColor: chartTheme.line.borderColor,
+            backgroundColor: chartTheme.line.bg,
+            fill: true,
+            tension: 0.35,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { x: { grid: { display: false } }, y: { min: -0.2, max: 0.9, ticks: { stepSize: 0.2 } } },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: context => `${context.raw.toFixed(2)} NSR • ${issue.notes[context.dataIndex] || 'signal update'}`
+              }
+            }
+          }
+        }
+      });
+
+      const radialOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '72%',
+        plugins: { legend: { display: false }, tooltip: { enabled: true } }
+      };
+
+      modalCharts.supply = new Chart(document.getElementById('radialSupply'), {
+        type: 'doughnut',
+        data: { labels: ['Impact', 'Rest'], datasets: [{ data: [issue.breakdown.supply, 100 - issue.breakdown.supply], backgroundColor: ['#2563eb', '#e2e8f0'] }] },
+        options: radialOptions,
+        plugins: [{ id: 'centerText', beforeDraw(chart) { const {ctx, chartArea: {width, height}} = chart; ctx.save(); ctx.font = '700 16px Inter'; ctx.fillStyle = '#0f172a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(`${issue.breakdown.supply}%`, width / 2, height / 2); ctx.restore(); } }]
+      });
+
+      modalCharts.price = new Chart(document.getElementById('radialPrice'), {
+        type: 'doughnut',
+        data: { labels: ['Impact', 'Rest'], datasets: [{ data: [issue.breakdown.price, 100 - issue.breakdown.price], backgroundColor: ['#10b981', '#e2e8f0'] }] },
+        options: radialOptions,
+        plugins: [{ id: 'centerText', beforeDraw(chart) { const {ctx, chartArea: {width, height}} = chart; ctx.save(); ctx.font = '700 16px Inter'; ctx.fillStyle = '#0f172a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(`${issue.breakdown.price}%`, width / 2, height / 2); ctx.restore(); } }]
+      });
+
+      modalCharts.logistics = new Chart(document.getElementById('radialLogistics'), {
+        type: 'doughnut',
+        data: { labels: ['Impact', 'Rest'], datasets: [{ data: [issue.breakdown.logistics, 100 - issue.breakdown.logistics], backgroundColor: ['#f59e0b', '#e2e8f0'] }] },
+        options: radialOptions,
+        plugins: [{ id: 'centerText', beforeDraw(chart) { const {ctx, chartArea: {width, height}} = chart; ctx.save(); ctx.font = '700 16px Inter'; ctx.fillStyle = '#0f172a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(`${issue.breakdown.logistics}%`, width / 2, height / 2); ctx.restore(); } }]
+      });
+    }
+
+    function initializeCharts() {
+      const miniCharts = [
+        ['miniSentimentChart', [55, 68, 72, 70, 76, 79]],
+        ['miniSignalsChart', [18, 24, 26, 31, 35, 39]],
+        ['miniRiskChart', [12, 17, 21, 24, 27, 29]]
+      ];
+
+      miniCharts.forEach(([id, values]) => {
+        new Chart(document.getElementById(id), {
+          type: 'line',
+          data: { labels: ['1', '2', '3', '4', '5', '6'], datasets: [{ data: values, borderColor: '#2563eb', borderWidth: 2, pointRadius: 0, tension: 0.35, fill: false }] },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } } }
         });
+      });
 
-        let dataset = [];
-        let stats = { total: 0, pos: 0, neg: 0, neu: 0, avg: 0 };
-        let currentFilter = 'All';
-        let currentSearch = '';
-        let chartInstances = {};
-        let trendPredictions = {};
+      new Chart(document.getElementById('donutChart'), {
+        type: 'doughnut',
+        data: { labels: ['Opportunities', 'Risks'], datasets: [{ data: [64, 36], backgroundColor: ['#2563eb', '#f59e0b'] }] },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '78%', plugins: { legend: { position: 'bottom' } } }
+      });
 
-        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        updatePipelineStatus('Ready to start');
+      new Chart(document.getElementById('trendBarChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          datasets: [
+            { label: 'Positive', data: [24, 28, 33, 31, 35, 39, 41, 44, 47, 49, 52, 58], backgroundColor: '#10b981' },
+            { label: 'Neutral', data: [12, 14, 16, 15, 16, 18, 19, 17, 18, 19, 17, 15], backgroundColor: '#64748b' },
+            { label: 'Negative', data: [11, 13, 10, 12, 13, 12, 11, 9, 10, 8, 7, 6], backgroundColor: '#ef4444' }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true } } }
+      });
+    }
 
-        function updatePipelineStatus(message) {
-            const status = document.getElementById('pipelineStatus');
-            status.innerHTML = `<span class="status-pill bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200"><span class="bg-slate-500"></span>${message}</span>`;
-        }
-
-        function dateToOrdinal(dateString) { return new Date(dateString).valueOf() / 86400000; }
-        function average(values) { if (!values.length) return 0; return values.reduce((sum, value) => sum + value, 0) / values.length; }
-        function normalizeSentimentLabel(value) { const normalized = String(value || '').trim().toLowerCase(); if (normalized === 'positive' || normalized === 'pos') return 'Positive'; if (normalized === 'negative' || normalized === 'neg') return 'Negative'; return 'Neutral'; }
-        function normalizeChartValue(value) { const numberValue = Number(value); return Number.isFinite(numberValue) ? numberValue : 0; }
-        function deriveSentimentFromScore(score) { if (score > 0) return 'Positive'; if (score < 0) return 'Negative'; return 'Neutral'; }
-        function resolveFallbackDate(row, index) { if (row && row.date && String(row.date).trim() && String(row.date).trim() !== 'Unknown') return String(row.date); return LAST_7_DAYS[index % LAST_7_DAYS.length]; }
-        function escapeHtml(value) { return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;').replace(/'/g, '&#39;'); }
-
-        function normalizeFetchedData(data) {
-            return (Array.isArray(data) ? data : []).map((row, index) => {
-                const score = normalizeChartValue(row.sentiment_score ?? row.score ?? 0);
-                const rawSentiment = row.sentiment_label || row.sentiment || row.label;
-                const sentiment = rawSentiment && String(rawSentiment).trim() ? normalizeSentimentLabel(rawSentiment) : deriveSentimentFromScore(score);
-                return { id: row.id || index + 1, date: resolveFallbackDate(row, index), category: row.category || 'Cross-Sector', title: row.title || 'Untitled', source_name: row.source_name || row.source || 'Unknown', source: row.source_name || row.source || 'Unknown', link: row.link || row.url || row.article_link || row.source_link || '', sentiment, sentiment_score: score, score, keywords: row.keywords || '' };
-            });
-        }
-
-        function resolveTrendData(categoryKey) {
-            if (trendPredictions && trendPredictions[categoryKey]) return trendPredictions[categoryKey];
-            if (trendPredictions && trendPredictions['All']) return trendPredictions['All'];
-            const fallback = generateFallbackTrendPredictions();
-            if (fallback[categoryKey]) return fallback[categoryKey];
-            if (fallback['All']) return fallback['All'];
-            return { historical: [], forecast: [] };
-        }
-
-        function parseCsv(text) {
-            const rows = [];
-            const lines = text.trim().split(/\r?\n/);
-            if (!lines.length) return rows;
-            const headers = lines[0].split(',').map((value) => value.trim().replace(/^\"|\"$/g, ''));
-            for (let index = 1; index < lines.length; index += 1) {
-                const values = [];
-                let current = '';
-                let inQuotes = false;
-                for (let i = 0; i < lines[index].length; i += 1) {
-                    const char = lines[index][i];
-                    if (char === '"') {
-                        inQuotes = !inQuotes;
-                    } else if (char === ',' && !inQuotes) {
-                        values.push(current.trim());
-                        current = '';
-                    } else {
-                        current += char;
-                    }
-                }
-                values.push(current.trim());
-                const row = {};
-                headers.forEach((header, headerIndex) => { row[header] = values[headerIndex] || ''; });
-                rows.push(row);
-            }
-            return rows;
-        }
-
-        async function loadTrendPredictions() {
-            try {
-                const response = await fetch('trend_predictions.json');
-                if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
-                trendPredictions = await response.json();
-            } catch (error) {
-                console.warn('Unable to load trend_predictions.json, using internal predictions:', error);
-                trendPredictions = generateFallbackTrendPredictions();
-            }
-        }
-
-        async function loadActualData() {
-            const candidates = ['articles_backup.json', 'articles_backup.csv'];
-            for (const url of candidates) {
-                try {
-                    const response = await fetch(url);
-                    if (!response.ok) continue;
-                    const contentType = response.headers.get('content-type') || '';
-                    if (url.endsWith('.json') || contentType.includes('application/json')) {
-                        const rows = await response.json();
-                        if (Array.isArray(rows)) return rows;
-                    } else {
-                        const text = await response.text();
-                        const rows = parseCsv(text);
-                        if (rows.length) return rows;
-                    }
-                } catch (error) {
-                    console.warn(`Unable to load ${url}:`, error);
-                }
-            }
-            return [];
-        }
-
-        async function loadArticlesData() {
-            const rows = await loadActualData();
-            dataset = normalizeFetchedData(rows);
-        }
-
-        function generateFallbackTrendPredictions() {
-            const categories = ['All', ...new Set(dataset.map(item => item.category))];
-            const fallback = {};
-            categories.forEach(category => {
-                const categoryData = computeDailyNsr(category === 'All' ? dataset : dataset.filter(item => item.category === category));
-                fallback[category] = { historical: categoryData, forecast: computeJsForecast(categoryData, 7) };
-            });
-            return fallback;
-        }
-
-        function computeDailyNsr(data) {
-            const grouped = {};
-            data.forEach(item => {
-                const date = item.date;
-                if (!grouped[date]) grouped[date] = { positive: 0, negative: 0, neutral: 0 };
-                if (item.sentiment === 'Positive') grouped[date].positive += 1;
-                else if (item.sentiment === 'Negative') grouped[date].negative += 1;
-                else grouped[date].neutral += 1;
-            });
-            return Object.entries(grouped).map(([date, totals]) => {
-                const total = totals.positive + totals.negative + totals.neutral;
-                return { date, nsr: total === 0 ? 0 : (totals.positive - totals.negative) / total, total };
-            }).sort((a, b) => a.date.localeCompare(b.date));
-        }
-
-        function computeJsForecast(historical, days) {
-            if (!historical.length) return [];
-            if (historical.length < 3) {
-                const lastNsr = historical[historical.length - 1].nsr;
-                return Array.from({ length: days }, (_, i) => {
-                    const date = new Date(historical[historical.length - 1].date);
-                    date.setDate(date.getDate() + i + 1);
-                    return { date: date.toISOString().slice(0, 10), predicted_nsr: lastNsr };
-                });
-            }
-            const xVals = historical.map(item => dateToOrdinal(item.date));
-            const yVals = historical.map(item => item.nsr);
-            const xMean = average(xVals); const yMean = average(yVals); let numerator = 0; let denominator = 0;
-            for (let i = 0; i < xVals.length; i += 1) { numerator += (xVals[i] - xMean) * (yVals[i] - yMean); denominator += Math.pow(xVals[i] - xMean, 2); }
-            const slope = denominator === 0 ? 0 : numerator / denominator;
-            const intercept = yMean - slope * xMean;
-            const lastDate = new Date(historical[historical.length - 1].date);
-            return Array.from({ length: days }, (_, i) => {
-                const future = new Date(lastDate);
-                future.setDate(future.getDate() + i + 1);
-                const pred = slope * dateToOrdinal(future.toISOString().slice(0, 10)) + intercept;
-                return { date: future.toISOString().slice(0, 10), predicted_nsr: Math.max(-1, Math.min(1, pred)) };
-            });
-        }
-
-        function initFilters() {
-            const categories = [...new Set(dataset.map(d => d.category))].sort();
-            const select = document.getElementById('categoryFilter');
-            select.innerHTML = '<option value="All">All</option>';
-            categories.forEach(cat => { select.innerHTML += `<option value="${cat}">${cat}</option>`; });
-            currentFilter = 'All';
-            select.value = 'All';
-            document.getElementById('currentFilterLabel').innerText = 'All';
-        }
-
-        function applyFilter(value) { currentFilter = value; document.getElementById('currentFilterLabel').innerText = value; processData(); }
-        function applySearch(value) { currentSearch = value.trim().toLowerCase(); processData(); }
-
-        async function runPipeline() {
-            const btn = document.getElementById('runBtn');
-            btn.disabled = true; btn.innerText = 'Running...'; btn.classList.add('opacity-70', 'cursor-not-allowed');
-            const steps = ['step1', 'step2', 'step3', 'step4', 'step5', 'step6'];
-            for (const step of steps) {
-                const el = document.getElementById(step); el.classList.add('pulse-active'); await new Promise(resolve => setTimeout(resolve, 450)); el.classList.remove('pulse-active'); el.classList.add('step-done');
-            }
-            await loadArticlesData();
-            await loadTrendPredictions();
-            document.getElementById('resultsArea').classList.remove('hidden');
-            initFilters();
-            processData();
-            updatePipelineStatus('Pipeline completed');
-            btn.innerText = 'Completed';
-            btn.classList.remove('opacity-70', 'cursor-not-allowed');
-        }
-
-        function processData(data = dataset) {
-            const normalizedData = normalizeFetchedData(data);
-            dataset = normalizedData;
-            let filtered = dataset;
-            if (currentFilter !== 'All') filtered = filtered.filter(item => item.category === currentFilter);
-            if (currentSearch) filtered = filtered.filter(item => item.title.toLowerCase().includes(currentSearch) || item.source_name.toLowerCase().includes(currentSearch));
-
-            stats.total = filtered.length;
-            stats.pos = filtered.filter(item => item.sentiment === 'Positive').length;
-            stats.neg = filtered.filter(item => item.sentiment === 'Negative').length;
-            stats.neu = filtered.filter(item => item.sentiment === 'Neutral').length;
-            stats.avg = stats.total > 0 ? Number((filtered.reduce((sum, item) => sum + item.sentiment_score, 0) / stats.total).toFixed(3)) : 0;
-
-            document.getElementById('kpiTotal').innerText = stats.total;
-            document.getElementById('kpiScore').innerText = stats.avg.toFixed(2);
-            document.getElementById('kpiPos').innerText = stats.total > 0 ? `${((stats.pos / stats.total) * 100).toFixed(1)}%` : '0%';
-            document.getElementById('kpiPosCount').innerText = `${stats.pos} articles`;
-            document.getElementById('kpiNeg').innerText = stats.total > 0 ? `${((stats.neg / stats.total) * 100).toFixed(1)}%` : '0%';
-            document.getElementById('kpiNegCount').innerText = `${stats.neg} articles`;
-            document.getElementById('currentCountLabel').innerText = stats.total;
-
-            const tableBody = document.getElementById('tableBody');
-            tableBody.innerHTML = filtered.map(item => {
-                const rawLink = item.link && String(item.link).trim();
-                const sourceText = `${item.source_name || item.source || ''}`.toLowerCase();
-                const isBlockedBbcLink = !!rawLink && (rawLink.includes('bbc.co.uk') || rawLink.includes('bbc.com') || sourceText.includes('bbc'));
-
-                // Use Google Translate as a UI-side proxy to bypass BBC link blocking in Vietnam.
-                const articleUrl = isBlockedBbcLink
-                    ? `https://translate.google.com/translate?sl=en&tl=vi&u=${encodeURIComponent(rawLink)}`
-                    : rawLink || '#';
-
-                const badgeClass = item.sentiment === 'Positive' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : item.sentiment === 'Negative' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-700/60 dark:text-slate-200';
-                const articleLink = rawLink && !rawLink.toLowerCase().includes('unknown') ? articleUrl : '';
-                const titleContent = escapeHtml(item.title);
-                const articleLinkContent = articleLink
-                    ? `<a href="${escapeHtml(articleLink)}" target="_blank" rel="noopener noreferrer" class="text-xs font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 hover:underline break-all">Open article ↗</a>`
-                    : '';
-                return `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors"><td class="px-4 py-4 text-slate-500 dark:text-slate-400">${item.date}</td><td class="px-4 py-4"><div class="flex flex-col gap-1"><a href="${articleLink ? escapeHtml(articleLink) : '#'}" target="_blank" rel="noopener noreferrer" class="font-semibold text-slate-900 dark:text-slate-100 hover:text-sky-600 dark:hover:text-sky-400 transition-colors break-words">${titleContent}</a>${articleLinkContent}</div></td><td class="px-4 py-4 text-slate-600 dark:text-slate-300">${escapeHtml(item.source_name)}</td><td class="px-4 py-4 text-slate-600 dark:text-slate-300">${escapeHtml(item.category)}</td><td class="px-4 py-4"><span class="rounded-full px-3 py-1 text-xs font-semibold ${badgeClass}">${item.sentiment}</span></td><td class="px-4 py-4 font-mono text-slate-700 dark:text-slate-200">${item.sentiment_score.toFixed(2)}</td></tr>`;
-            }).join('');
-            renderCharts(filtered);
-        }
-
-        function renderCharts(data) {
-            Object.entries(chartInstances).forEach(([key, chart]) => { if (chart) chart.destroy(); });
-            chartInstances = {};
-            const categoryKey = currentFilter === 'All' ? 'All' : currentFilter;
-            const trendData = resolveTrendData(categoryKey);
-            const historical = trendData.historical || [];
-            const forecast = trendData.forecast || [];
-            const historicalLabels = historical.map(item => item.date);
-            const historicalValues = historical.map(item => item.nsr);
-            const forecastLabels = forecast.map(item => item.date);
-            const forecastValues = forecast.map(item => item.predicted_nsr);
-
-            chartInstances.trendHistory = new Chart(document.getElementById('trendHistoryChart'), { type: 'line', data: { labels: historicalLabels, datasets: [{ label: 'Historical NSR', data: historicalValues, borderColor: '#0ea5e9', backgroundColor: 'rgba(14, 165, 233, 0.18)', fill: false, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#0ea5e9' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: -1, max: 1, ticks: { stepSize: 0.25 } } }, plugins: { tooltip: { mode: 'index', intersect: false }, legend: { position: 'bottom' } } } });
-            chartInstances.trendForecast = new Chart(document.getElementById('trendForecastChart'), { type: 'line', data: { labels: forecastLabels.length ? forecastLabels : historicalLabels, datasets: [{ label: 'Forecast NSR', data: forecastValues.length ? forecastValues : historicalValues, borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.15)', borderDash: [5, 5], fill: false, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#f59e0b' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: -1, max: 1, ticks: { stepSize: 0.25 } } }, plugins: { tooltip: { mode: 'index', intersect: false }, legend: { position: 'bottom' } } } });
-
-            const sentimentCounts = { Positive: 0, Neutral: 0, Negative: 0 };
-            data.forEach(item => { if (sentimentCounts[item.sentiment] !== undefined) sentimentCounts[item.sentiment] += 1; });
-            chartInstances.pie = new Chart(document.getElementById('pieChart'), { type: 'doughnut', data: { labels: ['Positive', 'Neutral', 'Negative'], datasets: [{ data: [sentimentCounts.Positive, sentimentCounts.Neutral, sentimentCounts.Negative], backgroundColor: ['#10b981', '#64748b', '#ef4444'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
-
-            const sourceGroups = {};
-            data.forEach(item => { const source = item.source_name || 'Unknown'; if (!sourceGroups[source]) sourceGroups[source] = { Positive: 0, Neutral: 0, Negative: 0 }; sourceGroups[source][item.sentiment] += 1; });
-            const sources = Object.keys(sourceGroups);
-            chartInstances.bar = new Chart(document.getElementById('barChart'), { type: 'bar', data: { labels: sources, datasets: [{ label: 'Positive', data: sources.map(source => sourceGroups[source].Positive), backgroundColor: '#10b981' }, { label: 'Neutral', data: sources.map(source => sourceGroups[source].Neutral), backgroundColor: '#64748b' }, { label: 'Negative', data: sources.map(source => sourceGroups[source].Negative), backgroundColor: '#ef4444' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { precision: 0, stepSize: 1 } } }, plugins: { legend: { position: 'bottom' } } } });
-        }
-
-        function exportCSV() { const rows = dataset.map(item => [item.date, item.title, item.source_name, item.category, item.sentiment, item.sentiment_score].join(',')); const content = ['date,title,source_name,category,sentiment,sentiment_score', ...rows].join('\n'); const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = 'articles_export.csv'; link.click(); URL.revokeObjectURL(url); }
-        function exportJSON() { const blob = new Blob([JSON.stringify(dataset, null, 2)], { type: 'application/json;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = 'articles_export.json'; link.click(); URL.revokeObjectURL(url); }
-        function exportReport() { const reportLines = ['GlobalPulse Technical Report', `Total articles: ${stats.total}`, `Average sentiment: ${stats.avg.toFixed(2)}`, `Positive: ${stats.pos}`, `Negative: ${stats.neg}`, `Neutral: ${stats.neu}`]; const blob = new Blob([reportLines.join('\n')], { type: 'text/plain;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = 'technical_report.txt'; link.click(); URL.revokeObjectURL(url); }
-
-        window.runPipeline = runPipeline; window.applyFilter = applyFilter; window.applySearch = applySearch; window.exportCSV = exportCSV; window.exportJSON = exportJSON; window.exportReport = exportReport;
-        document.addEventListener('DOMContentLoaded', () => { updatePipelineStatus('Ready to start'); document.getElementById('resultsArea').classList.add('hidden'); });
-    </script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      initializeCharts();
+      document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+      document.getElementById('mobileMenuBtn')?.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('hidden'));
+      document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+      document.getElementById('modalOverlay').addEventListener('click', event => {
+        if (event.target.id === 'modalOverlay') closeModal();
+      });
+      document.getElementById('chatForm').addEventListener('submit', event => {
+        event.preventDefault();
+        const value = document.getElementById('chatInput').value.trim();
+        if (!value) return;
+        document.getElementById('chatResponse').textContent = `AI insight: ${value} — the disruption remains elevated, with supplier diversification recommended in the next 14 days.`;
+        document.getElementById('chatInput').value = '';
+      });
+      document.querySelectorAll('[data-issue]').forEach(button => {
+        button.addEventListener('click', () => openModal(button.dataset.issue));
+      });
+    });
+  </script>
 </body>
 </html>
+
