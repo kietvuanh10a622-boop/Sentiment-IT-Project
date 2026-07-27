@@ -57,8 +57,8 @@
       </nav>
 
       <div class="mt-auto space-y-3 border-t border-slate-800 pt-5 text-sm">
-        <button class="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-slate-300 hover:bg-slate-800/70 hover:text-white">⚙ Settings</button>
-        <button class="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-slate-300 hover:bg-slate-800/70 hover:text-white">❓ Help Center</button>
+        <button id="btn-settings" data-view="settings" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-slate-300 hover:bg-slate-800/70 hover:text-white">⚙ Settings</button>
+        <button id="btn-help" data-view="settings" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-slate-300 hover:bg-slate-800/70 hover:text-white">❓ Help Center</button>
         <div class="flex items-center gap-3 rounded-2xl bg-slate-900/70 px-4 py-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-indigo-500 text-sm font-semibold text-white">KV</div>
           <div>
@@ -89,7 +89,7 @@
               </select>
             </label>
             <button id="themeToggle" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">☀︎ Theme</button>
-            <button class="rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-500">+ Export Report</button>
+            <button id="btnExportReport" type="button" onclick="exportReport()" class="rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-500">+ Export Report</button>
           </div>
         </div>
       </header>
@@ -103,7 +103,7 @@
                 <p class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Executive Overview</p>
                 <h1 class="mt-2 text-3xl font-semibold tracking-tight">Semiconductor market intelligence at a glance</h1>
               </div>
-              <div class="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-300">Live • 14 Signals</div>
+              <div class="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-300">Live • <span id="signalsCountBadge">0</span> Signals</div>
             </div>
             <div class="mt-6 grid gap-4 md:grid-cols-3">
               <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/70">
@@ -247,6 +247,11 @@
                 <p class="mt-2 max-w-2xl text-sm text-slate-500 dark:text-slate-400">Track semiconductor supply-chain articles, sentiment shifts, and intervention signals in one premium operational view.</p>
               </div>
               <div class="flex flex-wrap gap-3">
+                <label class="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                  <select id="categoryFilter" class="bg-transparent outline-none">
+                    <option value="All">All Categories</option>
+                  </select>
+                </label>
                 <button onclick="exportCSV()" class="rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">Export CSV</button>
                 <button onclick="exportJSON()" class="rounded-2xl bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-500">Export JSON</button>
                 <button onclick="exportReport()" class="rounded-2xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200">Download Tech Report</button>
@@ -257,12 +262,11 @@
               <table class="min-w-full text-left text-sm">
                 <thead class="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-[0.25em] text-slate-400 dark:border-slate-800 dark:bg-slate-950">
                   <tr>
-                    <th class="px-4 py-3 font-semibold">Date</th>
-                    <th class="px-4 py-3 font-semibold">Title</th>
-                    <th class="px-4 py-3 font-semibold">Source</th>
-                    <th class="px-4 py-3 font-semibold">Category</th>
-                    <th class="px-4 py-3 font-semibold">Sentiment</th>
-                    <th class="px-4 py-3 font-semibold">Score</th>
+                    <th class="px-4 py-3 font-semibold">STT</th>
+                    <th class="px-4 py-3 font-semibold">Tiêu đề</th>
+                    <th class="px-4 py-3 font-semibold">Nguồn</th>
+                    <th class="px-4 py-3 font-semibold">Nhãn</th>
+                    <th class="px-4 py-3 font-semibold">Điểm</th>
                   </tr>
                 </thead>
                 <tbody id="signalsTableBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
@@ -270,6 +274,38 @@
             </div>
           </section>
         </div>
+
+        <section id="view-insights" class="hidden">
+          <div class="panel p-8 text-center">
+            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Insights</p>
+            <h3 class="mt-3 text-2xl font-semibold">Strategic briefings and scenario modeling</h3>
+            <p class="mt-3 text-slate-500 dark:text-slate-400">This workspace is reserved for deeper analysis, watchlists, and executive narrative summaries.</p>
+          </div>
+        </section>
+
+        <section id="view-alerts" class="hidden">
+          <div class="panel p-8 text-center">
+            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Risk Alerts</p>
+            <h3 class="mt-3 text-2xl font-semibold">Critical disruptions and intervention queues</h3>
+            <p class="mt-3 text-slate-500 dark:text-slate-400">Monitor high-severity events and policy shifts across the semiconductor ecosystem.</p>
+          </div>
+        </section>
+
+        <section id="view-integrations" class="hidden">
+          <div class="panel p-8 text-center">
+            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Integrations</p>
+            <h3 class="mt-3 text-2xl font-semibold">Connect to your data and workflow stack</h3>
+            <p class="mt-3 text-slate-500 dark:text-slate-400">Link market feeds, internal ops systems, and downstream collaboration tools in one place.</p>
+          </div>
+        </section>
+
+        <section id="view-settings" class="hidden">
+          <div class="panel p-8 text-center">
+            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Settings</p>
+            <h3 class="mt-3 text-2xl font-semibold">Personalize alert thresholds and workspace preferences</h3>
+            <p class="mt-3 text-slate-500 dark:text-slate-400">Tune signal scoring, export cadence, and display preferences for your team.</p>
+          </div>
+        </section>
       </main>
     </div>
   </div>
@@ -347,22 +383,18 @@
     </div>
   </div>
 
+  <script src="signals_dataset.js"></script>
   <script>
-    let dataset = [
-      { date: '2026-07-01', title: 'TSMC expands advanced packaging capacity', source: 'Reuters', category: 'Foundry Capacity', sentiment: 'Positive', sentiment_score: 0.82 },
-      { date: '2026-07-03', title: 'U.S. export controls tighten chip equipment transfers', source: 'BBC', category: 'Export Controls', sentiment: 'Negative', sentiment_score: -0.71 },
-      { date: '2026-07-06', title: 'Samsung ramps 3nm production for AI chips', source: 'VnExpress', category: 'Foundry Capacity', sentiment: 'Positive', sentiment_score: 0.64 },
-      { date: '2026-07-09', title: 'Supply chain delays hit logistics corridors', source: 'Reuters', category: 'Logistics', sentiment: 'Neutral', sentiment_score: 0.11 },
-      { date: '2026-07-12', title: 'TSMC yield concerns persist after tool delays', source: 'BBC', category: 'TSMC Yield', sentiment: 'Negative', sentiment_score: -0.58 },
-      { date: '2026-07-16', title: 'Intel delays Ohio fab expansion', source: 'VnExpress', category: 'Competitive Landscape', sentiment: 'Neutral', sentiment_score: 0.03 }
-    ];
+    var dataset = Array.isArray(window.__signalsDataset) ? window.__signalsDataset.slice() : [];
 
     function escapeHtml(value) {
       return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
+    let currentCategoryFilter = 'All';
+
     function switchView(viewId) {
-      const views = ['dashboard', 'signals'];
+      const views = ['dashboard', 'insights', 'signals', 'alerts', 'integrations', 'settings'];
       views.forEach(id => {
         const view = document.getElementById(`view-${id}`);
         if (view) view.classList.toggle('hidden', id !== viewId);
@@ -374,22 +406,67 @@
         button.classList.toggle('text-white', isActive);
         button.classList.toggle('font-semibold', isActive);
         button.classList.toggle('text-slate-300', !isActive);
-        button.classList.toggle('hover:bg-slate-800/70', true);
       });
     }
 
-    function renderTable(data) {
+    function normalizeArticleLink(link) {
+      if (!link) return '#';
+      const value = String(link).trim();
+      if (!value) return '#';
+      if (/^https?:\/\//i.test(value)) return value;
+      if (value.startsWith('//')) return `https:${value}`;
+      if (value.startsWith('/')) return `${window.location.origin}${value}`;
+      return value;
+    }
+
+    function initFilter() {
+      const select = document.getElementById('categoryFilter');
+      const searchInput = document.getElementById('searchInput');
+      if (!select) return;
+      const categories = [...new Set((Array.isArray(dataset) ? dataset : []).map(item => item.category || 'Uncategorized'))].sort();
+      select.innerHTML = '<option value="All">All Categories</option>';
+      categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        select.appendChild(option);
+      });
+      select.value = currentCategoryFilter || 'All';
+      select.onchange = () => {
+        currentCategoryFilter = select.value || 'All';
+        renderTable(dataset, currentCategoryFilter, searchInput ? searchInput.value : '');
+      };
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          renderTable(dataset, currentCategoryFilter, searchInput.value);
+        });
+      }
+    }
+
+    function renderTable(data, category = 'All', searchTerm = '') {
       const tbody = document.getElementById('signalsTableBody');
+      const badge = document.getElementById('signalsCountBadge');
       if (!tbody) return;
 
-      const rows = Array.isArray(data) ? data : [];
+      const query = String(searchTerm || '').trim().toLowerCase();
+      const rows = Array.isArray(data) ? data.filter(item => {
+        const matchesCategory = category === 'All' || (item.category || 'Uncategorized') === category;
+        const haystack = `${item.title || ''} ${item.source || item.source_name || ''} ${item.category || ''}`.toLowerCase();
+        const matchesSearch = !query || haystack.includes(query);
+        return matchesCategory && matchesSearch;
+      }) : [];
+
+      if (badge) badge.textContent = String(rows.length);
+
       if (!rows.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-6 text-center text-sm text-slate-500">No signals available yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-sm text-slate-500">No signals available yet.</td></tr>';
         return;
       }
 
-      tbody.innerHTML = rows.map(item => {
+      tbody.innerHTML = rows.map((item, index) => {
         const sentiment = String(item.sentiment || 'Neutral');
+        const sourceText = String(item.source || item.source_name || '');
+        const articleLink = normalizeArticleLink(item.link || item.url || item.article_link || '');
         const badgeClass = sentiment === 'Positive'
           ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
           : sentiment === 'Negative'
@@ -398,14 +475,24 @@
 
         return `
           <tr class="text-slate-600 dark:text-slate-300">
-            <td class="px-4 py-3">${escapeHtml(item.date || '')}</td>
-            <td class="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">${escapeHtml(item.title || '')}</td>
-            <td class="px-4 py-3">${escapeHtml(item.source || item.source_name || '')}</td>
-            <td class="px-4 py-3">${escapeHtml(item.category || '')}</td>
+            <td class="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">${index + 1}</td>
+            <td class="px-4 py-3 font-medium text-slate-900 dark:text-slate-100"><a href="${escapeHtml(articleLink)}" target="_blank" rel="noopener noreferrer" class="hover:text-sky-600">${escapeHtml(item.title || '')}</a></td>
+            <td class="px-4 py-3">${escapeHtml(sourceText)}</td>
             <td class="px-4 py-3"><span class="rounded-full px-3 py-1 text-xs font-semibold ${badgeClass}">${escapeHtml(sentiment)}</span></td>
             <td class="px-4 py-3 font-mono text-slate-700 dark:text-slate-200">${Number(item.sentiment_score ?? item.score ?? 0).toFixed(2)}</td>
           </tr>`;
       }).join('');
+    }
+
+    function showToast(message) {
+      const existing = document.getElementById('toastMessage');
+      if (existing) existing.remove();
+      const toast = document.createElement('div');
+      toast.id = 'toastMessage';
+      toast.className = 'fixed bottom-5 right-5 z-[90] rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-xl dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2200);
     }
 
     function downloadFile(content, fileName, mimeType) {
@@ -414,8 +501,23 @@
       const link = document.createElement('a');
       link.href = url;
       link.download = fileName;
-      link.click();
-      URL.revokeObjectURL(url);
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      try {
+        link.click();
+      } catch (error) {
+        // Ignore and fall back to opening the content directly.
+      }
+      try {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } catch (error) {
+        window.location.href = url;
+      }
+      link.remove();
+      window.__lastDownload = fileName;
+      showToast(`Exported ${fileName}`);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      return url;
     }
 
     function exportCSV() {
@@ -684,20 +786,33 @@
     document.addEventListener('DOMContentLoaded', () => {
       initTheme();
       initializeCharts();
-      renderTable(dataset);
+      initFilter();
+      renderTable(dataset, currentCategoryFilter, '');
       switchView('dashboard');
 
-      document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-      document.getElementById('mobileMenuBtn')?.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('hidden'));
-      document.getElementById('closeModalBtn').addEventListener('click', closeModal);
-      document.getElementById('modalOverlay').addEventListener('click', event => {
+      document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
+      document.getElementById('mobileMenuBtn')?.addEventListener('click', () => document.getElementById('sidebar')?.classList.toggle('hidden'));
+      document.getElementById('btnExportReport')?.addEventListener('click', exportReport);
+      document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
+      document.getElementById('modalOverlay')?.addEventListener('click', event => {
         if (event.target.id === 'modalOverlay') closeModal();
       });
-      document.getElementById('chatForm').addEventListener('submit', event => {
+      document.getElementById('chatForm')?.addEventListener('submit', async event => {
         event.preventDefault();
-        const value = document.getElementById('chatInput').value.trim();
+        const value = document.getElementById('chatInput')?.value?.trim() || '';
         if (!value) return;
-        document.getElementById('chatResponse').textContent = `AI insight: ${value} — the disruption remains elevated, with supplier diversification recommended in the next 14 days.`;
+
+        const chatResponse = document.getElementById('chatResponse');
+        if (chatResponse) chatResponse.textContent = 'AI is analyzing supply chain impact...';
+
+        // Optional production hook:
+        // const response = await fetch('https://api.example.com/llm', { method: 'POST', body: JSON.stringify({ prompt: value }) });
+        // const data = await response.json();
+
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        if (chatResponse) {
+          chatResponse.textContent = `Based on recent alerts, this disruption requires diversified foundry allocation and tighter logistics contingency planning for the next 14 days.`;
+        }
         document.getElementById('chatInput').value = '';
       });
       document.querySelectorAll('[data-issue]').forEach(button => {
