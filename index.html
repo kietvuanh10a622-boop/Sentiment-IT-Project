@@ -49,11 +49,11 @@
       </div>
 
       <nav class="mt-8 space-y-1">
-        <button class="flex w-full items-center gap-3 rounded-2xl bg-slate-800/80 px-4 py-3 text-sm font-semibold text-white"><span>◉</span> Dashboard</button>
-        <button class="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Insights</button>
-        <button class="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Market Signals</button>
-        <button class="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Risk Alerts</button>
-        <button class="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Integrations</button>
+        <button id="btn-dashboard" data-view="dashboard" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl bg-slate-800/80 px-4 py-3 text-sm font-semibold text-white"><span>◉</span> Dashboard</button>
+        <button id="btn-insights" data-view="insights" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Insights</button>
+        <button id="btn-signals" data-view="signals" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Market Signals</button>
+        <button id="btn-alerts" data-view="alerts" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Risk Alerts</button>
+        <button id="btn-integrations" data-view="integrations" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Integrations</button>
       </nav>
 
       <div class="mt-auto space-y-3 border-t border-slate-800 pt-5 text-sm">
@@ -95,6 +95,7 @@
       </header>
 
       <main class="soft-grid min-h-screen px-4 py-6 lg:px-8 lg:py-8">
+        <div id="view-dashboard">
         <section class="mb-6 grid gap-4 xl:grid-cols-[1.35fr_0.65fr]">
           <div class="panel overflow-hidden p-6">
             <div class="flex items-start justify-between">
@@ -235,6 +236,40 @@
             </table>
           </div>
         </section>
+        </div>
+
+        <div id="view-signals" class="hidden">
+          <section class="panel overflow-hidden p-6">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Market Intelligence</p>
+                <h2 class="mt-1 text-2xl font-semibold">Market Signals Database</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-500 dark:text-slate-400">Track semiconductor supply-chain articles, sentiment shifts, and intervention signals in one premium operational view.</p>
+              </div>
+              <div class="flex flex-wrap gap-3">
+                <button onclick="exportCSV()" class="rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">Export CSV</button>
+                <button onclick="exportJSON()" class="rounded-2xl bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-500">Export JSON</button>
+                <button onclick="exportReport()" class="rounded-2xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200">Download Tech Report</button>
+              </div>
+            </div>
+
+            <div class="mt-6 overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-800">
+              <table class="min-w-full text-left text-sm">
+                <thead class="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-[0.25em] text-slate-400 dark:border-slate-800 dark:bg-slate-950">
+                  <tr>
+                    <th class="px-4 py-3 font-semibold">Date</th>
+                    <th class="px-4 py-3 font-semibold">Title</th>
+                    <th class="px-4 py-3 font-semibold">Source</th>
+                    <th class="px-4 py-3 font-semibold">Category</th>
+                    <th class="px-4 py-3 font-semibold">Sentiment</th>
+                    <th class="px-4 py-3 font-semibold">Score</th>
+                  </tr>
+                </thead>
+                <tbody id="signalsTableBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
       </main>
     </div>
   </div>
@@ -313,6 +348,122 @@
   </div>
 
   <script>
+    let dataset = [
+      { date: '2026-07-01', title: 'TSMC expands advanced packaging capacity', source: 'Reuters', category: 'Foundry Capacity', sentiment: 'Positive', sentiment_score: 0.82 },
+      { date: '2026-07-03', title: 'U.S. export controls tighten chip equipment transfers', source: 'BBC', category: 'Export Controls', sentiment: 'Negative', sentiment_score: -0.71 },
+      { date: '2026-07-06', title: 'Samsung ramps 3nm production for AI chips', source: 'VnExpress', category: 'Foundry Capacity', sentiment: 'Positive', sentiment_score: 0.64 },
+      { date: '2026-07-09', title: 'Supply chain delays hit logistics corridors', source: 'Reuters', category: 'Logistics', sentiment: 'Neutral', sentiment_score: 0.11 },
+      { date: '2026-07-12', title: 'TSMC yield concerns persist after tool delays', source: 'BBC', category: 'TSMC Yield', sentiment: 'Negative', sentiment_score: -0.58 },
+      { date: '2026-07-16', title: 'Intel delays Ohio fab expansion', source: 'VnExpress', category: 'Competitive Landscape', sentiment: 'Neutral', sentiment_score: 0.03 }
+    ];
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function switchView(viewId) {
+      const views = ['dashboard', 'signals'];
+      views.forEach(id => {
+        const view = document.getElementById(`view-${id}`);
+        if (view) view.classList.toggle('hidden', id !== viewId);
+      });
+
+      document.querySelectorAll('.sidebar-btn').forEach(button => {
+        const isActive = button.dataset.view === viewId;
+        button.classList.toggle('bg-slate-800/80', isActive);
+        button.classList.toggle('text-white', isActive);
+        button.classList.toggle('font-semibold', isActive);
+        button.classList.toggle('text-slate-300', !isActive);
+        button.classList.toggle('hover:bg-slate-800/70', true);
+      });
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('signalsTableBody');
+      if (!tbody) return;
+
+      const rows = Array.isArray(data) ? data : [];
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-6 text-center text-sm text-slate-500">No signals available yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = rows.map(item => {
+        const sentiment = String(item.sentiment || 'Neutral');
+        const badgeClass = sentiment === 'Positive'
+          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+          : sentiment === 'Negative'
+            ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300'
+            : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200';
+
+        return `
+          <tr class="text-slate-600 dark:text-slate-300">
+            <td class="px-4 py-3">${escapeHtml(item.date || '')}</td>
+            <td class="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">${escapeHtml(item.title || '')}</td>
+            <td class="px-4 py-3">${escapeHtml(item.source || item.source_name || '')}</td>
+            <td class="px-4 py-3">${escapeHtml(item.category || '')}</td>
+            <td class="px-4 py-3"><span class="rounded-full px-3 py-1 text-xs font-semibold ${badgeClass}">${escapeHtml(sentiment)}</span></td>
+            <td class="px-4 py-3 font-mono text-slate-700 dark:text-slate-200">${Number(item.sentiment_score ?? item.score ?? 0).toFixed(2)}</td>
+          </tr>`;
+      }).join('');
+    }
+
+    function downloadFile(content, fileName, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportCSV() {
+      const rows = Array.isArray(dataset) ? dataset : [];
+      const header = ['date', 'title', 'source', 'category', 'sentiment', 'sentiment_score'];
+      const body = rows.map(item => [
+        item.date || '',
+        item.title || '',
+        item.source || item.source_name || '',
+        item.category || '',
+        item.sentiment || '',
+        item.sentiment_score ?? item.score ?? 0
+      ].map(value => `"${String(value).replace(/"/g, '""')}"`).join(','));
+      downloadFile([header.join(','), ...body].join('\n'), 'articles_backup.csv', 'text/csv;charset=utf-8;');
+    }
+
+    function exportJSON() {
+      const rows = Array.isArray(dataset) ? dataset : [];
+      const positive = rows.filter(item => String(item.sentiment).toLowerCase() === 'positive').length;
+      const negative = rows.filter(item => String(item.sentiment).toLowerCase() === 'negative').length;
+      const neutral = rows.filter(item => String(item.sentiment).toLowerCase() === 'neutral').length;
+      const averageNsr = rows.length ? rows.reduce((sum, item) => sum + Number(item.sentiment_score ?? item.score ?? 0), 0) / rows.length : 0;
+      const payload = { generatedAt: new Date().toISOString(), kpis: { totalArticles: rows.length, averageNsr: Number(averageNsr.toFixed(3)), positive, negative, neutral }, dataset: rows };
+      downloadFile(JSON.stringify(payload, null, 2), 'daily_summary.json', 'application/json;charset=utf-8;');
+    }
+
+    function exportReport() {
+      const rows = Array.isArray(dataset) ? dataset : [];
+      const positive = rows.filter(item => String(item.sentiment).toLowerCase() === 'positive').length;
+      const negative = rows.filter(item => String(item.sentiment).toLowerCase() === 'negative').length;
+      const neutral = rows.filter(item => String(item.sentiment).toLowerCase() === 'neutral').length;
+      const averageNsr = rows.length ? rows.reduce((sum, item) => sum + Number(item.sentiment_score ?? item.score ?? 0), 0) / rows.length : 0;
+      const categories = rows.reduce((acc, item) => { const key = item.category || 'Uncategorized'; acc[key] = (acc[key] || 0) + 1; return acc; }, {});
+      const reportLines = [
+        'Technical Report',
+        '================',
+        `Total articles: ${rows.length}`,
+        `Average NSR: ${averageNsr.toFixed(3)}`,
+        `Positive signals: ${positive}`,
+        `Negative signals: ${negative}`,
+        `Neutral signals: ${neutral}`,
+        '',
+        'Risk distribution by category:',
+        ...Object.entries(categories).map(([name, count]) => `- ${name}: ${count}`)
+      ];
+      downloadFile(reportLines.join('\n'), 'Technical_Report.txt', 'text/plain;charset=utf-8;');
+    }
+
     const chartTheme = {
       line: { borderColor: '#2563eb', bg: 'rgba(37, 99, 235, 0.14)' },
       positive: '#10b981',
@@ -533,6 +684,9 @@
     document.addEventListener('DOMContentLoaded', () => {
       initTheme();
       initializeCharts();
+      renderTable(dataset);
+      switchView('dashboard');
+
       document.getElementById('themeToggle').addEventListener('click', toggleTheme);
       document.getElementById('mobileMenuBtn')?.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('hidden'));
       document.getElementById('closeModalBtn').addEventListener('click', closeModal);
@@ -548,6 +702,9 @@
       });
       document.querySelectorAll('[data-issue]').forEach(button => {
         button.addEventListener('click', () => openModal(button.dataset.issue));
+      });
+      document.querySelectorAll('.sidebar-btn').forEach(button => {
+        button.addEventListener('click', () => switchView(button.dataset.view || 'dashboard'));
       });
     });
   </script>
