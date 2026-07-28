@@ -4,146 +4,294 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GlobalPulse AI • Semiconductor Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
   <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
   <script>
     tailwind.config = {
-      darkMode: 'class',
-      theme: { extend: { boxShadow: { soft: '0 20px 45px -20px rgba(15, 23, 42, 0.25)' } } }
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'] },
+          colors: {
+            supabase: { green: '#3ecf8e', deep: '#24b47e', ink: '#171717', muted: '#707070', hairline: '#dfdfdf' }
+          },
+          boxShadow: {
+            'supabase-sm': '0 1px 3px rgba(0, 0, 0, 0.06)',
+            'supabase-md': '0 8px 24px rgba(0, 0, 0, 0.08)',
+            'supabase-lg': '0 16px 48px rgba(0, 0, 0, 0.12)'
+          }
+        }
+      }
     };
   </script>
   <style>
-    :root { color-scheme: light; }
-    .dark { color-scheme: dark; }
-    body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    :root {
+      color-scheme: light;
+      --color-primary: #3ecf8e;
+      --color-primary-deep: #24b47e;
+      --color-primary-soft: #4ade80;
+      --color-ink: #171717;
+      --color-ink-secondary: #212121;
+      --color-ink-muted: #707070;
+      --color-ink-tertiary: #9a9a9a;
+      --color-ink-faint: #b2b2b2;
+      --color-canvas: #ffffff;
+      --color-canvas-soft: #fafafa;
+      --color-canvas-night: #1c1c1c;
+      --color-canvas-night-soft: #202020;
+      --color-hairline: #dfdfdf;
+      --color-hairline-strong: #c7c7c7;
+      --color-hairline-cool: #ededed;
+      --color-hairline-cool-2: #efefef;
+      --color-hairline-cool-3: #d4d4d4;
+      --color-accent-yellow: #ffdb13;
+      --color-accent-indigo: #054cff;
+      --color-accent-tomato: #ff2201;
+      --radius-xs: 4px;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 12px;
+      --space-lg: 16px;
+      --space-xl: 24px;
+      --space-xxl: 32px;
+      --motion-fast: 150ms;
+      --motion-normal: 240ms;
+      --motion-ease: cubic-bezier(.2, 0, 0, 1);
+    }
+
+    .dark {
+      color-scheme: dark;
+      --color-primary: #3ecf8e;
+      --color-primary-deep: #2fb373;
+      --color-primary-soft: #4ade80;
+      --color-ink: #f7fafc;
+      --color-ink-secondary: #e5ebf2;
+      --color-ink-muted: #aab4c0;
+      --color-ink-tertiary: #7d8897;
+      --color-ink-faint: #647081;
+      --color-canvas: #0f1318;
+      --color-canvas-soft: #171b22;
+      --color-canvas-night: #11161d;
+      --color-canvas-night-soft: #1b212b;
+      --color-hairline: #2b3340;
+      --color-hairline-strong: #364252;
+      --color-hairline-cool: #242b36;
+      --color-hairline-cool-2: #212631;
+      --color-hairline-cool-3: #37404f;
+      --color-accent-yellow: #ffd84d;
+      --color-accent-indigo: #6ea5ff;
+      --color-accent-tomato: #ff7b64;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--color-canvas); }
+    body { font-family: Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif; color: var(--color-ink); background: var(--color-canvas); transition: background-color var(--motion-fast) var(--motion-ease), color var(--motion-fast) var(--motion-ease); }
+    body, button, input, select, textarea { font-size: 14px; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: not-allowed; }
+    .app-shell { min-height: 100vh; background: var(--color-canvas); }
+    .app-sidebar { background: var(--color-canvas); border-right: 1px solid var(--color-hairline); }
+    .app-main { min-width: 0; background: var(--color-canvas); }
+    .app-header { background: rgba(255, 255, 255, 0.96); border-bottom: 1px solid var(--color-hairline); }
+    .page-canvas { background: var(--color-canvas-soft); }
     .panel {
-      border-radius: 1.5rem;
-      border: 1px solid rgba(226, 232, 240, 0.9);
-      background: rgba(255, 255, 255, 0.92);
-      box-shadow: 0 20px 45px -20px rgba(15, 23, 42, 0.25);
-      backdrop-filter: blur(8px);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-hairline);
+      background: var(--color-canvas);
+      box-shadow: none;
     }
-    .dark .panel {
-      border-color: rgba(30, 41, 59, 0.95);
-      background: rgba(15, 23, 42, 0.92);
+    .panel-flat { border: 1px solid var(--color-hairline-cool); background: var(--color-canvas-soft); border-radius: var(--radius-md); }
+    .panel-dark { border-radius: var(--radius-lg); border: 1px solid var(--color-canvas-night); background: var(--color-canvas-night); color: var(--color-canvas); }
+    .eyebrow { color: var(--color-ink-muted); font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+    .sidebar-btn { color: var(--color-ink-muted); border-left: 2px solid transparent; border-radius: var(--radius-sm); transition: color var(--motion-fast) var(--motion-ease), background-color var(--motion-fast) var(--motion-ease), border-color var(--motion-fast) var(--motion-ease); }
+    .sidebar-btn:hover { color: var(--color-ink); background: var(--color-canvas-soft); }
+    .sidebar-btn.is-active { color: var(--color-ink); background: var(--color-canvas-soft); border-left-color: var(--color-primary); }
+    .control, .control-select, .control-input { border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); border-radius: var(--radius-sm); }
+    .control:hover, .control-select:hover { border-color: var(--color-hairline-strong); }
+    .control:focus-visible, .control-select:focus-visible, .control-input:focus-visible, .sidebar-btn:focus-visible, a:focus-visible, button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+    .header-search {
+      position: relative;
+      min-height: 44px;
+      border-radius: calc(var(--radius-lg) + 2px);
+      border: 1px solid rgba(5, 76, 255, 0.24);
+      background: linear-gradient(135deg, rgba(5, 76, 255, 0.08) 0%, rgba(62, 207, 142, 0.12) 100%);
+      box-shadow: 0 1px 2px rgba(5, 76, 255, 0.08), 0 0 0 1px rgba(5, 76, 255, 0.06);
+      transition: border-color var(--motion-fast) var(--motion-ease), box-shadow var(--motion-fast) var(--motion-ease), background-color var(--motion-fast) var(--motion-ease);
+      overflow: hidden;
     }
-    .soft-grid { background-image: linear-gradient(to right, rgba(15,23,42,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(15,23,42,0.03) 1px, transparent 1px); background-size: 24px 24px; }
-    .modal-enter { opacity: 0; transform: translateY(18px) scale(0.98); }
+    .header-search::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--color-accent-indigo) 0%, var(--color-primary) 100%);
+      opacity: 0.95;
+    }
+    .header-search:focus-within {
+      border-color: var(--color-accent-indigo);
+      box-shadow: 0 0 0 3px rgba(5, 76, 255, 0.16);
+      background: linear-gradient(135deg, rgba(5, 76, 255, 0.14) 0%, rgba(62, 207, 142, 0.16) 100%);
+    }
+    .header-search:focus-within::after {
+      background: linear-gradient(180deg, var(--color-accent-indigo) 0%, var(--color-primary-soft) 100%);
+    }
+    .header-search input {
+      color: var(--color-ink);
+    }
+    .header-search input::placeholder {
+      color: var(--color-ink-muted);
+    }
+    .primary-action { background: var(--color-primary); color: var(--color-ink); border-radius: var(--radius-sm); transition: background-color var(--motion-fast) var(--motion-ease), transform var(--motion-fast) var(--motion-ease); }
+    .primary-action:hover { background: var(--color-primary-deep); }
+    .primary-action:active { transform: translateY(1px); }
+    .secondary-action { border: 1px solid var(--color-hairline-strong); background: var(--color-canvas); color: var(--color-ink); border-radius: var(--radius-sm); transition: background-color var(--motion-fast) var(--motion-ease); }
+    .secondary-action:hover { background: var(--color-canvas-soft); }
+    .status-pill { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--color-hairline); border-radius: 9999px; background: var(--color-canvas-soft); color: var(--color-ink-secondary); padding: 4px 8px; font-size: 12px; font-weight: 500; }
+    .status-dot { width: 6px; height: 6px; border-radius: 9999px; background: var(--color-primary); }
+    .data-row { transition: background-color var(--motion-fast) var(--motion-ease); }
+    .data-row:hover { background: var(--color-canvas-soft); }
+    .slider-card { transition: border-color var(--motion-fast) var(--motion-ease), background-color var(--motion-fast) var(--motion-ease); }
+    .slider-card:hover { transform: none; box-shadow: none; border-color: var(--color-hairline-strong); background: var(--color-canvas-soft); }
+    .chart-shell { min-width: 0; }
+    .bg-slate-50, .bg-slate-100, .bg-slate-200 { background-color: var(--color-canvas-soft) !important; }
+    .bg-white { background-color: var(--color-canvas) !important; }
+    .border-slate-100, .border-slate-200, .border-slate-300 { border-color: var(--color-hairline) !important; }
+    .text-slate-900, .text-slate-800, .text-slate-700 { color: var(--color-ink) !important; }
+    .text-slate-600, .text-slate-500 { color: var(--color-ink-muted) !important; }
+    .text-slate-400, .text-slate-300 { color: var(--color-ink-tertiary) !important; }
+    .bg-sky-600 { background-color: var(--color-primary) !important; }
+    .hover\\:bg-sky-500:hover { background-color: var(--color-primary-deep) !important; }
+    .text-sky-600, .text-sky-700 { color: var(--color-ink-secondary) !important; }
+    .dark\\:bg-slate-950, .dark\\:bg-slate-900, .dark\\:bg-slate-800 { background-color: var(--color-canvas) !important; }
+    .dark\\:text-slate-100, .dark\\:text-slate-200 { color: var(--color-ink) !important; }
+    .dark\\:text-slate-300, .dark\\:text-slate-400 { color: var(--color-ink-muted) !important; }
+    .modal-enter { opacity: 0; transform: translateY(12px) scale(.99); }
     .modal-enter-active { opacity: 1; transform: translateY(0) scale(1); }
     .modal-exit { opacity: 1; transform: translateY(0) scale(1); }
-    .modal-exit-active { opacity: 0; transform: translateY(16px) scale(0.98); }
-    .slider-card { transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease; }
-    .slider-card:hover { transform: translateY(-2px); box-shadow: 0 18px 36px -20px rgba(37, 99, 235, 0.4); }
-    .density-compact .panel { border-radius: 1rem; }
-    .density-compact .panel.p-6 { padding: 1rem !important; }
-    .settings-surface { border-top: 1px solid rgba(226, 232, 240, 0.95); padding: 1.5rem 0; }
-    .dark .settings-surface { border-top-color: rgba(51, 65, 85, 0.95); }
-    .settings-actions { border-top: 1px solid rgba(226, 232, 240, 0.95); padding-top: 1.5rem; }
-    .dark .settings-actions { border-top-color: rgba(51, 65, 85, 0.95); }
+    .modal-exit-active { opacity: 0; transform: translateY(12px) scale(.99); }
     canvas { display: block; width: 100% !important; height: 100% !important; }
+    @media (max-width: 767px) {
+      .mobile-drawer { width: min(88vw, 320px); box-shadow: 16px 0 48px rgba(0, 0, 0, .12); }
+      .page-canvas { padding: 16px !important; }
+      .app-header { padding: 12px 16px !important; }
+      .header-search { order: 3; flex-basis: 100%; }
+      .kpi-grid { grid-template-columns: 1fr !important; }
+      .dashboard-grid { grid-template-columns: 1fr !important; }
+      .hide-mobile { display: none !important; }
+      .table-scroll { margin-inline: -1px; }
+    }
   </style>
 </head>
-<body class="min-h-screen bg-slate-100 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
+<body class="app-shell">
   <div class="flex min-h-screen">
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 hidden w-72 flex-col border-r border-slate-800 bg-slate-950 px-6 py-6 text-slate-200 lg:flex">
-      <div class="flex items-center gap-3">
-        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-500/15 text-lg font-semibold text-sky-400">GP</div>
+    <aside id="sidebar" class="app-sidebar mobile-drawer fixed inset-y-0 left-0 z-50 hidden w-60 flex-col px-4 py-5 lg:flex">
+      <div class="flex items-center gap-3 border-b border-[#ededed] px-2 pb-5">
+        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#1c1c1c] text-xs font-semibold text-white">GP</div>
         <div>
-          <p class="text-lg font-semibold tracking-tight">GlobalPulse AI</p>
-          <p class="text-xs uppercase tracking-[0.3em] text-slate-400">Semiconductor OS</p>
+          <p class="text-sm font-semibold tracking-[-0.02em] text-[#171717]">GlobalPulse AI</p>
+          <p class="mt-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-[#9a9a9a]">Semiconductor OS</p>
         </div>
       </div>
 
-      <nav class="mt-8 space-y-1">
-        <button id="btn-dashboard" data-view="dashboard" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl bg-slate-800/80 px-4 py-3 text-sm font-semibold text-white"><span>◉</span> Dashboard</button>
-        <button id="btn-insights" data-view="insights" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Insights</button>
-        <button id="btn-signals" data-view="signals" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Market Signals</button>
-        <button id="btn-alerts" data-view="alerts" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Risk Alerts</button>
-        <button id="btn-integrations" data-view="integrations" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-white"><span>◌</span> Integrations</button>
+      <nav aria-label="Primary navigation" class="mt-6 space-y-1">
+        <button id="btn-dashboard" data-view="dashboard" class="sidebar-btn is-active flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium" aria-current="page"><i data-lucide="layout-dashboard" class="h-4 w-4" aria-hidden="true"></i><span>Dashboard</span></button>
+        <button id="btn-insights" data-view="insights" class="sidebar-btn flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium"><i data-lucide="globe-2" class="h-4 w-4" aria-hidden="true"></i><span>Insights</span></button>
+        <button id="btn-signals" data-view="signals" class="sidebar-btn flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium"><i data-lucide="radio-tower" class="h-4 w-4" aria-hidden="true"></i><span>Market Signals</span></button>
+        <button id="btn-alerts" data-view="alerts" class="sidebar-btn flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium"><i data-lucide="triangle-alert" class="h-4 w-4" aria-hidden="true"></i><span>Risk Alerts</span><span class="ml-auto rounded-full bg-[#fff7cf] px-1.5 py-0.5 text-[10px] font-semibold text-[#7a5d00]">3</span></button>
+        <button id="btn-integrations" data-view="integrations" class="sidebar-btn flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium"><i data-lucide="plug-zap" class="h-4 w-4" aria-hidden="true"></i><span>Integrations</span></button>
       </nav>
 
-      <div class="mt-auto space-y-3 border-t border-slate-800 pt-5 text-sm">
-        <button id="btn-settings" data-view="settings" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-slate-300 hover:bg-slate-800/70 hover:text-white">⚙ Settings</button>
-        <button id="btn-help" data-view="help" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-slate-300 hover:bg-slate-800/70 hover:text-white">❓ Help Center</button>
-        <div class="flex items-center gap-3 rounded-2xl bg-slate-900/70 px-4 py-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-indigo-500 text-sm font-semibold text-white">
-            <img src="kise.jpg" alt="User Avatar" class="h-full w-full rounded-full object-cover">
-          </div>
-          <div>
-            <p class="font-semibold text-white">Kise Beta</p>
-            <p class="text-xs text-slate-400">Principal Analyst</p>
+      <div class="mt-auto space-y-1 border-t border-[#ededed] pt-4">
+        <button id="btn-settings" data-view="settings" class="sidebar-btn flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium"><i data-lucide="settings-2" class="h-4 w-4" aria-hidden="true"></i><span>Settings</span></button>
+        <button id="btn-help" data-view="settings" class="sidebar-btn flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium"><i data-lucide="circle-help" class="h-4 w-4" aria-hidden="true"></i><span>Help Center</span></button>
+        <div class="mt-4 flex items-center gap-3 rounded-lg border border-[#ededed] bg-[#fafafa] px-3 py-3">
+          <div class="flex h-8 w-8 items-center justify-center rounded-full bg-[#3ecf8e] text-xs font-semibold text-[#171717]">KV</div>
+          <div class="min-w-0">
+            <p class="truncate text-sm font-medium text-[#171717]">Kiet Vu</p>
+            <p class="truncate text-xs text-[#707070]">Principal Analyst</p>
           </div>
         </div>
       </div>
     </aside>
+    <div id="sidebarBackdrop" class="fixed inset-0 z-40 hidden bg-black/20 lg:hidden" aria-hidden="true"></div>
 
-    <div class="flex-1 lg:ml-72">
-      <header class="border-b border-slate-200 bg-white/80 px-4 py-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/80 lg:px-8">
-        <div class="flex flex-wrap items-center justify-between gap-4">
+    <div class="app-main flex-1 lg:ml-60">
+      <header class="app-header sticky top-0 z-30 px-4 py-3 lg:px-8">
+        <div class="flex flex-wrap items-center gap-3">
           <div class="flex items-center gap-3 lg:hidden">
-            <button id="mobileMenuBtn" class="rounded-2xl border border-slate-300 p-2.5 text-slate-700 dark:border-slate-700 dark:text-slate-200">☰</button>
-            <div class="text-sm font-semibold">GlobalPulse AI</div>
+            <button id="mobileMenuBtn" class="control flex h-9 w-9 items-center justify-center" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false"><i data-lucide="menu" class="h-4 w-4" aria-hidden="true"></i></button>
+            <div class="text-sm font-semibold tracking-[-0.02em]">GlobalPulse AI</div>
           </div>
-          <div class="flex flex-1 flex-wrap items-center gap-3">
-            <label class="flex flex-1 items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
-              <span>🔎</span>
-              <input id="searchInput" type="text" placeholder="Search market signals..." class="w-full bg-transparent outline-none" />
-            </label>
-            <label class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
-              <select id="rangeSelect" class="bg-transparent outline-none">
-                <option>Monthly</option>
-                <option selected>Q3 2026</option>
-                <option>YTD</option>
-              </select>
-            </label>
-            <button id="themeToggle" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">☀︎ Theme</button>
-            <button id="btnExportReport" type="button" onclick="exportReport()" class="rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-500">+ Export Report</button>
-          </div>
+          <label class="header-search control-input flex min-w-0 flex-1 items-center gap-2 px-3 py-2.5 text-sm text-[#707070]">
+            <i data-lucide="search" class="h-4 w-4 shrink-0" aria-hidden="true"></i>
+            <span class="sr-only">Search market signals</span>
+            <input id="searchInput" type="text" placeholder="Search market signals..." class="w-full min-w-0 bg-transparent text-[#171717] outline-none placeholder:text-[#9a9a9a]" />
+          </label>
+          <label class="control-select flex items-center gap-2 px-3 py-2.5 text-sm text-[#212121]" style="background: linear-gradient(135deg, rgba(5, 76, 255, 0.10) 0%, rgba(62, 207, 142, 0.12) 100%); border-color: rgba(5, 76, 255, 0.24);">
+            <span class="sr-only">Reporting range</span>
+            <select id="rangeSelect" class="bg-transparent outline-none">
+              <option>Monthly</option>
+              <option selected>Q3 2026</option>
+              <option>YTD</option>
+            </select>
+          </label>
+          <button id="themeToggle" class="secondary-action hidden items-center gap-2 px-3 py-2.5 text-sm font-medium sm:inline-flex" aria-label="Theme setting"><i data-lucide="sun" class="h-4 w-4" aria-hidden="true"></i><span>Light mode</span></button>
+          <button id="btnExportReport" type="button" onclick="exportReport()" class="primary-action inline-flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium"><i data-lucide="download" class="h-4 w-4" aria-hidden="true"></i><span>Export report</span></button>
         </div>
       </header>
 
-      <main class="soft-grid min-h-screen px-4 py-6 lg:px-8 lg:py-8">
+      <main class="page-canvas min-h-screen px-4 py-6 lg:px-8 lg:py-8">
         <div id="view-dashboard">
-        <section class="mb-6 grid gap-4 xl:grid-cols-[1.35fr_0.65fr]">
-          <div class="panel overflow-hidden p-6">
-            <div class="flex items-start justify-between">
+        <section class="dashboard-grid mb-6 grid gap-4 xl:grid-cols-[1.35fr_0.65fr]">
+          <div class="panel overflow-hidden p-5 lg:p-6">
+            <div class="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Executive Overview</p>
-                <h1 class="mt-2 text-3xl font-semibold tracking-tight">Semiconductor market intelligence at a glance</h1>
+                <p class="eyebrow">Portfolio pulse · Q3 2026</p>
+                <h1 class="mt-2 max-w-2xl text-2xl font-medium leading-tight tracking-[-0.04em] lg:text-3xl">Semiconductor market intelligence at a glance</h1>
               </div>
-              <div class="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-300">Live • <span id="signalsCountBadge">0</span> Signals</div>
+              <div class="status-pill"><span class="status-dot"></span><span>Live · <span id="signalsCountBadge">0</span> signals</span></div>
             </div>
-            <div class="mt-6 grid gap-4 md:grid-cols-3">
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/70">
-                <p class="text-sm text-slate-500">Overall Market Sentiment</p>
+            <div class="kpi-grid mt-6 grid gap-3 md:grid-cols-3">
+              <div class="panel-flat p-4">
+                <p class="text-sm text-[#707070]">Overall market sentiment</p>
                 <div class="mt-3 flex items-end justify-between">
                   <div>
-                    <div class="text-3xl font-semibold">+72%</div>
-                    <div class="mt-2 text-sm font-medium text-emerald-600">↑ 12% vs last month</div>
+                    <div class="text-3xl font-medium tracking-[-0.04em]">+72%</div>
+                    <div class="mt-2 text-xs font-medium text-[#24b47e]">↑ 12% vs last month</div>
                   </div>
                   <div class="h-14 w-20"><canvas id="miniSentimentChart"></canvas></div>
                 </div>
               </div>
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/70">
-                <p class="text-sm text-slate-500">Signals Collected</p>
+              <div class="panel-flat p-4">
+                <p class="text-sm text-[#707070]">Signals collected</p>
                 <div class="mt-3 flex items-end justify-between">
                   <div>
-                    <div class="text-3xl font-semibold">1,248</div>
-                    <div class="mt-2 text-sm font-medium text-sky-600">↑ 8.3% this week</div>
+                    <div class="text-3xl font-medium tracking-[-0.04em]">1,248</div>
+                    <div class="mt-2 text-xs font-medium text-[#707070]">8.3% this week · +104</div>
                   </div>
                   <div class="h-14 w-20"><canvas id="miniSignalsChart"></canvas></div>
                 </div>
               </div>
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/70">
-                <p class="text-sm text-slate-500">AI Risk Insights</p>
+              <div class="panel-flat p-4">
+                <p class="text-sm text-[#707070]">AI risk insights</p>
                 <div class="mt-3 flex items-end justify-between">
                   <div>
-                    <div class="text-3xl font-semibold">89</div>
-                    <div class="mt-2 text-sm font-medium text-amber-600">↑ 4.7% this week</div>
+                    <div class="text-3xl font-medium tracking-[-0.04em]">89</div>
+                    <div class="mt-2 text-xs font-medium text-[#7a5d00]">4.7% this week · +4</div>
                   </div>
                   <div class="h-14 w-20"><canvas id="miniRiskChart"></canvas></div>
                 </div>
@@ -151,35 +299,35 @@
             </div>
           </div>
 
-          <div class="panel p-6">
-            <div class="flex items-center justify-between">
+          <div class="panel p-5 lg:p-6">
+            <div class="flex items-center justify-between gap-3">
               <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Signal Mix</p>
-                <h2 class="mt-1 text-xl font-semibold">Opportunity vs Risk</h2>
+                <p class="eyebrow">Signal mix</p>
+                <h2 class="mt-1 text-lg font-medium tracking-[-0.02em]">Opportunity vs risk</h2>
               </div>
-              <div class="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">Balanced</div>
+              <div class="status-pill">Balanced</div>
             </div>
-            <div class="mt-4 h-56"><canvas id="donutChart"></canvas></div>
+            <div class="mt-4 h-56 chart-shell"><canvas id="donutChart"></canvas></div>
           </div>
         </section>
 
-        <section class="mb-6 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-          <div class="panel p-6">
-            <div class="flex items-center justify-between">
+        <section class="mb-6 grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+          <div class="panel p-5 lg:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Sentiment Trend</p>
-                <h2 class="mt-1 text-xl font-semibold">Volume by sentiment over the last 12 months</h2>
+                <p class="eyebrow">Sentiment trend</p>
+                <h2 class="mt-1 text-lg font-medium tracking-[-0.02em]">Volume by sentiment over the last 12 months</h2>
               </div>
-              <div class="text-sm text-slate-500">Updated 2h ago</div>
+              <div class="text-xs text-[#707070]">Updated 2h ago</div>
             </div>
-            <div class="mt-6 h-80"><canvas id="trendBarChart"></canvas></div>
+            <div class="mt-6 h-80 chart-shell"><canvas id="trendBarChart"></canvas></div>
           </div>
 
-          <div class="panel p-6">
+          <div class="panel p-5 lg:p-6">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Drill-down</p>
-                <h2 class="mt-1 text-xl font-semibold">High priority disruptions</h2>
+                <p class="eyebrow">Drill-down</p>
+                <h2 class="mt-1 text-lg font-medium tracking-[-0.02em]">High priority disruptions</h2>
               </div>
             </div>
             <div class="mt-4 space-y-3">
@@ -208,43 +356,24 @@
           </div>
         </section>
 
-        <section id="sourcePerformanceSection" class="panel overflow-hidden p-6">
+        <section class="panel overflow-hidden p-5 lg:p-6">
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Source Performance</p>
-              <h2 class="mt-1 text-xl font-semibold">Multichannel source health and distribution</h2>
+              <p class="eyebrow">Source performance</p>
+              <h2 class="mt-1 text-lg font-medium tracking-[-0.02em]">Multichannel source health and distribution</h2>
             </div>
           </div>
-          <div class="mt-6 overflow-x-auto">
+          <div class="table-scroll mt-6 overflow-x-auto">
             <table class="min-w-full text-left text-sm">
               <thead class="border-b border-slate-200 text-xs uppercase tracking-[0.25em] text-slate-400 dark:border-slate-800">
                 <tr>
                   <th class="pb-3 pr-4 font-semibold">Source</th>
                   <th class="pb-3 pr-4 font-semibold">Momentum</th>
                   <th class="pb-3 pr-4 font-semibold">Sentiment mix</th>
-                  <th class="pb-3 pr-4 font-semibold">Coverage</th>
+                  <th class="pb-3 pr-4 font-semibold">Article Volume</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr class="border-b border-slate-100 text-slate-600 dark:border-slate-800 dark:text-slate-300">
-                  <td class="py-4 pr-4 font-semibold text-slate-900 dark:text-slate-100">VnExpress</td>
-                  <td class="py-4 pr-4"><div class="h-2.5 w-28 rounded-full bg-slate-200 dark:bg-slate-800"><div class="h-2.5 w-[76%] rounded-full bg-emerald-500"></div></div></td>
-                  <td class="py-4 pr-4"><div class="flex items-center gap-2"><span class="h-2.5 w-10 rounded-full bg-emerald-500"></span><span class="h-2.5 w-5 rounded-full bg-slate-400"></span><span class="h-2.5 w-6 rounded-full bg-rose-500"></span></div></td>
-                  <td class="py-4 pr-4">38 articles</td>
-                </tr>
-                <tr class="border-b border-slate-100 text-slate-600 dark:border-slate-800 dark:text-slate-300">
-                  <td class="py-4 pr-4 font-semibold text-slate-900 dark:text-slate-100">BBC</td>
-                  <td class="py-4 pr-4"><div class="h-2.5 w-28 rounded-full bg-slate-200 dark:bg-slate-800"><div class="h-2.5 w-[62%] rounded-full bg-sky-500"></div></div></td>
-                  <td class="py-4 pr-4"><div class="flex items-center gap-2"><span class="h-2.5 w-8 rounded-full bg-emerald-500"></span><span class="h-2.5 w-7 rounded-full bg-slate-400"></span><span class="h-2.5 w-8 rounded-full bg-rose-500"></span></div></td>
-                  <td class="py-4 pr-4">24 articles</td>
-                </tr>
-                <tr class="text-slate-600 dark:text-slate-300">
-                  <td class="py-4 pr-4 font-semibold text-slate-900 dark:text-slate-100">Reuters</td>
-                  <td class="py-4 pr-4"><div class="h-2.5 w-28 rounded-full bg-slate-200 dark:bg-slate-800"><div class="h-2.5 w-[83%] rounded-full bg-violet-500"></div></div></td>
-                  <td class="py-4 pr-4"><div class="flex items-center gap-2"><span class="h-2.5 w-9 rounded-full bg-emerald-500"></span><span class="h-2.5 w-5 rounded-full bg-slate-400"></span><span class="h-2.5 w-6 rounded-full bg-rose-500"></span></div></td>
-                  <td class="py-4 pr-4">19 articles</td>
-                </tr>
-              </tbody>
+              <tbody id="sourcePerformanceBody"></tbody>
             </table>
           </div>
         </section>
@@ -320,7 +449,7 @@
                     <span class="font-semibold text-rose-800 dark:text-rose-200">Critical: Factory Fire</span>
                     <span class="text-sm text-rose-600 dark:text-rose-400">15 minutes ago</span>
                   </div>
-                  <p class="mt-2 text-sm text-rose-700 dark:text-rose-300">A fire has been reported at a major packaging facility in Taiwan. Production is halted. <a href="https://example.com/fire-alert" target="_blank" class="text-sky-600 hover:underline">Read more</a></p>
+                  <p class="mt-2 text-sm text-rose-700 dark:text-rose-300">A fire has been reported at a major packaging facility in Taiwan. Production is halted.</p>
                 </div>
                 <!-- Mock Alert 2 -->
                 <div class="p-4 rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-900/30 dark:bg-amber-900/15">
@@ -328,7 +457,7 @@
                     <span class="font-semibold text-amber-800 dark:text-amber-200">High: Port Congestion</span>
                     <span class="text-sm text-amber-600 dark:text-amber-400">2 hours ago</span>
                   </div>
-                  <p class="mt-2 text-sm text-amber-700 dark:text-amber-300">Severe congestion at the Port of Singapore is causing shipping delays of up to 72 hours. <a href="https://example.com/port-congestion" target="_blank" class="text-sky-600 hover:underline">Read more</a></p>
+                  <p class="mt-2 text-sm text-amber-700 dark:text-amber-300">Severe congestion at the Port of Singapore is causing shipping delays of up to 72 hours.</p>
                 </div>
                 <!-- Mock Alert 3 -->
                 <div class="p-4 rounded-lg border border-sky-200 bg-sky-50 dark:border-sky-900/30 dark:bg-sky-900/15">
@@ -336,7 +465,8 @@
                     <span class="font-semibold text-sky-800 dark:text-sky-200">Medium: Material Shortage</span>
                     <span class="text-sm text-sky-600 dark:text-sky-400">8 hours ago</span>
                   </div>
-                  <p class="mt-2 text-sm text-sky-700 dark:text-sky-300">A key supplier of photoresist is reporting a production slowdown, potentially impacting wafer starts next quarter. <a href="https://example.com/material-shortage" target="_blank" class="text-sky-600 hover:underline">Read more</a></p>
+                  <p class="mt-2 text-sm text-sky-700 dark:text-sky-300">A key supplier of photoresist is reporting a production slowdown, potentially impacting wafer starts next quarter.</p>
+                </div>
               </div>
             </div>
 
@@ -365,231 +495,87 @@
         </section>
 
         <section id="view-integrations" class="hidden">
-          <div class="panel p-8">
-            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Integrations</p>
-            <h3 class="mt-3 text-2xl font-semibold">Connect to your data and workflow stack</h3>
-            <p class="mt-3 text-slate-500 dark:text-slate-400">Link market feeds, internal ops systems, and downstream collaboration tools in one place.</p>
-
-            <div class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <!-- Slack Integration Card -->
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center dark:border-slate-800 dark:bg-slate-950/70">
-                <svg class="mx-auto h-12 w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5-2-7 2 0 4 1 5 3 2-2 3-4 5-4-1 2-2 4-4 5 2 1 3 3 3 5s-1 4-3 5z" />
-                </svg>
-                <h4 class="mt-4 text-lg font-semibold">Slack</h4>
-                <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Receive real-time alerts and summaries directly in your Slack channels.</p>
-                <button class="mt-5 rounded-2xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-500">Connect</button>
-              </div>
-
-              <!-- Microsoft Teams Integration Card -->
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center dark:border-slate-800 dark:bg-slate-950/70">
-                <svg class="mx-auto h-12 w-12 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-                <h4 class="mt-4 text-lg font-semibold">Microsoft Teams</h4>
-                <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Integrate alerts and collaborate on insights within your Teams environment.</p>
-                <button class="mt-5 rounded-2xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-500">Connect</button>
-              </div>
-
-              <!-- Jira Integration Card -->
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center dark:border-slate-800 dark:bg-slate-950/70">
-                <svg class="mx-auto h-12 w-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M13 16h.01" />
-                </svg>
-                <h4 class="mt-4 text-lg font-semibold">Jira</h4>
-                <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Create and manage issues or tasks based on identified market risks.</p>
-                <button class="mt-5 rounded-2xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-500">Connect</button>
-              </div>
-
-              <!-- Custom API Integration Card -->
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center dark:border-slate-800 dark:bg-slate-950/70">
-                <svg class="mx-auto h-12 w-12 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-                <h4 class="mt-4 text-lg font-semibold">Custom API</h4>
-                <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Build custom integrations with our flexible API for bespoke workflows.</p>
-                <button class="mt-5 rounded-2xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-500">View Docs</button>
-              </div>
+          <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p class="eyebrow">Workspace connections</p>
+              <h2 class="mt-1 text-2xl font-medium tracking-[-0.04em]">Connect your intelligence stack</h2>
+              <p class="mt-2 max-w-2xl text-sm text-[#707070]">Keep market feeds, internal operations, and reporting destinations in one controlled workspace.</p>
             </div>
+            <button class="primary-action inline-flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium" onclick="showToast('Connector catalog opened')"><i data-lucide="plus" class="h-4 w-4" aria-hidden="true"></i>Add connector</button>
           </div>
-        </section>
-
-        <section id="view-help" class="hidden">
-          <div class="panel p-8">
-            <div class="text-center">
-              <p class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Help Center</p>
-              <h3 class="mt-3 text-2xl font-semibold">How can we help you?</h3>
-              <p class="mt-3 text-slate-500 dark:text-slate-400">Find answers to your questions and learn how to use GlobalPulse AI.</p>
-              <div class="mt-6 mx-auto max-w-lg">
-                <label class="flex flex-1 items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                  <span>🔎</span>
-                  <input type="text" placeholder="Search for help articles..." class="w-full bg-transparent outline-none" />
-                </label>
-              </div>
-            </div>
-
-            <div class="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-950/70">
-                <h4 class="font-semibold">Getting Started</h4>
-                <ul class="mt-3 space-y-2 text-sm text-sky-600 dark:text-sky-400">
-                  <li><a href="#" class="hover:underline">First steps with GlobalPulse</a></li>
-                  <li><a href="#" class="hover:underline">Understanding the dashboard</a></li>
-                  <li><a href="#" class="hover:underline">Setting up your profile</a></li>
-                </ul>
-              </div>
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-950/70">
-                <h4 class="font-semibold">Managing Alerts</h4>
-                <ul class="mt-3 space-y-2 text-sm text-sky-600 dark:text-sky-400">
-                  <li><a href="#" class="hover:underline">Configuring alert thresholds</a></li>
-                  <li><a href="#" class="hover:underline">Understanding alert types</a></li>
-                  <li><a href="#" class="hover:underline">Snoozing and resolving alerts</a></li>
-                </ul>
-              </div>
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-950/70">
-                <h4 class="font-semibold">Data & Integrations</h4>
-                <ul class="mt-3 space-y-2 text-sm text-sky-600 dark:text-sky-400">
-                  <li><a href="#" class="hover:underline">Connecting to data sources</a></li>
-                  <li><a href="#" class="hover:underline">Using the Slack integration</a></li>
-                  <li><a href="#" class="hover:underline">API access and usage</a></li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="mt-10 text-center">
-              <h4 class="font-semibold">Can't find what you're looking for?</h4>
-              <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Our support team is here to help you with any questions.</p>
-              <button class="mt-4 rounded-2xl bg-sky-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-500">Contact Support</button>
-            </div>
+          <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <article class="panel p-5">
+              <div class="flex items-start justify-between gap-3"><div class="flex h-9 w-9 items-center justify-center rounded-md bg-[#1c1c1c] text-xs font-semibold text-white">BBC</div><span class="status-pill"><span class="status-dot"></span>Connected</span></div>
+              <h3 class="mt-5 text-lg font-medium">BBC News</h3><p class="mt-2 text-sm leading-6 text-[#707070]">Global policy, technology, and market coverage for sentiment collection.</p>
+              <button class="secondary-action mt-5 px-3 py-2 text-xs font-medium" onclick="showToast('BBC News settings opened')">Manage source</button>
+            </article>
+            <article class="panel p-5">
+              <div class="flex items-start justify-between gap-3"><div class="flex h-9 w-9 items-center justify-center rounded-md bg-[#fafafa] text-xs font-semibold text-[#171717] ring-1 ring-[#dfdfdf]">VN</div><span class="status-pill"><span class="status-dot"></span>Connected</span></div>
+              <h3 class="mt-5 text-lg font-medium">VnExpress</h3><p class="mt-2 text-sm leading-6 text-[#707070]">Regional semiconductor and logistics signals from Vietnam and Asia.</p>
+              <button class="secondary-action mt-5 px-3 py-2 text-xs font-medium" onclick="showToast('VnExpress settings opened')">Manage source</button>
+            </article>
+            <article class="panel p-5">
+              <div class="flex items-start justify-between gap-3"><div class="flex h-9 w-9 items-center justify-center rounded-md bg-[#fafafa] text-[#707070] ring-1 ring-[#dfdfdf]"><i data-lucide="webhook" class="h-4 w-4" aria-hidden="true"></i></div><span class="status-pill">Not connected</span></div>
+              <h3 class="mt-5 text-lg font-medium">Operations webhook</h3><p class="mt-2 text-sm leading-6 text-[#707070]">Send high-priority disruption alerts to your internal response workflow.</p>
+              <button class="secondary-action mt-5 px-3 py-2 text-xs font-medium" onclick="showToast('Webhook setup opened')">Set up webhook</button>
+            </article>
           </div>
+          <div class="panel-dark mt-4 flex flex-wrap items-center justify-between gap-4 p-5"><div><p class="text-sm font-medium">Need a different source?</p><p class="mt-1 text-sm text-white/60">Use the connector catalog to request a new feed or destination.</p></div><button class="inline-flex items-center gap-2 rounded-md border border-white/20 px-3 py-2 text-sm font-medium text-white transition hover:bg-white/10" onclick="showToast('Connector request started')">Request connector <i data-lucide="arrow-up-right" class="h-4 w-4" aria-hidden="true"></i></button></div>
         </section>
 
         <section id="view-settings" class="hidden">
-          <div class="mx-auto max-w-6xl">
-            <header class="flex flex-col gap-5 border-b border-slate-200 pb-6 dark:border-slate-800 lg:flex-row lg:items-end lg:justify-between">
-              <div>
-                <h2 class="text-3xl font-semibold tracking-tight">Tune your intelligence workspace</h2>
-                <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">Set the signal sensitivity, report delivery, and dashboard preferences that shape your daily operating rhythm.</p>
-              </div>
-              <div id="settingsSyncBadge" class="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-300">
-                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-                <span>No unsaved changes</span>
-              </div>
-            </header>
-
-            <form id="settingsForm" class="mt-6 space-y-6" novalidate>
-              <div class="grid gap-6 lg:grid-cols-2">
-                <fieldset class="settings-surface">
-                  <legend class="text-lg font-semibold">Alert thresholds</legend>
-                  <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">Control when supply-chain signals become actionable alerts.</p>
-                  <div class="mt-6 space-y-5">
-                    <div>
-                      <label for="riskThreshold" class="flex items-center justify-between text-sm font-semibold text-slate-900 dark:text-slate-100">
-                        <span>Risk score threshold</span>
-                        <span class="font-mono text-xs font-medium text-slate-500">0–100</span>
-                      </label>
-                      <div class="mt-2 flex items-center gap-3">
-                        <input id="riskThreshold" name="riskThreshold" type="number" min="0" max="100" step="5" inputmode="numeric" value="70" aria-describedby="riskThresholdHelp riskThresholdError" class="w-28 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-900 outline-none transition placeholder:text-slate-400 focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100" />
-                        <span class="text-sm text-slate-500">points or higher</span>
-                      </div>
-                      <p id="riskThresholdHelp" class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">Higher values reduce noise while keeping critical disruptions visible.</p>
-                      <p id="riskThresholdError" class="mt-1 hidden text-xs font-medium text-rose-600 dark:text-rose-400" role="alert"></p>
-                    </div>
-                    <div>
-                      <label for="alertCadence" class="text-sm font-semibold text-slate-900 dark:text-slate-100">Alert delivery</label>
-                      <select id="alertCadence" name="alertCadence" aria-describedby="alertCadenceHelp" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
-                        <option value="instant">Instant for every qualifying signal</option>
-                        <option value="fifteen-minutes">Digest every 15 minutes</option>
-                        <option value="hourly">Hourly digest</option>
-                      </select>
-                      <p id="alertCadenceHelp" class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">Use instant delivery for active incidents; digests are calmer for routine monitoring.</p>
-                    </div>
-                  </div>
-                </fieldset>
-
-                <fieldset class="settings-surface">
-                  <legend class="text-lg font-semibold">Report delivery</legend>
-                  <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">Choose how often your operating summaries should be prepared.</p>
-                  <div class="mt-6 space-y-5">
-                    <div>
-                      <label for="exportCadence" class="text-sm font-semibold text-slate-900 dark:text-slate-100">Report cadence</label>
-                      <select id="exportCadence" name="exportCadence" aria-describedby="exportCadenceHelp" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
-                        <option value="on-demand">On demand only</option>
-                        <option value="daily">Daily at 08:00</option>
-                        <option value="weekly">Every Monday at 08:00</option>
-                      </select>
-                      <p id="exportCadenceHelp" class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">Scheduled exports use the current filters and workspace defaults.</p>
-                    </div>
-                    <div>
-                      <label for="exportFormat" class="text-sm font-semibold text-slate-900 dark:text-slate-100">Default export package</label>
-                      <select id="exportFormat" name="exportFormat" aria-describedby="exportFormatHelp" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
-                        <option value="csv-json">CSV and JSON data</option>
-                        <option value="technical-report">Technical report</option>
-                        <option value="full-package">Full data and report package</option>
-                      </select>
-                      <p id="exportFormatHelp" class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">This controls the default action used by the Export Report shortcut.</p>
-                    </div>
-                  </div>
-                </fieldset>
-              </div>
-
-              <fieldset class="settings-surface">
-                <legend class="text-lg font-semibold">Workspace preferences</legend>
-                <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">Shape the first screen and density of the analyst console.</p>
-                <div class="mt-6 grid gap-5 md:grid-cols-2">
-                  <div>
-                    <label for="landingView" class="text-sm font-semibold text-slate-900 dark:text-slate-100">Start on</label>
-                    <select id="landingView" name="landingView" aria-describedby="landingViewHelp" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
-                      <option value="dashboard">Dashboard</option>
-                      <option value="insights">Insights</option>
-                      <option value="signals">Market Signals</option>
-                      <option value="alerts">Risk Alerts</option>
-                    </select>
-                    <p id="landingViewHelp" class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">Applied the next time GlobalPulse is opened.</p>
-                  </div>
-                  <div>
-                    <label for="density" class="text-sm font-semibold text-slate-900 dark:text-slate-100">Workspace density</label>
-                    <select id="density" name="density" aria-describedby="densityHelp" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
-                      <option value="comfortable">Comfortable</option>
-                      <option value="compact">Compact for data review</option>
-                    </select>
-                    <p id="densityHelp" class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">Compact mode reduces the vertical rhythm across dashboard panels.</p>
-                  </div>
-                  <label class="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm dark:border-slate-800 dark:bg-slate-900/70">
-                    <input id="showSourceCoverage" name="showSourceCoverage" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-2 focus:ring-sky-500/40 dark:border-slate-600 dark:bg-slate-800" />
-                    <span><span class="font-semibold text-slate-900 dark:text-slate-100">Show source coverage</span><span class="mt-1 block text-xs leading-5 text-slate-500 dark:text-slate-400">Keep the source health panel visible on the dashboard.</span></span>
-                  </label>
-                  <label class="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm dark:border-slate-800 dark:bg-slate-900/70">
-                    <input id="keyboardShortcuts" name="keyboardShortcuts" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-2 focus:ring-sky-500/40 dark:border-slate-600 dark:bg-slate-800" />
-                    <span><span class="font-semibold text-slate-900 dark:text-slate-100">Enable keyboard shortcuts</span><span class="mt-1 block text-xs leading-5 text-slate-500 dark:text-slate-400">Press <kbd class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-[11px] dark:border-slate-700 dark:bg-slate-800">/</kbd> to focus global search.</span></span>
-                  </label>
-                </div>
-              </fieldset>
-
-              <div class="settings-actions flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p id="settingsStatus" class="text-sm font-semibold text-slate-700 dark:text-slate-200" role="status" aria-live="polite">No unsaved changes</p>
-                  <p id="settingsLastSaved" class="mt-1 text-xs text-slate-500 dark:text-slate-400">Using the default workspace preferences.</p>
-                </div>
-                <div class="flex flex-col-reverse gap-3 sm:flex-row">
-                  <button id="resetSettingsBtn" type="button" class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">Reset to defaults</button>
-                  <button id="saveSettingsBtn" type="submit" disabled class="rounded-xl bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/40 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600 disabled:shadow-none dark:disabled:bg-slate-700 dark:disabled:text-slate-400">Save changes</button>
-                </div>
-              </div>
-            </form>
+          <div class="mb-6">
+            <p class="eyebrow">Workspace preferences</p>
+            <h2 class="mt-1 text-2xl font-medium tracking-[-0.04em]">Tune your operating view</h2>
+            <p class="mt-2 max-w-2xl text-sm text-[#707070]">Set the thresholds, refresh cadence, and delivery preferences used by your analyst workspace.</p>
           </div>
+          <form id="settingsForm" class="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+            <div class="panel p-5 lg:p-6">
+              <div class="flex items-center justify-between gap-4 border-b border-[#ededed] pb-4"><div><h3 class="text-lg font-medium">Alert thresholds</h3><p class="mt-1 text-sm text-[#707070]">Choose when a signal enters the intervention queue.</p></div><i data-lucide="sliders-horizontal" class="h-5 w-5 text-[#9a9a9a]" aria-hidden="true"></i></div>
+              <div class="mt-5 grid gap-5 md:grid-cols-2">
+                <label class="block"><span class="text-sm font-medium">Risk score threshold</span><span class="mt-2 flex items-center gap-3"><input id="riskThreshold" type="range" min="0" max="100" value="72" class="w-full accent-[#3ecf8e]" /><output for="riskThreshold" class="w-10 text-right font-mono text-sm text-[#707070]">72</output></span><span class="mt-1 block text-xs text-[#9a9a9a]">Escalate signals above this score.</span></label>
+                <label class="block"><span class="text-sm font-medium">Minimum article volume</span><select class="control-select mt-2 w-full px-3 py-2.5"><option>10 articles</option><option selected>25 articles</option><option>50 articles</option></select><span class="mt-1 block text-xs text-[#9a9a9a]">Avoids overreacting to isolated mentions.</span></label>
+              </div>
+            </div>
+            <div class="panel p-5 lg:p-6">
+              <div class="flex items-center justify-between gap-4 border-b border-[#ededed] pb-4"><div><h3 class="text-lg font-medium">Delivery preferences</h3><p class="mt-1 text-sm text-[#707070]">Keep the team aligned without adding noise.</p></div><i data-lucide="bell-ring" class="h-5 w-5 text-[#9a9a9a]" aria-hidden="true"></i></div>
+              <div class="mt-5 space-y-4">
+                <label class="flex items-start justify-between gap-4"><span><span class="block text-sm font-medium">Critical alerts</span><span class="mt-1 block text-xs text-[#707070]">Notify immediately when production is at risk.</span></span><input type="checkbox" checked class="mt-1 h-4 w-4 accent-[#3ecf8e]" /></label>
+                <label class="flex items-start justify-between gap-4"><span><span class="block text-sm font-medium">Daily digest</span><span class="mt-1 block text-xs text-[#707070]">Send a summary at the start of the workday.</span></span><input type="checkbox" checked class="mt-1 h-4 w-4 accent-[#3ecf8e]" /></label>
+                <label class="flex items-start justify-between gap-4"><span><span class="block text-sm font-medium">Weekly export</span><span class="mt-1 block text-xs text-[#707070]">Archive a technical report every Friday.</span></span><input type="checkbox" class="mt-1 h-4 w-4 accent-[#3ecf8e]" /></label>
+              </div>
+              <div class="mt-6 flex items-center justify-end gap-3 border-t border-[#ededed] pt-4"><span id="settingsSaveStatus" class="text-xs text-[#707070]" role="status"></span><button type="submit" class="primary-action px-3.5 py-2.5 text-sm font-medium">Save preferences</button></div>
+            </div>
+          </form>
         </section>
       </main>
     </div>
   </div>
 
-  <div id="modalOverlay" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm">
-    <div id="modalPanel" class="absolute inset-y-0 right-0 flex w-full max-w-6xl flex-col bg-white shadow-2xl transition-all duration-300 dark:bg-slate-950">
-      <div class="flex items-center justify-between border-b border-slate-200 px-6 py-5 dark:border-slate-800">
+  <div id="articleDrawerOverlay" class="fixed inset-0 z-[60] hidden bg-black/30">
+    <div id="articleDrawerPanel" class="absolute inset-y-0 right-0 flex w-full max-w-3xl translate-x-full flex-col bg-white shadow-[0_16px_48px_rgba(0,0,0,0.12)] transition-all duration-300">
+      <div class="flex items-center justify-between border-b border-[#dfdfdf] px-6 py-5">
         <div>
-          <p class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Disruption Explorer</p>
-          <h3 id="modalTitle" class="mt-1 text-2xl font-semibold"></h3>
+          <p class="eyebrow">Article explorer</p>
+          <h3 id="articleDrawerTitle" class="mt-1 text-2xl font-medium tracking-[-0.04em]"></h3>
         </div>
-        <button id="closeModalBtn" class="rounded-full border border-slate-300 p-2 text-slate-600 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">✕</button>
+        <button id="closeArticleDrawerBtn" class="control flex h-9 w-9 items-center justify-center" aria-label="Close article explorer"><i data-lucide="x" class="h-4 w-4" aria-hidden="true"></i></button>
+      </div>
+      <div class="flex-1 overflow-y-auto px-6 py-6">
+        <div id="articleDrawerSummary" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/70"></div>
+        <div id="articleDrawerList" class="mt-5 space-y-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalOverlay" class="fixed inset-0 z-50 hidden bg-black/30">
+    <div id="modalPanel" class="absolute inset-y-0 right-0 flex w-full max-w-6xl translate-x-full flex-col bg-white shadow-[0_16px_48px_rgba(0,0,0,0.12)] transition-all duration-300">
+      <div class="flex items-center justify-between border-b border-[#dfdfdf] px-6 py-5">
+        <div>
+          <p class="eyebrow">Disruption explorer</p>
+          <h3 id="modalTitle" class="mt-1 text-2xl font-medium tracking-[-0.04em]"></h3>
+        </div>
+        <button id="closeModalBtn" class="control flex h-9 w-9 items-center justify-center" aria-label="Close disruption explorer"><i data-lucide="x" class="h-4 w-4" aria-hidden="true"></i></button>
       </div>
       <div class="flex-1 overflow-y-auto px-6 py-6">
         <div class="grid gap-4 md:grid-cols-3">
@@ -658,7 +644,12 @@
   <script src="signals_dataset.js"></script>
   <script src="insights.js"></script>
   <script>
-    var dataset = Array.isArray(window.__signalsDataset) ? window.__signalsDataset.slice() : [];
+    let dataset = [];
+    if (Array.isArray(window.__signalsDataset) && window.__signalsDataset.length) {
+      dataset = window.__signalsDataset.slice();
+    } else if (Array.isArray(window.dataset)) {
+      dataset = window.dataset.slice();
+    }
 
     function escapeHtml(value) {
       return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -667,7 +658,7 @@
     let currentCategoryFilter = 'All';
 
     function switchView(viewId) {
-      const views = ['dashboard', 'insights', 'signals', 'alerts', 'integrations', 'settings', 'help'];
+      const views = ['dashboard', 'insights', 'signals', 'alerts', 'integrations', 'settings'];
       views.forEach(id => {
         const view = document.getElementById(`view-${id}`);
         if (view) view.classList.toggle('hidden', id !== viewId);
@@ -675,179 +666,18 @@
 
       document.querySelectorAll('.sidebar-btn').forEach(button => {
         const isActive = button.dataset.view === viewId;
-        button.classList.toggle('bg-slate-800/80', isActive);
-        button.classList.toggle('text-white', isActive);
-        button.classList.toggle('font-semibold', isActive);
-        button.classList.toggle('text-slate-300', !isActive);
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-current', isActive ? 'page' : 'false');
       });
-    }
 
-    const SETTINGS_STORAGE_KEY = 'globalpulse-settings-v1';
-    const SETTINGS_SAVED_AT_KEY = 'globalpulse-settings-saved-at-v1';
-    const SETTINGS_DEFAULTS = Object.freeze({
-      riskThreshold: 70,
-      alertCadence: 'instant',
-      exportCadence: 'on-demand',
-      exportFormat: 'technical-report',
-      landingView: 'dashboard',
-      density: 'comfortable',
-      showSourceCoverage: true,
-      keyboardShortcuts: true
-    });
-    let currentSettings = { ...SETTINGS_DEFAULTS };
-
-    function settingsEqual(left, right) {
-      return Object.keys(SETTINGS_DEFAULTS).every(key => left[key] === right[key]);
-    }
-
-    function readSettingsForm() {
-      const thresholdValue = document.getElementById('riskThreshold')?.value ?? '';
-      return {
-        riskThreshold: thresholdValue === '' ? NaN : Number(thresholdValue),
-        alertCadence: document.getElementById('alertCadence')?.value || SETTINGS_DEFAULTS.alertCadence,
-        exportCadence: document.getElementById('exportCadence')?.value || SETTINGS_DEFAULTS.exportCadence,
-        exportFormat: document.getElementById('exportFormat')?.value || SETTINGS_DEFAULTS.exportFormat,
-        landingView: document.getElementById('landingView')?.value || SETTINGS_DEFAULTS.landingView,
-        density: document.getElementById('density')?.value || SETTINGS_DEFAULTS.density,
-        showSourceCoverage: Boolean(document.getElementById('showSourceCoverage')?.checked),
-        keyboardShortcuts: Boolean(document.getElementById('keyboardShortcuts')?.checked)
-      };
-    }
-
-    function applySettingsToForm(settings) {
-      const values = { ...SETTINGS_DEFAULTS, ...settings };
-      const threshold = document.getElementById('riskThreshold');
-      if (threshold) threshold.value = values.riskThreshold;
-      ['alertCadence', 'exportCadence', 'exportFormat', 'landingView', 'density'].forEach(id => {
-        const field = document.getElementById(id);
-        if (field) field.value = values[id];
-      });
-      const sourceCoverage = document.getElementById('showSourceCoverage');
-      const shortcuts = document.getElementById('keyboardShortcuts');
-      if (sourceCoverage) sourceCoverage.checked = values.showSourceCoverage;
-      if (shortcuts) shortcuts.checked = values.keyboardShortcuts;
-    }
-
-    function validateSettings(showMessage = false) {
-      const field = document.getElementById('riskThreshold');
-      const error = document.getElementById('riskThresholdError');
-      if (!field || !error) return true;
-      const value = Number(field.value);
-      const valid = field.value !== '' && Number.isInteger(value) && value >= 0 && value <= 100;
-      field.classList.toggle('border-rose-500', !valid);
-      field.classList.toggle('focus-visible:border-rose-500', !valid);
-      error.classList.toggle('hidden', valid || !showMessage);
-      error.textContent = valid ? '' : 'Enter a whole number from 0 to 100.';
-      return valid;
-    }
-
-    function updateSettingsStatus(message, tone = 'neutral') {
-      const status = document.getElementById('settingsStatus');
-      const badge = document.getElementById('settingsSyncBadge');
-      const badgeText = badge?.querySelector('span:last-child');
-      const badgeDot = badge?.querySelector('span:first-child');
-      if (status) {
-        status.textContent = message;
-        status.classList.remove('text-slate-700', 'dark:text-slate-200', 'text-amber-700', 'dark:text-amber-300', 'text-emerald-700', 'dark:text-emerald-300', 'text-rose-700', 'dark:text-rose-300');
-        status.classList.add(tone === 'error' ? 'text-rose-700' : tone === 'success' ? 'text-emerald-700' : tone === 'dirty' ? 'text-amber-700' : 'text-slate-700');
-        status.dataset.tone = tone;
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const menuButton = document.getElementById('mobileMenuBtn');
+      if (window.innerWidth < 1024 && sidebar && !sidebar.classList.contains('hidden')) {
+        sidebar.classList.add('hidden');
+        backdrop?.classList.add('hidden');
+        menuButton?.setAttribute('aria-expanded', 'false');
       }
-      if (badgeText) badgeText.textContent = tone === 'dirty' ? 'Unsaved changes' : tone === 'error' ? 'Save failed' : tone === 'success' ? 'Changes saved' : 'No unsaved changes';
-      if (badgeDot) {
-        badgeDot.classList.remove('bg-emerald-500', 'bg-amber-500', 'bg-rose-500');
-        badgeDot.classList.add(tone === 'error' ? 'bg-rose-500' : tone === 'dirty' ? 'bg-amber-500' : 'bg-emerald-500');
-      }
-    }
-
-    function applySettingsPresentation(settings) {
-      document.querySelector('main')?.classList.toggle('density-compact', settings.density === 'compact');
-      document.getElementById('sourcePerformanceSection')?.classList.toggle('hidden', settings.showSourceCoverage === false);
-    }
-
-    function updateSettingsFormState() {
-      const draft = readSettingsForm();
-      const valid = validateSettings(false);
-      applySettingsPresentation(draft);
-      const dirty = !settingsEqual(draft, currentSettings);
-      const saveButton = document.getElementById('saveSettingsBtn');
-      if (saveButton) saveButton.disabled = !dirty || !valid;
-      if (dirty) updateSettingsStatus('Unsaved changes', 'dirty');
-      else if (document.getElementById('settingsStatus')?.dataset.tone !== 'success') updateSettingsStatus('No unsaved changes', 'neutral');
-    }
-
-    function initSettings() {
-      const form = document.getElementById('settingsForm');
-      if (!form) return;
-      let storedSettings = null;
-      try {
-        storedSettings = JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY) || 'null');
-      } catch (error) {
-        storedSettings = null;
-      }
-      currentSettings = { ...SETTINGS_DEFAULTS, ...(storedSettings || {}) };
-      applySettingsToForm(currentSettings);
-      applySettingsPresentation(currentSettings);
-      const savedAt = localStorage.getItem(SETTINGS_SAVED_AT_KEY);
-      const lastSaved = document.getElementById('settingsLastSaved');
-      if (lastSaved && savedAt) lastSaved.textContent = `Last saved on this device: ${new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(savedAt))}`;
-
-      form.querySelectorAll('input, select').forEach(field => {
-        field.addEventListener('input', updateSettingsFormState);
-        field.addEventListener('change', updateSettingsFormState);
-      });
-      document.getElementById('riskThreshold')?.addEventListener('blur', () => validateSettings(true));
-      form.addEventListener('submit', async event => {
-        event.preventDefault();
-        if (!validateSettings(true)) {
-          updateSettingsStatus('Fix the highlighted field before saving', 'error');
-          return;
-        }
-        const saveButton = document.getElementById('saveSettingsBtn');
-        if (saveButton) {
-          saveButton.disabled = true;
-          saveButton.textContent = 'Saving…';
-        }
-        try {
-          const nextSettings = readSettingsForm();
-          await new Promise(resolve => setTimeout(resolve, 300));
-          localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(nextSettings));
-          localStorage.setItem(SETTINGS_SAVED_AT_KEY, new Date().toISOString());
-          currentSettings = nextSettings;
-          applySettingsPresentation(currentSettings);
-          if (lastSaved) lastSaved.textContent = `Last saved on this device: ${new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date())}`;
-          updateSettingsStatus('Changes saved', 'success');
-          showToast('Settings saved on this device');
-        } catch (error) {
-          updateSettingsStatus('Could not save settings. Try again.', 'error');
-          showToast('Settings could not be saved');
-        } finally {
-          if (saveButton) {
-            saveButton.textContent = 'Save changes';
-            updateSettingsFormState();
-            if (document.getElementById('settingsStatus')?.dataset.tone === 'success') updateSettingsStatus('Changes saved', 'success');
-          }
-        }
-      });
-      document.getElementById('resetSettingsBtn')?.addEventListener('click', () => {
-        applySettingsToForm(SETTINGS_DEFAULTS);
-        validateSettings(false);
-        updateSettingsStatus('Defaults restored in form', 'dirty');
-        const savedLine = document.getElementById('settingsLastSaved');
-        if (savedLine) savedLine.textContent = 'Save changes to keep the defaults on this device.';
-        updateSettingsFormState();
-      });
-      if (!window.__settingsShortcutsBound) {
-        document.addEventListener('keydown', event => {
-          const target = event.target;
-          const isTyping = target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement;
-          if (currentSettings.keyboardShortcuts && event.key === '/' && !isTyping) {
-            event.preventDefault();
-            document.getElementById('searchInput')?.focus();
-          }
-        });
-        window.__settingsShortcutsBound = true;
-      }
-      updateSettingsFormState();
     }
 
     function normalizeArticleLink(link) {
@@ -915,14 +745,146 @@
             : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200';
 
         return `
-          <tr class="text-slate-600 dark:text-slate-300">
-            <td class="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">${index + 1}</td>
-            <td class="px-4 py-3 font-medium text-slate-900 dark:text-slate-100"><a href="${escapeHtml(articleLink)}" target="_blank" rel="noopener noreferrer" class="hover:text-sky-600">${escapeHtml(item.title || '')}</a></td>
+          <tr class="data-row text-[#707070]">
+            <td class="px-4 py-3 font-medium text-[#171717]">${index + 1}</td>
+            <td class="max-w-[34rem] px-4 py-3 font-medium text-[#171717]"><a href="${escapeHtml(articleLink)}" target="_blank" rel="noopener noreferrer" class="line-clamp-2 hover:underline">${escapeHtml(item.title || '')}</a></td>
             <td class="px-4 py-3">${escapeHtml(sourceText)}</td>
-            <td class="px-4 py-3"><span class="rounded-full px-3 py-1 text-xs font-semibold ${badgeClass}">${escapeHtml(sentiment)}</span></td>
-            <td class="px-4 py-3 font-mono text-slate-700 dark:text-slate-200">${Number(item.sentiment_score ?? item.score ?? 0).toFixed(2)}</td>
+            <td class="px-4 py-3"><span class="rounded-full px-2 py-1 text-xs font-medium ${badgeClass}">${escapeHtml(sentiment)}</span></td>
+            <td class="px-4 py-3 font-mono text-[#212121]">${Number(item.sentiment_score ?? item.score ?? 0).toFixed(2)}</td>
           </tr>`;
       }).join('');
+    }
+
+    function getSourcePerformanceStats(data) {
+      const rows = Array.isArray(data) ? data : [];
+      const grouped = new Map();
+
+      rows.forEach(item => {
+        const source = String(item.source || item.source_name || 'Unknown').trim() || 'Unknown';
+        if (!grouped.has(source)) {
+          grouped.set(source, { source, count: 0, positive: 0, neutral: 0, negative: 0, articles: [] });
+        }
+        const bucket = grouped.get(source);
+        bucket.count += 1;
+        bucket.articles.push(item);
+
+        const sentiment = String(item.sentiment || 'Neutral').toLowerCase();
+        if (sentiment === 'positive') bucket.positive += 1;
+        else if (sentiment === 'negative') bucket.negative += 1;
+        else bucket.neutral += 1;
+      });
+
+      return Array.from(grouped.values()).sort((a, b) => b.count - a.count);
+    }
+
+    function renderSourcePerformance() {
+      const tbody = document.getElementById('sourcePerformanceBody');
+      if (!tbody) return;
+
+      const stats = getSourcePerformanceStats(dataset);
+      const maxCount = Math.max(...stats.map(item => item.count), 1);
+
+      tbody.innerHTML = stats.map(item => {
+        const momentumWidth = Math.max(20, Math.round((item.count / maxCount) * 100));
+        const positiveBarWidth = item.count ? Math.max(12, Math.round((item.positive / item.count) * 56)) : 0;
+        const neutralBarWidth = item.count ? Math.max(12, Math.round((item.neutral / item.count) * 56)) : 0;
+        const negativeBarWidth = item.count ? Math.max(12, Math.round((item.negative / item.count) * 56)) : 0;
+
+        return `
+          <tr class="data-row border-b border-[#ededed] text-[#707070] last:border-b-0">
+            <td class="py-4 pr-4 font-medium text-[#171717]">${escapeHtml(item.source)}</td>
+            <td class="py-4 pr-4"><div class="h-2.5 w-28 rounded-full bg-slate-200 dark:bg-slate-800"><div class="h-2.5 rounded-full bg-sky-500" style="width:${momentumWidth}%"></div></div></td>
+            <td class="py-4 pr-4"><div class="flex items-center gap-2">${positiveBarWidth ? `<span class="h-2.5 rounded-full bg-emerald-500" style="width:${positiveBarWidth}px"></span>` : '<span class="h-2.5 w-2 rounded-full bg-slate-300"></span>'}${neutralBarWidth ? `<span class="h-2.5 rounded-full bg-slate-400" style="width:${neutralBarWidth}px"></span>` : '<span class="h-2.5 w-2 rounded-full bg-slate-300"></span>'}${negativeBarWidth ? `<span class="h-2.5 rounded-full bg-rose-500" style="width:${negativeBarWidth}px"></span>` : '<span class="h-2.5 w-2 rounded-full bg-slate-300"></span>'}</div></td>
+            <td class="py-4 pr-4">
+              <button type="button" data-source="${escapeHtml(item.source)}" class="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-3 py-1.5 text-sm font-semibold text-sky-700 transition hover:bg-sky-100 dark:border-sky-900/40 dark:bg-sky-900/20 dark:text-sky-300">
+                <span>View ${item.count} articles</span>
+                <span aria-hidden="true">↗</span>
+              </button>
+            </td>
+          </tr>`;
+      }).join('');
+
+      tbody.querySelectorAll('button[data-source]').forEach(button => {
+        button.addEventListener('click', () => openArticleDrawer(button.dataset.source));
+      });
+    }
+
+    function openArticleDrawer(sourceName) {
+      const stats = getSourcePerformanceStats(dataset).find(item => item.source === sourceName);
+      const overlay = document.getElementById('articleDrawerOverlay');
+      const panel = document.getElementById('articleDrawerPanel');
+      const title = document.getElementById('articleDrawerTitle');
+      const summary = document.getElementById('articleDrawerSummary');
+      const list = document.getElementById('articleDrawerList');
+
+      if (!stats || !overlay || !panel || !title || !summary || !list) return;
+
+      title.textContent = stats.source;
+      summary.innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Article volume</p>
+            <h4 class="mt-1 text-xl font-semibold text-slate-900 dark:text-slate-100">${stats.count} articles from ${stats.source}</h4>
+          </div>
+          <div class="rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300">${stats.positive} positive</div>
+        </div>
+        <div class="mt-4 grid gap-3 sm:grid-cols-3">
+          <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-900/30 dark:bg-emerald-900/15">
+            <p class="text-sm text-emerald-700 dark:text-emerald-300">Positive</p>
+            <p class="mt-1 text-2xl font-semibold">${stats.positive}</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-950">
+            <p class="text-sm text-slate-600 dark:text-slate-300">Neutral</p>
+            <p class="mt-1 text-2xl font-semibold">${stats.neutral}</p>
+          </div>
+          <div class="rounded-2xl border border-rose-200 bg-rose-50 p-3 dark:border-rose-900/30 dark:bg-rose-900/15">
+            <p class="text-sm text-rose-700 dark:text-rose-300">Negative</p>
+            <p class="mt-1 text-2xl font-semibold">${stats.negative}</p>
+          </div>
+        </div>`;
+
+      list.innerHTML = stats.articles.map(item => {
+        const sentiment = String(item.sentiment || 'Neutral');
+        const badgeClass = sentiment === 'Positive'
+          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+          : sentiment === 'Negative'
+            ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300'
+            : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200';
+        const articleLink = normalizeArticleLink(item.link || item.url || item.article_link || '');
+        return `
+          <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">${escapeHtml(item.title || 'Untitled article')}</p>
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">${escapeHtml(item.date || 'No date')}</p>
+              </div>
+              <span class="rounded-full px-3 py-1 text-xs font-semibold ${badgeClass}">${escapeHtml(sentiment)}</span>
+            </div>
+            <div class="mt-3 flex flex-wrap items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+              <span class="rounded-full bg-slate-100 px-2.5 py-1 dark:bg-slate-800">${escapeHtml(item.category || 'General')}</span>
+              <a href="${escapeHtml(articleLink)}" target="_blank" rel="noopener noreferrer" class="font-semibold text-sky-600 hover:text-sky-500">Open article ↗</a>
+            </div>
+          </article>`;
+      }).join('');
+
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex');
+      requestAnimationFrame(() => {
+        panel.classList.remove('translate-x-full');
+        panel.classList.add('translate-x-0');
+      });
+    }
+
+    function closeArticleDrawer() {
+      const overlay = document.getElementById('articleDrawerOverlay');
+      const panel = document.getElementById('articleDrawerPanel');
+      if (!overlay || !panel) return;
+      panel.classList.remove('translate-x-0');
+      panel.classList.add('translate-x-full');
+      setTimeout(() => {
+        overlay.classList.add('hidden');
+        overlay.classList.remove('flex');
+      }, 220);
     }
 
     function showToast(message) {
@@ -930,7 +892,7 @@
       if (existing) existing.remove();
       const toast = document.createElement('div');
       toast.id = 'toastMessage';
-      toast.className = 'fixed bottom-5 right-5 z-[90] rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-xl dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200';
+      toast.className = 'fixed bottom-5 right-5 z-[90] rounded-md border border-[#dfdfdf] bg-white px-4 py-3 text-sm font-medium text-[#171717] shadow-[0_8px_24px_rgba(0,0,0,0.08)]';
       toast.textContent = message;
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 2200);
@@ -986,14 +948,6 @@
     }
 
     function exportReport() {
-      const preferredFormat = currentSettings.exportFormat || SETTINGS_DEFAULTS.exportFormat;
-      if (preferredFormat === 'csv-json') {
-        exportCSV();
-        exportJSON();
-        showToast('Exported CSV and JSON package');
-        return;
-      }
-
       const rows = Array.isArray(dataset) ? dataset : [];
       const positive = rows.filter(item => String(item.sentiment).toLowerCase() === 'positive').length;
       const negative = rows.filter(item => String(item.sentiment).toLowerCase() === 'negative').length;
@@ -1013,19 +967,16 @@
         ...Object.entries(categories).map(([name, count]) => `- ${name}: ${count}`)
       ];
       downloadFile(reportLines.join('\n'), 'Technical_Report.txt', 'text/plain;charset=utf-8;');
-      if (preferredFormat === 'full-package') {
-        exportCSV();
-        exportJSON();
-        showToast('Exported full data and report package');
-      }
     }
 
     const chartTheme = {
-      line: { borderColor: '#2563eb', bg: 'rgba(37, 99, 235, 0.14)' },
-      positive: '#10b981',
-      neutral: '#64748b',
-      negative: '#ef4444',
-      grid: 'rgba(148, 163, 184, 0.2)'
+      line: { borderColor: '#3ecf8e', bg: 'rgba(62, 207, 142, 0.14)' },
+      positive: '#3ecf8e',
+      neutral: '#9a9a9a',
+      negative: '#ff2201',
+      warning: '#ffdb13',
+      grid: 'rgba(112, 112, 112, 0.16)',
+      text: '#707070'
     };
 
     const MOCK_DATA = {
@@ -1039,9 +990,9 @@
         notes: ['Oct 2: 75 high-risk signals', 'Oct 5: export license review', 'Oct 9: fab capacity watchlist'],
         breakdown: { supply: 68, price: 54, logistics: 72 },
         samples: [
-          { title: 'TSMC defers advanced packaging expansion', excerpt: 'Executives cited equipment bottlenecks and supply chain pressure from tightening export controls.', link: 'https://example.com/tsmc-expansion-delay' },
-          { title: 'Intel delays Ohio mega-fab', excerpt: 'Analysts expect the delay to strengthen TSMC’s bargaining position in high-performance compute.', link: 'https://example.com/intel-fab-delay' },
-          { title: 'Foundry clients raise inventory buffers', excerpt: 'Customers are preparing for prolonged lead times and tighter allocation windows.', link: 'https://example.com/foundry-buffers' }
+          { title: 'TSMC defers advanced packaging expansion', excerpt: 'Executives cited equipment bottlenecks and supply chain pressure from tightening export controls.' },
+          { title: 'Intel delays Ohio mega-fab', excerpt: 'Analysts expect the delay to strengthen TSMC’s bargaining position in high-performance compute.' },
+          { title: 'Foundry clients raise inventory buffers', excerpt: 'Customers are preparing for prolonged lead times and tighter allocation windows.' }
         ]
       },
       'export-controls': {
@@ -1054,8 +1005,8 @@
         notes: ['Oct 3: customs review backlog', 'Oct 8: EUV export restriction update', 'Oct 12: OEM shipment re-route'],
         breakdown: { supply: 78, price: 62, logistics: 84 },
         samples: [
-          { title: 'China export rules tighten semiconductor equipment flows', excerpt: 'Industry sources report fresh restrictions affecting advanced packaging equipment routes.', link: 'https://example.com/china-export-rules' },
-          { title: 'Freight lanes rerouted near Taiwan Strait', excerpt: 'Logistics teams are adjusting transshipment plans after rapid policy changes.', link: 'https://example.com/taiwan-strait-reroute' }
+          { title: 'China export rules tighten semiconductor equipment flows', excerpt: 'Industry sources report fresh restrictions affecting advanced packaging equipment routes.' },
+          { title: 'Freight lanes rerouted near Taiwan Strait', excerpt: 'Logistics teams are adjusting transshipment plans after rapid policy changes.' }
         ]
       },
       'samsung-capacity': {
@@ -1068,24 +1019,60 @@
         notes: ['Oct 4: production ramp-up stable', 'Oct 8: demand confidence rebounding', 'Oct 12: packaging capacity improving'],
         breakdown: { supply: 42, price: 38, logistics: 48 },
         samples: [
-          { title: 'Samsung increases 3nm capacity guidance', excerpt: 'The foundry announced additional tooling to support high-volume production in late Q4.', link: 'https://example.com/samsung-3nm-capacity' },
-          { title: 'Customers diversify wafer allocation', excerpt: 'Several customers are shifting orders to hedge against regional bottlenecks.', link: 'https://example.com/wafer-diversification' }
+          { title: 'Samsung increases 3nm capacity guidance', excerpt: 'The foundry announced additional tooling to support high-volume production in late Q4.' },
+          { title: 'Customers diversify wafer allocation', excerpt: 'Several customers are shifting orders to hedge against regional bottlenecks.' }
         ]
       }
     };
 
     let modalCharts = {};
 
+    function updateThemeToggleButton(theme) {
+      const button = document.getElementById('themeToggle');
+      if (!button) return;
+
+      const isDark = theme === 'dark';
+      const iconName = isDark ? 'moon' : 'sun';
+      const labelText = isDark ? 'Dark mode' : 'Light mode';
+      const ariaLabel = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+
+      button.innerHTML = `<i data-lucide="${iconName}" class="h-4 w-4" aria-hidden="true"></i><span>${labelText}</span>`;
+      button.setAttribute('aria-label', ariaLabel);
+
+      if (window.lucide) {
+        window.lucide.createIcons({ attrs: { 'stroke-width': 1.7 } });
+      }
+    }
+
+    function applyTheme(theme) {
+      const normalizedTheme = theme === 'dark' ? 'dark' : 'light';
+      document.documentElement.classList.toggle('dark', normalizedTheme === 'dark');
+      localStorage.setItem('theme', normalizedTheme);
+      updateThemeToggleButton(normalizedTheme);
+    }
+
     function initTheme() {
-      const saved = localStorage.getItem('theme');
+      const storedTheme = localStorage.getItem('theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (saved === 'dark' || (!saved && prefersDark)) document.documentElement.classList.add('dark');
-      else document.documentElement.classList.remove('dark');
+      const theme = storedTheme === 'dark' || (!storedTheme && prefersDark) ? 'dark' : 'light';
+      applyTheme(theme);
     }
 
     function toggleTheme() {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+      applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    }
+
+    function setMobileNavOpen(isOpen) {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const menuButton = document.getElementById('mobileMenuBtn');
+      if (!sidebar || !backdrop || !menuButton) return;
+      const shouldOpen = Boolean(isOpen) && window.innerWidth < 1024;
+      sidebar.classList.toggle('hidden', !shouldOpen);
+      backdrop.classList.toggle('hidden', !shouldOpen);
+      menuButton.setAttribute('aria-expanded', String(shouldOpen));
+      document.body.classList.toggle('overflow-hidden', shouldOpen);
     }
 
     function destroyCharts() {
@@ -1123,21 +1110,22 @@
     function renderAccordion(samples) {
       const container = document.getElementById('accordionList');
       container.innerHTML = samples.map((item, index) => `
-        <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-950">
-          <button class="flex w-full items-center justify-between text-left" data-index="${index}">
-            <span class="font-semibold text-slate-900 dark:text-slate-100">
-              <a href="${escapeHtml(item.link || '#')}" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:underline">${item.title}</a>
-            </span>
-            <span class="text-slate-400">▾</span>
+        <div class="panel-flat p-4">
+          <button class="flex w-full items-center justify-between gap-3 text-left" data-index="${index}" aria-expanded="false" aria-controls="sample-panel-${index}">
+            <span class="font-medium text-[#171717]">${item.title}</span>
+            <i data-lucide="chevron-down" class="h-4 w-4 shrink-0 text-[#9a9a9a]" aria-hidden="true"></i>
           </button>
-          <div class="mt-3 hidden text-sm leading-6 text-slate-600 dark:text-slate-300" data-panel="${index}">${item.excerpt}</div>
+          <div id="sample-panel-${index}" class="mt-3 hidden text-sm leading-6 text-[#707070]" data-panel="${index}">${item.excerpt}</div>
         </div>
       `).join('');
+      if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.7 } });
 
       container.querySelectorAll('button').forEach(button => {
         button.addEventListener('click', () => {
           const panel = container.querySelector(`[data-panel="${button.dataset.index}"]`);
-          panel.classList.toggle('hidden');
+          const isOpen = !panel.classList.contains('hidden');
+          panel.classList.toggle('hidden', isOpen);
+          button.setAttribute('aria-expanded', String(!isOpen));
         });
       });
     }
@@ -1184,23 +1172,23 @@
 
       modalCharts.supply = new Chart(document.getElementById('radialSupply'), {
         type: 'doughnut',
-        data: { labels: ['Impact', 'Rest'], datasets: [{ data: [issue.breakdown.supply, 100 - issue.breakdown.supply], backgroundColor: ['#2563eb', '#e2e8f0'] }] },
+        data: { labels: ['Impact', 'Rest'], datasets: [{ data: [issue.breakdown.supply, 100 - issue.breakdown.supply], backgroundColor: [chartTheme.line.borderColor, '#ededed'] }] },
         options: radialOptions,
-        plugins: [{ id: 'centerText', beforeDraw(chart) { const {ctx, chartArea: {width, height}} = chart; ctx.save(); ctx.font = '700 16px Inter'; ctx.fillStyle = '#0f172a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(`${issue.breakdown.supply}%`, width / 2, height / 2); ctx.restore(); } }]
+        plugins: [{ id: 'centerText', beforeDraw(chart) { const {ctx, chartArea: {width, height}} = chart; ctx.save(); ctx.font = '500 16px Inter'; ctx.fillStyle = '#171717'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(`${issue.breakdown.supply}%`, width / 2, height / 2); ctx.restore(); } }]
       });
 
       modalCharts.price = new Chart(document.getElementById('radialPrice'), {
         type: 'doughnut',
-        data: { labels: ['Impact', 'Rest'], datasets: [{ data: [issue.breakdown.price, 100 - issue.breakdown.price], backgroundColor: ['#10b981', '#e2e8f0'] }] },
+        data: { labels: ['Impact', 'Rest'], datasets: [{ data: [issue.breakdown.price, 100 - issue.breakdown.price], backgroundColor: [chartTheme.positive, '#ededed'] }] },
         options: radialOptions,
-        plugins: [{ id: 'centerText', beforeDraw(chart) { const {ctx, chartArea: {width, height}} = chart; ctx.save(); ctx.font = '700 16px Inter'; ctx.fillStyle = '#0f172a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(`${issue.breakdown.price}%`, width / 2, height / 2); ctx.restore(); } }]
+        plugins: [{ id: 'centerText', beforeDraw(chart) { const {ctx, chartArea: {width, height}} = chart; ctx.save(); ctx.font = '500 16px Inter'; ctx.fillStyle = '#171717'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(`${issue.breakdown.price}%`, width / 2, height / 2); ctx.restore(); } }]
       });
 
       modalCharts.logistics = new Chart(document.getElementById('radialLogistics'), {
         type: 'doughnut',
-        data: { labels: ['Impact', 'Rest'], datasets: [{ data: [issue.breakdown.logistics, 100 - issue.breakdown.logistics], backgroundColor: ['#f59e0b', '#e2e8f0'] }] },
+        data: { labels: ['Impact', 'Rest'], datasets: [{ data: [issue.breakdown.logistics, 100 - issue.breakdown.logistics], backgroundColor: [chartTheme.warning, '#ededed'] }] },
         options: radialOptions,
-        plugins: [{ id: 'centerText', beforeDraw(chart) { const {ctx, chartArea: {width, height}} = chart; ctx.save(); ctx.font = '700 16px Inter'; ctx.fillStyle = '#0f172a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(`${issue.breakdown.logistics}%`, width / 2, height / 2); ctx.restore(); } }]
+        plugins: [{ id: 'centerText', beforeDraw(chart) { const {ctx, chartArea: {width, height}} = chart; ctx.save(); ctx.font = '500 16px Inter'; ctx.fillStyle = '#171717'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(`${issue.breakdown.logistics}%`, width / 2, height / 2); ctx.restore(); } }]
       });
     }
 
@@ -1214,15 +1202,15 @@
       miniCharts.forEach(([id, values]) => {
         new Chart(document.getElementById(id), {
           type: 'line',
-          data: { labels: ['1', '2', '3', '4', '5', '6'], datasets: [{ data: values, borderColor: '#2563eb', borderWidth: 2, pointRadius: 0, tension: 0.35, fill: false }] },
+          data: { labels: ['1', '2', '3', '4', '5', '6'], datasets: [{ data: values, borderColor: chartTheme.line.borderColor, borderWidth: 2, pointRadius: 0, tension: 0.35, fill: false }] },
           options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } } }
         });
       });
 
       new Chart(document.getElementById('donutChart'), {
         type: 'doughnut',
-        data: { labels: ['Opportunities', 'Risks'], datasets: [{ data: [64, 36], backgroundColor: ['#2563eb', '#f59e0b'] }] },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '78%', plugins: { legend: { position: 'bottom' } } }
+        data: { labels: ['Opportunities', 'Risks'], datasets: [{ data: [64, 36], backgroundColor: [chartTheme.positive, chartTheme.warning], borderColor: '#ffffff', borderWidth: 2 }] },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '78%', plugins: { legend: { position: 'bottom', labels: { color: chartTheme.text, usePointStyle: true, boxWidth: 8 } } } }
       });
 
       new Chart(document.getElementById('trendBarChart'), {
@@ -1230,29 +1218,41 @@
         data: {
           labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
           datasets: [
-            { label: 'Positive', data: [24, 28, 33, 31, 35, 39, 41, 44, 47, 49, 52, 58], backgroundColor: '#10b981' },
-            { label: 'Neutral', data: [12, 14, 16, 15, 16, 18, 19, 17, 18, 19, 17, 15], backgroundColor: '#64748b' },
-            { label: 'Negative', data: [11, 13, 10, 12, 13, 12, 11, 9, 10, 8, 7, 6], backgroundColor: '#ef4444' }
+            { label: 'Positive', data: [24, 28, 33, 31, 35, 39, 41, 44, 47, 49, 52, 58], backgroundColor: chartTheme.positive },
+            { label: 'Neutral', data: [12, 14, 16, 15, 16, 18, 19, 17, 18, 19, 17, 15], backgroundColor: chartTheme.neutral },
+            { label: 'Negative', data: [11, 13, 10, 12, 13, 12, 11, 9, 10, 8, 7, 6], backgroundColor: chartTheme.negative }
           ]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true } } }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: chartTheme.text, usePointStyle: true, boxWidth: 8 } } }, scales: { x: { grid: { color: chartTheme.grid }, ticks: { color: chartTheme.text } }, y: { beginAtZero: true, grid: { color: chartTheme.grid }, ticks: { color: chartTheme.text } } } }
       });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       initTheme();
+      if (window.lucide) window.lucide.createIcons();
       initializeCharts();
+      if (!dataset.length && typeof window.dataset !== 'undefined') {
+        dataset = Array.isArray(window.dataset) ? window.dataset.slice() : [];
+      }
       initFilter();
       renderTable(dataset, currentCategoryFilter, '');
-      initSettings();
-      switchView(currentSettings.landingView || 'dashboard');
+      renderSourcePerformance();
+      switchView('dashboard');
 
       document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
-      document.getElementById('mobileMenuBtn')?.addEventListener('click', () => document.getElementById('sidebar')?.classList.toggle('hidden'));
+      document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
+        const isOpen = document.getElementById('mobileMenuBtn')?.getAttribute('aria-expanded') === 'true';
+        setMobileNavOpen(!isOpen);
+      });
+      document.getElementById('sidebarBackdrop')?.addEventListener('click', () => setMobileNavOpen(false));
       document.getElementById('btnExportReport')?.addEventListener('click', exportReport);
       document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
+      document.getElementById('closeArticleDrawerBtn')?.addEventListener('click', closeArticleDrawer);
       document.getElementById('modalOverlay')?.addEventListener('click', event => {
         if (event.target.id === 'modalOverlay') closeModal();
+      });
+      document.getElementById('articleDrawerOverlay')?.addEventListener('click', event => {
+        if (event.target.id === 'articleDrawerOverlay') closeArticleDrawer();
       });
       document.getElementById('chatForm')?.addEventListener('submit', async event => {
         event.preventDefault();
@@ -1277,6 +1277,25 @@
       });
       document.querySelectorAll('.sidebar-btn').forEach(button => {
         button.addEventListener('click', () => switchView(button.dataset.view || 'dashboard'));
+      });
+      const settingsForm = document.getElementById('settingsForm');
+      const riskThreshold = document.getElementById('riskThreshold');
+      const riskOutput = document.querySelector('output[for="riskThreshold"]');
+      riskThreshold?.addEventListener('input', () => { if (riskOutput) riskOutput.value = riskThreshold.value; });
+      settingsForm?.addEventListener('submit', event => {
+        event.preventDefault();
+        localStorage.setItem('riskThreshold', riskThreshold?.value || '72');
+        const status = document.getElementById('settingsSaveStatus');
+        if (status) status.textContent = 'Saved just now';
+        showToast('Preferences saved');
+      });
+      const savedThreshold = localStorage.getItem('riskThreshold');
+      if (savedThreshold && riskThreshold && riskOutput) { riskThreshold.value = savedThreshold; riskOutput.value = savedThreshold; }
+      document.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') return;
+        setMobileNavOpen(false);
+        if (!document.getElementById('modalOverlay')?.classList.contains('hidden')) closeModal();
+        if (!document.getElementById('articleDrawerOverlay')?.classList.contains('hidden')) closeArticleDrawer();
       });
     });
   </script>
