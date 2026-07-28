@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlobalPulse AI • Semiconductor Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'] },
+          colors: {
+            supabase: { green: '#3ecf8e', deep: '#24b47e', ink: '#171717', muted: '#707070', hairline: '#dfdfdf' }
+          },
+          boxShadow: {
+            'supabase-sm': '0 1px 3px rgba(0, 0, 0, 0.06)',
+            'supabase-md': '0 8px 24px rgba(0, 0, 0, 0.08)',
+            'supabase-lg': '0 16px 48px rgba(0, 0, 0, 0.12)'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --color-primary: #3ecf8e;
+      --color-primary-deep: #24b47e;
+      --color-primary-soft: #4ade80;
+      --color-ink: #171717;
+      --color-ink-secondary: #212121;
+      --color-ink-muted: #707070;
+      --color-ink-tertiary: #9a9a9a;
+      --color-ink-faint: #b2b2b2;
+      --color-canvas: #ffffff;
+      --color-canvas-soft: #fafafa;
+      --color-canvas-night: #1c1c1c;
+      --color-canvas-night-soft: #202020;
+      --color-hairline: #dfdfdf;
+      --color-hairline-strong: #c7c7c7;
+      --color-hairline-cool: #ededed;
+      --color-hairline-cool-2: #efefef;
+      --color-hairline-cool-3: #d4d4d4;
+      --color-accent-yellow: #ffdb13;
+      --color-accent-indigo: #054cff;
+      --color-accent-tomato: #ff2201;
+      --radius-xs: 4px;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 12px;
+      --space-lg: 16px;
+      --space-xl: 24px;
+      --space-xxl: 32px;
+      --motion-fast: 150ms;
+      --motion-normal: 240ms;
+      --motion-ease: cubic-bezier(.2, 0, 0, 1);
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--color-canvas); }
+    body { font-family: Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif; color: var(--color-ink); background: var(--color-canvas); }
+    body, button, input, select, textarea { font-size: 14px; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: not-allowed; }
+    .app-shell { min-height: 100vh; background: var(--color-canvas); }
+    .app-sidebar { background: var(--color-canvas); border-right: 1px solid var(--color-hairline); }
+    .app-main { min-width: 0; background: var(--color-canvas); }
+    .app-header { background: rgba(255, 255, 255, 0.96); border-bottom: 1px solid var(--color-hairline); }
+    .page-canvas { background: var(--color-canvas-soft); }
+    .panel {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-hairline);
+      background: var(--color-canvas);
+      box-shadow: none;
+    }
+    .panel-flat { border: 1px solid var(--color-hairline-cool); background: var(--color-canvas-soft); border-radius: var(--radius-md); }
+    .panel-dark { border-radius: var(--radius-lg); border: 1px solid var(--color-canvas-night); background: var(--color-canvas-night); color: var(--color-canvas); }
+    .eyebrow { color: var(--color-ink-muted); font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+    .sidebar-btn { color: var(--color-ink-muted); border-left: 2px solid transparent; border-radius: var(--radius-sm); transition: color var(--motion-fast) var(--motion-ease), background-color var(--motion-fast) var(--motion-ease), border-color var(--motion-fast) var(--motion-ease); }
+    .sidebar-btn:hover { color: var(--color-ink); background: var(--color-canvas-soft); }
+    .sidebar-btn.is-active { color: var(--color-ink); background: var(--color-canvas-soft); border-left-color: var(--color-primary); }
+    .control, .control-select, .control-input { border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); border-radius: var(--radius-sm); }
+    .control:hover, .control-select:hover { border-color: var(--color-hairline-strong); }
+    .control:focus-visible, .control-select:focus-visible, .control-input:focus-visible, .sidebar-btn:focus-visible, a:focus-visible, button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+    .primary-action { background: var(--color-primary); color: var(--color-ink); border-radius: var(--radius-sm); transition: background-color var(--motion-fast) var(--motion-ease), transform var(--motion-fast) var(--motion-ease); }
+    .primary-action:hover { background: var(--color-primary-deep); }
+    .primary-action:active { transform: translateY(1px); }
+    .secondary-action { border: 1px solid var(--color-hairline-strong); background: var(--color-canvas); color: var(--color-ink); border-radius: var(--radius-sm); transition: background-color var(--motion-fast) var(--motion-ease); }
+    .secondary-action:hover { background: var(--color-canvas-soft); }
+    .status-pill { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--color-hairline); border-radius: 9999px; background: var(--color-canvas-soft); color: var(--color-ink-secondary); padding: 4px 8px; font-size: 12px; font-weight: 500; }
+    .status-dot { width: 6px; height: 6px; border-radius: 9999px; background: var(--color-primary); }
+    .data-row { transition: background-color var(--motion-fast) var(--motion-ease); }
+    .data-row:hover { background: var(--color-canvas-soft); }
+    .slider-card { transition: border-color var(--motion-fast) var(--motion-ease), background-color var(--motion-fast) var(--motion-ease); }
+    .slider-card:hover { transform: none; box-shadow: none; border-color: var(--color-hairline-strong); background: var(--color-canvas-soft); }
+    .chart-shell { min-width: 0; }
+    .bg-slate-50, .bg-slate-100, .bg-slate-200 { background-color: var(--color-canvas-soft) !important; }
+    .bg-white { background-color: var(--color-canvas) !important; }
+    .border-slate-100, .border-slate-200, .border-slate-300 { border-color: var(--color-hairline) !important; }
+    .text-slate-900, .text-slate-800, .text-slate-700 { color: var(--color-ink) !important; }
+    .text-slate-600, .text-slate-500 { color: var(--color-ink-muted) !important; }
+    .text-slate-400, .text-slate-300 { color: var(--color-ink-tertiary) !important; }
+    .bg-sky-600 { background-color: var(--color-primary) !important; }
+    .hover\\:bg-sky-500:hover { background-color: var(--color-primary-deep) !important; }
+    .text-sky-600, .text-sky-700 { color: var(--color-ink-secondary) !important; }
+    .dark\\:bg-slate-950, .dark\\:bg-slate-900, .dark\\:bg-slate-800 { background-color: var(--color-canvas) !important; }
+    .dark\\:text-slate-100, .dark\\:text-slate-200 { color: var(--color-ink) !important; }
+    .dark\\:text-slate-300, .dark\\:text-slate-400 { color: var(--color-ink-muted) !important; }
+    .modal-enter { opacity: 0; transform: translateY(12px) scale(.99); }
+    .modal-enter-active { opacity: 1; transform: translateY(0) scale(1); }
+    .modal-exit { opacity: 1; transform: translateY(0) scale(1); }
+    .modal-exit-active { opacity: 0; transform: translateY(12px) scale(.99); }
+    canvas { display: block; width: 100% !important; height: 100% !important; }
+    @media (max-width: 767px) {
+      .mobile-drawer { width: min(88vw, 320px); box-shadow: 16px 0 48px rgba(0, 0, 0, .12); }
+      .page-canvas { padding: 16px !important; }
+      .app-header { padding: 12px 16px !important; }
+      .header-search { order: 3; flex-basis: 100%; }
+      .kpi-grid { grid-template-columns: 1fr !important; }
+      .dashboard-grid { grid-template-columns: 1fr !important; }
+      .hide-mobile { display: none !important; }
+      .table-scroll { margin-inline: -1px; }
+    }
+  </style>
+</head>
+<body class="app-shell">
+  <div class="flex min-h-screen">
+    <aside id="sidebar" class="app-sidebar mobile-drawer fixed inset-y-0 left-0 z-50 hidden w-60 flex-col px-4 py-5 lg:flex">
+      <div class="flex items-center gap-3 border-b border-[#ededed] px-2 pb-5">
+        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#1c1c1c] text-xs font-semibold text-white">GP</div>
+        <div>
+          <p class="text-sm font-semibold tracking-[-0.02em] text-[#171717]">GlobalPulse AI</p>
+          <p class="mt-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-[#9a9a9a]">Semiconductor OS</p>
+        </div>
+      </div>
+
+      <nav aria-label="Primary navigation" class="mt-6 space-y-1">
+        <button id="btn-dashboard" data-view="dashboard" class="sidebar-btn is-active flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium" aria-current="page"><i data-lucide="layout-dashboard" class="h-4 w-4" aria-hidden="true"></i><span>Dashboard</span></button>
+        <button id="btn-insights" data-view="insights" class="sidebar-btn flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium"><i data-lucide="globe-2" class="h-4 w-4" aria-hidden="true"></i><span>Insights</span></button>
+        <button id="btn-signals" data-view="signals" class="sidebar-btn flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium"><i data-lucide="radio-tower" class="h-4 w-4" aria-hidden="true"></i><span>Market Signals</span></button>
+        <button id="btn-alerts" data-view="alerts" class="sidebar-btn flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium"><i data-lucide="triangle-alert" class="h-4 w-4" aria-hidden="true"></i><span>Risk Alerts</span><span class="ml-auto rounded-full bg-[#fff7cf] px-1.5 py-0.5 text-[10px] font-semibold text-[#7a5d00]">3</span></button>
+        <button id="btn-integrations" data-view="integrations" class="sidebar-btn flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium"><i data-lucide="plug-zap" class="h-4 w-4" aria-hidden="true"></i><span>Integrations</span></button>
+      </nav>
+
+      <div class="mt-auto space-y-1 border-t border-[#ededed] pt-4">
+        <button id="btn-settings" data-view="settings" class="sidebar-btn flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium"><i data-lucide="settings-2" class="h-4 w-4" aria-hidden="true"></i><span>Settings</span></button>
+        <button id="btn-help" data-view="settings" class="sidebar-btn flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium"><i data-lucide="circle-help" class="h-4 w-4" aria-hidden="true"></i><span>Help Center</span></button>
+        <div class="mt-4 flex items-center gap-3 rounded-lg border border-[#ededed] bg-[#fafafa] px-3 py-3">
+          <div class="flex h-8 w-8 items-center justify-center rounded-full bg-[#3ecf8e] text-xs font-semibold text-[#171717]">KV</div>
+          <div class="min-w-0">
+            <p class="truncate text-sm font-medium text-[#171717]">Kiet Vu</p>
+            <p class="truncate text-xs text-[#707070]">Principal Analyst</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <div id="sidebarBackdrop" class="fixed inset-0 z-40 hidden bg-black/20 lg:hidden" aria-hidden="true"></div>
+
+    <div class="app-main flex-1 lg:ml-60">
+      <header class="app-header sticky top-0 z-30 px-4 py-3 lg:px-8">
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex items-center gap-3 lg:hidden">
+            <button id="mobileMenuBtn" class="control flex h-9 w-9 items-center justify-center" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false"><i data-lucide="menu" class="h-4 w-4" aria-hidden="true"></i></button>
+            <div class="text-sm font-semibold tracking-[-0.02em]">GlobalPulse AI</div>
+          </div>
+          <label class="header-search control-input flex min-w-0 flex-1 items-center gap-2 px-3 py-2.5 text-sm text-[#707070]">
+            <i data-lucide="search" class="h-4 w-4 shrink-0" aria-hidden="true"></i>
+            <span class="sr-only">Search market signals</span>
+            <input id="searchInput" type="text" placeholder="Search market signals..." class="w-full min-w-0 bg-transparent text-[#171717] outline-none placeholder:text-[#9a9a9a]" />
+          </label>
+          <label class="control-select flex items-center gap-2 px-3 py-2.5 text-sm text-[#212121]">
+            <span class="sr-only">Reporting range</span>
+            <select id="rangeSelect" class="bg-transparent outline-none">
+              <option>Monthly</option>
+              <option selected>Q3 2026</option>
+              <option>YTD</option>
+            </select>
+          </label>
+          <button id="themeToggle" class="secondary-action hidden items-center gap-2 px-3 py-2.5 text-sm font-medium sm:inline-flex" aria-label="Theme setting"><i data-lucide="sun" class="h-4 w-4" aria-hidden="true"></i><span>Light mode</span></button>
+          <button id="btnExportReport" type="button" onclick="exportReport()" class="primary-action inline-flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium"><i data-lucide="download" class="h-4 w-4" aria-hidden="true"></i><span>Export report</span></button>
+        </div>
+      </header>
+
+      <main class="page-canvas min-h-screen px-4 py-6 lg:px-8 lg:py-8">
+        <div id="view-dashboard">
+        <section class="dashboard-grid mb-6 grid gap-4 xl:grid-cols-[1.35fr_0.65fr]">
+          <div class="panel overflow-hidden p-5 lg:p-6">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p class="eyebrow">Portfolio pulse · Q3 2026</p>
+                <h1 class="mt-2 max-w-2xl text-2xl font-medium leading-tight tracking-[-0.04em] lg:text-3xl">Semiconductor market intelligence at a glance</h1>
+              </div>
+              <div class="status-pill"><span class="status-dot"></span><span>Live · <span id="signalsCountBadge">0</span> signals</span></div>
+            </div>
+            <div class="kpi-grid mt-6 grid gap-3 md:grid-cols-3">
+              <div class="panel-flat p-4">
+                <p class="text-sm text-[#707070]">Overall market sentiment</p>
+                <div class="mt-3 flex items-end justify-between">
+                  <div>
+                    <div class="text-3xl font-medium tracking-[-0.04em]">+72%</div>
+                    <div class="mt-2 text-xs font-medium text-[#24b47e]">↑ 12% vs last month</div>
+                  </div>
+                  <div class="h-14 w-20"><canvas id="miniSentimentChart"></canvas></div>
+                </div>
+              </div>
+              <div class="panel-flat p-4">
+                <p class="text-sm text-[#707070]">Signals collected</p>
+                <div class="mt-3 flex items-end justify-between">
+                  <div>
+                    <div class="text-3xl font-medium tracking-[-0.04em]">1,248</div>
+                    <div class="mt-2 text-xs font-medium text-[#707070]">8.3% this week · +104</div>
+                  </div>
+                  <div class="h-14 w-20"><canvas id="miniSignalsChart"></canvas></div>
+                </div>
+              </div>
+              <div class="panel-flat p-4">
+                <p class="text-sm text-[#707070]">AI risk insights</p>
+                <div class="mt-3 flex items-end justify-between">
+                  <div>
+                    <div class="text-3xl font-medium tracking-[-0.04em]">89</div>
+                    <div class="mt-2 text-xs font-medium text-[#7a5d00]">4.7% this week · +4</div>
+                  </div>
+                  <div class="h-14 w-20"><canvas id="miniRiskChart"></canvas></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel p-5 lg:p-6">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="eyebrow">Signal mix</p>
+                <h2 class="mt-1 text-lg font-medium tracking-[-0.02em]">Opportunity vs risk</h2>
+              </div>
+              <div class="status-pill">Balanced</div>
+            </div>
+            <div class="mt-4 h-56 chart-shell"><canvas id="donutChart"></canvas></div>
+          </div>
+        </section>
+
+        <section class="mb-6 grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+          <div class="panel p-5 lg:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p class="eyebrow">Sentiment trend</p>
+                <h2 class="mt-1 text-lg font-medium tracking-[-0.02em]">Volume by sentiment over the last 12 months</h2>
+              </div>
+              <div class="text-xs text-[#707070]">Updated 2h ago</div>
+            </div>
+            <div class="mt-6 h-80 chart-shell"><canvas id="trendBarChart"></canvas></div>
+          </div>
+
+          <div class="panel p-5 lg:p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="eyebrow">Drill-down</p>
+                <h2 class="mt-1 text-lg font-medium tracking-[-0.02em]">High priority disruptions</h2>
+              </div>
+            </div>
+            <div class="mt-4 space-y-3">
+              <button data-issue="tsmc-yield" class="slider-card flex w-full items-start justify-between rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left dark:border-slate-800 dark:bg-slate-950/70">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">TSMC Yield Issues</p>
+                  <p class="mt-1 text-sm text-slate-500">Advanced nodes under pressure after EUV tool delays.</p>
+                </div>
+                <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-900/25 dark:text-amber-300">High Risk</span>
+              </button>
+              <button data-issue="export-controls" class="slider-card flex w-full items-start justify-between rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left dark:border-slate-800 dark:bg-slate-950/70">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Export Controls</p>
+                  <p class="mt-1 text-sm text-slate-500">Geopolitical restrictions tightening shipping lanes.</p>
+                </div>
+                <span class="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700 dark:bg-rose-900/25 dark:text-rose-300">Critical</span>
+              </button>
+              <button data-issue="samsung-capacity" class="slider-card flex w-full items-start justify-between rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left dark:border-slate-800 dark:bg-slate-950/70">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Samsung Capacity</p>
+                  <p class="mt-1 text-sm text-slate-500">Foundry expansion pacing slower than expected.</p>
+                </div>
+                <span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700 dark:bg-sky-900/25 dark:text-sky-300">Watch</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel overflow-hidden p-5 lg:p-6">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p class="eyebrow">Source performance</p>
+              <h2 class="mt-1 text-lg font-medium tracking-[-0.02em]">Multichannel source health and distribution</h2>
+            </div>
+          </div>
+          <div class="table-scroll mt-6 overflow-x-auto">
+            <table class="min-w-full text-left text-sm">
+              <thead class="border-b border-slate-200 text-xs uppercase tracking-[0.25em] text-slate-400 dark:border-slate-800">
+                <tr>
+                  <th class="pb-3 pr-4 font-semibold">Source</th>
+                  <th class="pb-3 pr-4 font-semibold">Momentum</th>
+                  <th class="pb-3 pr-4 font-semibold">Sentiment mix</th>
+                  <th class="pb-3 pr-4 font-semibold">Article Volume</th>
+                </tr>
+              </thead>
+              <tbody id="sourcePerformanceBody"></tbody>
+            </table>
+          </div>
+        </section>
+        </div>
+
+        <div id="view-signals" class="hidden">
+          <section class="panel overflow-hidden p-6">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Market Intelligence</p>
+                <h2 class="mt-1 text-2xl font-semibold">Market Signals Database</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-500 dark:text-slate-400">Track semiconductor supply-chain articles, sentiment shifts, and intervention signals in one premium operational view.</p>
+              </div>
+              <div class="flex flex-wrap gap-3">
+                <label class="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                  <select id="categoryFilter" class="bg-transparent outline-none">
+                    <option value="All">All Categories</option>
+                  </select>
+                </label>
+                <button onclick="exportCSV()" class="rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">Export CSV</button>
+                <button onclick="exportJSON()" class="rounded-2xl bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-500">Export JSON</button>
+                <button onclick="exportReport()" class="rounded-2xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200">Download Tech Report</button>
+              </div>
+            </div>
+
+            <div class="mt-6 overflow-x-auto rounded-3xl border border-slate-200 dark:border-slate-800">
+              <table class="min-w-full text-left text-sm">
+                <thead class="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-[0.25em] text-slate-400 dark:border-slate-800 dark:bg-slate-950">
+                  <tr>
+                    <th class="px-4 py-3 font-semibold">Ordinal Number</th>
+                    <th class="px-4 py-3 font-semibold">Title</th>
+                    <th class="px-4 py-3 font-semibold">Source</th>
+                    <th class="px-4 py-3 font-semibold">Label</th>
+                    <th class="px-4 py-3 font-semibold">Point</th>
+                  </tr>
+                </thead>
+                <tbody id="signalsTableBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <section id="view-insights" class="hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 panel p-6">
+              <h3 class="text-xl font-semibold">Geopolitical Hotspot Map</h3>
+              <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Visualize news sentiment across the globe to identify regional trends and potential disruptions.</p>
+              <div id="hotspotMap" class="mt-4 h-96 bg-slate-200 dark:bg-slate-800 rounded-lg flex items-center justify-center">
+                <p class="text-slate-500">Map Placeholder</p>
+              </div>
+            </div>
+
+            <div class="panel p-6">
+              <h3 class="text-xl font-semibold">Opportunity vs. Risk Matrix</h3>
+              <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Categorize market signals to identify high-impact opportunities and critical risks.</p>
+              <div class="mt-4 h-96">
+                <canvas id="opportunityRiskMatrix"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-alerts" class="hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Alerts Feed -->
+            <div class="lg:col-span-2 panel p-6">
+              <h3 class="text-xl font-semibold">Real-time Alerts Feed</h3>
+              <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">A live feed of critical events and disruptions.</p>
+              <div class="mt-4 space-y-4">
+                <!-- Mock Alert 1 -->
+                <div class="p-4 rounded-lg border border-rose-200 bg-rose-50 dark:border-rose-900/30 dark:bg-rose-900/15">
+                  <div class="flex justify-between">
+                    <span class="font-semibold text-rose-800 dark:text-rose-200">Critical: Factory Fire</span>
+                    <span class="text-sm text-rose-600 dark:text-rose-400">15 minutes ago</span>
+                  </div>
+                  <p class="mt-2 text-sm text-rose-700 dark:text-rose-300">A fire has been reported at a major packaging facility in Taiwan. Production is halted.</p>
+                </div>
+                <!-- Mock Alert 2 -->
+                <div class="p-4 rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-900/30 dark:bg-amber-900/15">
+                  <div class="flex justify-between">
+                    <span class="font-semibold text-amber-800 dark:text-amber-200">High: Port Congestion</span>
+                    <span class="text-sm text-amber-600 dark:text-amber-400">2 hours ago</span>
+                  </div>
+                  <p class="mt-2 text-sm text-amber-700 dark:text-amber-300">Severe congestion at the Port of Singapore is causing shipping delays of up to 72 hours.</p>
+                </div>
+                <!-- Mock Alert 3 -->
+                <div class="p-4 rounded-lg border border-sky-200 bg-sky-50 dark:border-sky-900/30 dark:bg-sky-900/15">
+                  <div class="flex justify-between">
+                    <span class="font-semibold text-sky-800 dark:text-sky-200">Medium: Material Shortage</span>
+                    <span class="text-sm text-sky-600 dark:text-sky-400">8 hours ago</span>
+                  </div>
+                  <p class="mt-2 text-sm text-sky-700 dark:text-sky-300">A key supplier of photoresist is reporting a production slowdown, potentially impacting wafer starts next quarter.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Intervention Queue -->
+            <div class="panel p-6">
+              <h3 class="text-xl font-semibold">Intervention Queue</h3>
+              <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Alerts requiring immediate attention and action.</p>
+              <div class="mt-4 space-y-3">
+                <div class="p-3 rounded-lg bg-slate-100 dark:bg-slate-800">
+                  <p class="font-semibold">Factory Fire in Taiwan</p>
+                  <div class="flex justify-between items-center mt-2">
+                    <span class="text-xs font-bold text-rose-500">Status: NEW</span>
+                    <button class="text-xs bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded-md">Assign</button>
+                  </div>
+                </div>
+                <div class="p-3 rounded-lg bg-slate-100 dark:bg-slate-800">
+                  <p class="font-semibold">Port Congestion</p>
+                  <div class="flex justify-between items-center mt-2">
+                    <span class="text-xs font-bold text-amber-500">Status: IN PROGRESS</span>
+                    <span class="text-xs font-semibold">Assigned to: Kiet Vu</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-integrations" class="hidden">
+          <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p class="eyebrow">Workspace connections</p>
+              <h2 class="mt-1 text-2xl font-medium tracking-[-0.04em]">Connect your intelligence stack</h2>
+              <p class="mt-2 max-w-2xl text-sm text-[#707070]">Keep market feeds, internal operations, and reporting destinations in one controlled workspace.</p>
+            </div>
+            <button class="primary-action inline-flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium" onclick="showToast('Connector catalog opened')"><i data-lucide="plus" class="h-4 w-4" aria-hidden="true"></i>Add connector</button>
+          </div>
+          <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <article class="panel p-5">
+              <div class="flex items-start justify-between gap-3"><div class="flex h-9 w-9 items-center justify-center rounded-md bg-[#1c1c1c] text-xs font-semibold text-white">BBC</div><span class="status-pill"><span class="status-dot"></span>Connected</span></div>
+              <h3 class="mt-5 text-lg font-medium">BBC News</h3><p class="mt-2 text-sm leading-6 text-[#707070]">Global policy, technology, and market coverage for sentiment collection.</p>
+              <button class="secondary-action mt-5 px-3 py-2 text-xs font-medium" onclick="showToast('BBC News settings opened')">Manage source</button>
+            </article>
+            <article class="panel p-5">
+              <div class="flex items-start justify-between gap-3"><div class="flex h-9 w-9 items-center justify-center rounded-md bg-[#fafafa] text-xs font-semibold text-[#171717] ring-1 ring-[#dfdfdf]">VN</div><span class="status-pill"><span class="status-dot"></span>Connected</span></div>
+              <h3 class="mt-5 text-lg font-medium">VnExpress</h3><p class="mt-2 text-sm leading-6 text-[#707070]">Regional semiconductor and logistics signals from Vietnam and Asia.</p>
+              <button class="secondary-action mt-5 px-3 py-2 text-xs font-medium" onclick="showToast('VnExpress settings opened')">Manage source</button>
+            </article>
+            <article class="panel p-5">
+              <div class="flex items-start justify-between gap-3"><div class="flex h-9 w-9 items-center justify-center rounded-md bg-[#fafafa] text-[#707070] ring-1 ring-[#dfdfdf]"><i data-lucide="webhook" class="h-4 w-4" aria-hidden="true"></i></div><span class="status-pill">Not connected</span></div>
+              <h3 class="mt-5 text-lg font-medium">Operations webhook</h3><p class="mt-2 text-sm leading-6 text-[#707070]">Send high-priority disruption alerts to your internal response workflow.</p>
+              <button class="secondary-action mt-5 px-3 py-2 text-xs font-medium" onclick="showToast('Webhook setup opened')">Set up webhook</button>
+            </article>
+          </div>
+          <div class="panel-dark mt-4 flex flex-wrap items-center justify-between gap-4 p-5"><div><p class="text-sm font-medium">Need a different source?</p><p class="mt-1 text-sm text-white/60">Use the connector catalog to request a new feed or destination.</p></div><button class="inline-flex items-center gap-2 rounded-md border border-white/20 px-3 py-2 text-sm font-medium text-white transition hover:bg-white/10" onclick="showToast('Connector request started')">Request connector <i data-lucide="arrow-up-right" class="h-4 w-4" aria-hidden="true"></i></button></div>
+        </section>
+
+        <section id="view-settings" class="hidden">
+          <div class="mb-6">
+            <p class="eyebrow">Workspace preferences</p>
+            <h2 class="mt-1 text-2xl font-medium tracking-[-0.04em]">Tune your operating view</h2>
+            <p class="mt-2 max-w-2xl text-sm text-[#707070]">Set the thresholds, refresh cadence, and delivery preferences used by your analyst workspace.</p>
+          </div>
+          <form id="settingsForm" class="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+            <div class="panel p-5 lg:p-6">
+              <div class="flex items-center justify-between gap-4 border-b border-[#ededed] pb-4"><div><h3 class="text-lg font-medium">Alert thresholds</h3><p class="mt-1 text-sm text-[#707070]">Choose when a signal enters the intervention queue.</p></div><i data-lucide="sliders-horizontal" class="h-5 w-5 text-[#9a9a9a]" aria-hidden="true"></i></div>
+              <div class="mt-5 grid gap-5 md:grid-cols-2">
+                <label class="block"><span class="text-sm font-medium">Risk score threshold</span><span class="mt-2 flex items-center gap-3"><input id="riskThreshold" type="range" min="0" max="100" value="72" class="w-full accent-[#3ecf8e]" /><output for="riskThreshold" class="w-10 text-right font-mono text-sm text-[#707070]">72</output></span><span class="mt-1 block text-xs text-[#9a9a9a]">Escalate signals above this score.</span></label>
+                <label class="block"><span class="text-sm font-medium">Minimum article volume</span><select class="control-select mt-2 w-full px-3 py-2.5"><option>10 articles</option><option selected>25 articles</option><option>50 articles</option></select><span class="mt-1 block text-xs text-[#9a9a9a]">Avoids overreacting to isolated mentions.</span></label>
+              </div>
+            </div>
+            <div class="panel p-5 lg:p-6">
+              <div class="flex items-center justify-between gap-4 border-b border-[#ededed] pb-4"><div><h3 class="text-lg font-medium">Delivery preferences</h3><p class="mt-1 text-sm text-[#707070]">Keep the team aligned without adding noise.</p></div><i data-lucide="bell-ring" class="h-5 w-5 text-[#9a9a9a]" aria-hidden="true"></i></div>
+              <div class="mt-5 space-y-4">
+                <label class="flex items-start justify-between gap-4"><span><span class="block text-sm font-medium">Critical alerts</span><span class="mt-1 block text-xs text-[#707070]">Notify immediately when production is at risk.</span></span><input type="checkbox" checked class="mt-1 h-4 w-4 accent-[#3ecf8e]" /></label>
+                <label class="flex items-start justify-between gap-4"><span><span class="block text-sm font-medium">Daily digest</span><span class="mt-1 block text-xs text-[#707070]">Send a summary at the start of the workday.</span></span><input type="checkbox" checked class="mt-1 h-4 w-4 accent-[#3ecf8e]" /></label>
+                <label class="flex items-start justify-between gap-4"><span><span class="block text-sm font-medium">Weekly export</span><span class="mt-1 block text-xs text-[#707070]">Archive a technical report every Friday.</span></span><input type="checkbox" class="mt-1 h-4 w-4 accent-[#3ecf8e]" /></label>
+              </div>
+              <div class="mt-6 flex items-center justify-end gap-3 border-t border-[#ededed] pt-4"><span id="settingsSaveStatus" class="text-xs text-[#707070]" role="status"></span><button type="submit" class="primary-action px-3.5 py-2.5 text-sm font-medium">Save preferences</button></div>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div id="articleDrawerOverlay" class="fixed inset-0 z-[60] hidden bg-black/30">
+    <div id="articleDrawerPanel" class="absolute inset-y-0 right-0 flex w-full max-w-3xl translate-x-full flex-col bg-white shadow-[0_16px_48px_rgba(0,0,0,0.12)] transition-all duration-300">
+      <div class="flex items-center justify-between border-b border-[#dfdfdf] px-6 py-5">
+        <div>
+          <p class="eyebrow">Article explorer</p>
+          <h3 id="articleDrawerTitle" class="mt-1 text-2xl font-medium tracking-[-0.04em]"></h3>
+        </div>
+        <button id="closeArticleDrawerBtn" class="control flex h-9 w-9 items-center justify-center" aria-label="Close article explorer"><i data-lucide="x" class="h-4 w-4" aria-hidden="true"></i></button>
+      </div>
+      <div class="flex-1 overflow-y-auto px-6 py-6">
+        <div id="articleDrawerSummary" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/70"></div>
+        <div id="articleDrawerList" class="mt-5 space-y-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalOverlay" class="fixed inset-0 z-50 hidden bg-black/30">
+    <div id="modalPanel" class="absolute inset-y-0 right-0 flex w-full max-w-6xl translate-x-full flex-col bg-white shadow-[0_16px_48px_rgba(0,0,0,0.12)] transition-all duration-300">
+      <div class="flex items-center justify-between border-b border-[#dfdfdf] px-6 py-5">
+        <div>
+          <p class="eyebrow">Disruption explorer</p>
+          <h3 id="modalTitle" class="mt-1 text-2xl font-medium tracking-[-0.04em]"></h3>
+        </div>
+        <button id="closeModalBtn" class="control flex h-9 w-9 items-center justify-center" aria-label="Close disruption explorer"><i data-lucide="x" class="h-4 w-4" aria-hidden="true"></i></button>
+      </div>
+      <div class="flex-1 overflow-y-auto px-6 py-6">
+        <div class="grid gap-4 md:grid-cols-3">
+          <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900/30 dark:bg-emerald-900/15">
+            <p class="text-sm text-emerald-700 dark:text-emerald-300">Positive</p>
+            <p id="kpiPositive" class="mt-2 text-3xl font-semibold">0</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/70">
+            <p class="text-sm text-slate-600 dark:text-slate-300">Neutral</p>
+            <p id="kpiNeutral" class="mt-2 text-3xl font-semibold">0</p>
+          </div>
+          <div class="rounded-2xl border border-rose-200 bg-rose-50 p-4 dark:border-rose-900/30 dark:bg-rose-900/15">
+            <p class="text-sm text-rose-700 dark:text-rose-300">Negative</p>
+            <p id="kpiNegative" class="mt-2 text-3xl font-semibold">0</p>
+          </div>
+        </div>
+
+        <div class="mt-6 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+          <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/70">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Net Sentiment Rate</p>
+                <h4 class="mt-1 text-xl font-semibold">30-day trend</h4>
+              </div>
+            </div>
+            <div class="mt-5 h-80"><canvas id="modalLineChart"></canvas></div>
+          </div>
+          <div class="space-y-4">
+            <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/70">
+              <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Impact Breakdown</p>
+              <div class="mt-4 grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
+                <div class="h-28"><canvas id="radialSupply"></canvas></div>
+                <div class="h-28"><canvas id="radialPrice"></canvas></div>
+                <div class="h-28"><canvas id="radialLogistics"></canvas></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+          <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/70">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Signal Samples</p>
+                <h4 class="mt-1 text-xl font-semibold">Raw article excerpts</h4>
+              </div>
+            </div>
+            <div id="accordionList" class="mt-5 space-y-3"></div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/70">
+            <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">AI Copilot</p>
+            <div class="mt-4 rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
+              <p id="chatResponse" class="leading-6">Ask for a strategic outlook or mitigation plan for this disruption.</p>
+            </div>
+            <form id="chatForm" class="mt-4 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+              <input id="chatInput" type="text" placeholder="Ask AI about this disruption..." class="flex-1 bg-transparent px-3 py-2 outline-none" />
+              <button class="rounded-xl bg-sky-600 px-3 py-2 text-white">↗</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="signals_dataset.js"></script>
+  <script src="insights.js"></script>
+  <script>
+    var dataset = Array.isArray(window.__signalsDataset) ? window.__signalsDataset.slice() : [];
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    let currentCategoryFilter = 'All';
+
+    function switchView(viewId) {
+      const views = ['dashboard', 'insights', 'signals', 'alerts', 'integrations', 'settings'];
+      views.forEach(id => {
+        const view = document.getElementById(`view-${id}`);
+        if (view) view.classList.toggle('hidden', id !== viewId);
+      });
+
+      document.querySelectorAll('.sidebar-btn').forEach(button => {
+        const isActive = button.dataset.view === viewId;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-current', isActive ? 'page' : 'false');
+      });
+
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const menuButton = document.getElementById('mobileMenuBtn');
+      if (window.innerWidth < 1024 && sidebar && !sidebar.classList.contains('hidden')) {
+        sidebar.classList.add('hidden');
+        backdrop?.classList.add('hidden');
+        menuButton?.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    function normalizeArticleLink(link) {
+      if (!link) return '#';
+      const value = String(link).trim();
+      if (!value) return '#';
+      if (/^https?:\/\//i.test(value)) return value;
+      if (value.startsWith('//')) return `https:${value}`;
+      if (value.startsWith('/')) return `${window.location.origin}${value}`;
+      return value;
+    }
+
+    function initFilter() {
+      const select = document.getElementById('categoryFilter');
+      const searchInput = document.getElementById('searchInput');
+      if (!select) return;
+      const categories = [...new Set((Array.isArray(dataset) ? dataset : []).map(item => item.category || 'Uncategorized'))].sort();
+      select.innerHTML = '<option value="All">All Categories</option>';
+      categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        select.appendChild(option);
+      });
+      select.value = currentCategoryFilter || 'All';
+      select.onchange = () => {
+        currentCategoryFilter = select.value || 'All';
+        renderTable(dataset, currentCategoryFilter, searchInput ? searchInput.value : '');
+      };
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          renderTable(dataset, currentCategoryFilter, searchInput.value);
+        });
+      }
+    }
+
+    function renderTable(data, category = 'All', searchTerm = '') {
+      const tbody = document.getElementById('signalsTableBody');
+      const badge = document.getElementById('signalsCountBadge');
+      if (!tbody) return;
+
+      const query = String(searchTerm || '').trim().toLowerCase();
+      const rows = Array.isArray(data) ? data.filter(item => {
+        const matchesCategory = category === 'All' || (item.category || 'Uncategorized') === category;
+        const haystack = `${item.title || ''} ${item.source || item.source_name || ''} ${item.category || ''}`.toLowerCase();
+        const matchesSearch = !query || haystack.includes(query);
+        return matchesCategory && matchesSearch;
+      }) : [];
+
+      if (badge) badge.textContent = String(rows.length);
+
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-sm text-slate-500">No signals available yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = rows.map((item, index) => {
+        const sentiment = String(item.sentiment || 'Neutral');
+        const sourceText = String(item.source || item.source_name || '');
+        const articleLink = normalizeArticleLink(item.link || item.url || item.article_link || '');
+        const badgeClass = sentiment === 'Positive'
+          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+          : sentiment === 'Negative'
+            ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300'
+            : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200';
+
+        return `
+          <tr class="data-row text-[#707070]">
+            <td class="px-4 py-3 font-medium text-[#171717]">${index + 1}</td>
+            <td class="max-w-[34rem] px-4 py-3 font-medium text-[#171717]"><a href="${escapeHtml(articleLink)}" target="_blank" rel="noopener noreferrer" class="line-clamp-2 hover:underline">${escapeHtml(item.title || '')}</a></td>
+            <td class="px-4 py-3">${escapeHtml(sourceText)}</td>
+            <td class="px-4 py-3"><span class="rounded-full px-2 py-1 text-xs font-medium ${badgeClass}">${escapeHtml(sentiment)}</span></td>
+            <td class="px-4 py-3 font-mono text-[#212121]">${Number(item.sentiment_score ?? item.score ?? 0).toFixed(2)}</td>
+          </tr>`;
+      }).join('');
+    }
+
+    function getSourcePerformanceStats(data) {
+      const rows = Array.isArray(data) ? data : [];
+      const grouped = new Map();
+
+      rows.forEach(item => {
+        const source = String(item.source || item.source_name || 'Unknown').trim() || 'Unknown';
+        if (!grouped.has(source)) {
+          grouped.set(source, { source, count: 0, positive: 0, neutral: 0, negative: 0, articles: [] });
+        }
+        const bucket = grouped.get(source);
+        bucket.count += 1;
+        bucket.articles.push(item);
+
+        const sentiment = String(item.sentiment || 'Neutral').toLowerCase();
+        if (sentiment === 'positive') bucket.positive += 1;
+        else if (sentiment === 'negative') bucket.negative += 1;
+        else bucket.neutral += 1;
+      });
+
+      return Array.from(grouped.values()).sort((a, b) => b.count - a.count);
+    }
+
+    function renderSourcePerformance() {
+      const tbody = document.getElementById('sourcePerformanceBody');
+      if (!tbody) return;
+
+      const stats = getSourcePerformanceStats(dataset);
+      const maxCount = Math.max(...stats.map(item => item.count), 1);
+
+      tbody.innerHTML = stats.map(item => {
+        const momentumWidth = Math.max(20, Math.round((item.count / maxCount) * 100));
+        const positiveBarWidth = item.count ? Math.max(12, Math.round((item.positive / item.count) * 56)) : 0;
+        const neutralBarWidth = item.count ? Math.max(12, Math.round((item.neutral / item.count) * 56)) : 0;
+        const negativeBarWidth = item.count ? Math.max(12, Math.round((item.negative / item.count) * 56)) : 0;
+
+        return `
+          <tr class="data-row border-b border-[#ededed] text-[#707070] last:border-b-0">
+            <td class="py-4 pr-4 font-medium text-[#171717]">${escapeHtml(item.source)}</td>
+            <td class="py-4 pr-4"><div class="h-2.5 w-28 rounded-full bg-slate-200 dark:bg-slate-800"><div class="h-2.5 rounded-full bg-sky-500" style="width:${momentumWidth}%"></div></div></td>
+            <td class="py-4 pr-4"><div class="flex items-center gap-2">${positiveBarWidth ? `<span class="h-2.5 rounded-full bg-emerald-500" style="width:${positiveBarWidth}px"></span>` : '<span class="h-2.5 w-2 rounded-full bg-slate-300"></span>'}${neutralBarWidth ? `<span class="h-2.5 rounded-full bg-slate-400" style="width:${neutralBarWidth}px"></span>` : '<span class="h-2.5 w-2 rounded-full bg-slate-300"></span>'}${negativeBarWidth ? `<span class="h-2.5 rounded-full bg-rose-500" style="width:${negativeBarWidth}px"></span>` : '<span class="h-2.5 w-2 rounded-full bg-slate-300"></span>'}</div></td>
+            <td class="py-4 pr-4">
+              <button type="button" data-source="${escapeHtml(item.source)}" class="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-3 py-1.5 text-sm font-semibold text-sky-700 transition hover:bg-sky-100 dark:border-sky-900/40 dark:bg-sky-900/20 dark:text-sky-300">
+                <span>View ${item.count} articles</span>
+                <span aria-hidden="true">↗</span>
+              </button>
+            </td>
+          </tr>`;
+      }).join('');
+
+      tbody.querySelectorAll('button[data-source]').forEach(button => {
+        button.addEventListener('click', () => openArticleDrawer(button.dataset.source));
+      });
+    }
+
+    function openArticleDrawer(sourceName) {
+      const stats = getSourcePerformanceStats(dataset).find(item => item.source === sourceName);
+      const overlay = document.getElementById('articleDrawerOverlay');
+      const panel = document.getElementById('articleDrawerPanel');
+      const title = document.getElementById('articleDrawerTitle');
+      const summary = document.getElementById('articleDrawerSummary');
+      const list = document.getElementById('articleDrawerList');
+
+      if (!stats || !overlay || !panel || !title || !summary || !list) return;
+
+      title.textContent = stats.source;
+      summary.innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Article volume</p>
+            <h4 class="mt-1 text-xl font-semibold text-slate-900 dark:text-slate-100">${stats.count} articles from ${stats.source}</h4>
+          </div>
+          <div class="rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300">${stats.positive} positive</div>
+        </div>
+        <div class="mt-4 grid gap-3 sm:grid-cols-3">
+          <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-900/30 dark:bg-emerald-900/15">
+            <p class="text-sm text-emerald-700 dark:text-emerald-300">Positive</p>
+            <p class="mt-1 text-2xl font-semibold">${stats.positive}</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-950">
+            <p class="text-sm text-slate-600 dark:text-slate-300">Neutral</p>
+            <p class="mt-1 text-2xl font-semibold">${stats.neutral}</p>
+          </div>
+          <div class="rounded-2xl border border-rose-200 bg-rose-50 p-3 dark:border-rose-900/30 dark:bg-rose-900/15">
+            <p class="text-sm text-rose-700 dark:text-rose-300">Negative</p>
+            <p class="mt-1 text-2xl font-semibold">${stats.negative}</p>
+          </div>
+        </div>`;
+
+      list.innerHTML = stats.articles.map(item => {
+        const sentiment = String(item.sentiment || 'Neutral');
+        const badgeClass = sentiment === 'Positive'
+          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+          : sentiment === 'Negative'
+            ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300'
+            : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200';
+        const articleLink = normalizeArticleLink(item.link || item.url || item.article_link || '');
+        return `
+          <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">${escapeHtml(item.title || 'Untitled article')}</p>
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">${escapeHtml(item.date || 'No date')}</p>
+              </div>
+              <span class="rounded-full px-3 py-1 text-xs font-semibold ${badgeClass}">${escapeHtml(sentiment)}</span>
+            </div>
+            <div class="mt-3 flex flex-wrap items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+              <span class="rounded-full bg-slate-100 px-2.5 py-1 dark:bg-slate-800">${escapeHtml(item.category || 'General')}</span>
+              <a href="${escapeHtml(articleLink)}" target="_blank" rel="noopener noreferrer" class="font-semibold text-sky-600 hover:text-sky-500">Open article ↗</a>
+            </div>
+          </article>`;
+      }).join('');
+
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex');
+      requestAnimationFrame(() => {
+        panel.classList.remove('translate-x-full');
+        panel.classList.add('translate-x-0');
+      });
+    }
+
+    function closeArticleDrawer() {
+      const overlay = document.getElementById('articleDrawerOverlay');
+      const panel = document.getElementById('articleDrawerPanel');
+      if (!overlay || !panel) return;
+      panel.classList.remove('translate-x-0');
+      panel.classList.add('translate-x-full');
+      setTimeout(() => {
+        overlay.classList.add('hidden');
+        overlay.classList.remove('flex');
+      }, 220);
+    }
+
+    function showToast(message) {
+      const existing = document.getElementById('toastMessage');
+      if (existing) existing.remove();
+      const toast = document.createElement('div');
+      toast.id = 'toastMessage';
+      toast.className = 'fixed bottom-5 right-5 z-[90] rounded-md border border-[#dfdfdf] bg-white px-4 py-3 text-sm font-medium text-[#171717] shadow-[0_8px_24px_rgba(0,0,0,0.08)]';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2200);
+    }
+
+    function downloadFile(content, fileName, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      try {
+        link.click();
+      } catch (error) {
+        // Ignore and fall back to opening the content directly.
+      }
+      try {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } catch (error) {
+        window.location.href = url;
+      }
+      link.remove();
+      window.__lastDownload = fileName;
+      showToast(`Exported ${fileName}`);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      return url;
+    }
+
+    function exportCSV() {
+      const rows = Array.isArray(dataset) ? dataset : [];
+      const header = ['date', 'title', 'source', 'category', 'sentiment', 'sentiment_score'];
+      const body = rows.map(item => [
+        item.date || '',
+        item.title || '',
+        item.source || item.source_name || '',
+        item.category || '',
+        item.sentiment || '',
+        item.sentiment_score ?? item.score ?? 0
+      ].map(value => `"${String(value).replace(/"/g, '""')}"`).join(','));
+      downloadFile([header.join(','), ...body].join('\n'), 'articles_backup.csv', 'text/csv;charset=utf-8;');
+    }
+
+    function exportJSON() {
+      const rows = Array.isArray(dataset) ? dataset : [];
+      const positive = rows.filter(item => String(item.sentiment).toLowerCase() === 'positive').length;
+      const negative = rows.filter(item => String(item.sentiment).toLowerCase() === 'negative').length;
+      const neutral = rows.filter(item => String(item.sentiment).toLowerCase() === 'neutral').length;
+      const averageNsr = rows.length ? rows.reduce((sum, item) => sum + Number(item.sentiment_score ?? item.score ?? 0), 0) / rows.length : 0;
+      const payload = { generatedAt: new Date().toISOString(), kpis: { totalArticles: rows.length, averageNsr: Number(averageNsr.toFixed(3)), positive, negative, neutral }, dataset: rows };
+      downloadFile(JSON.stringify(payload, null, 2), 'daily_summary.json', 'application/json;charset=utf-8;');
+    }
+
+    function exportReport() {
+      const rows = Array.isArray(dataset) ? dataset : [];
+      const positive = rows.filter(item => String(item.sentiment).toLowerCase() === 'positive').length;
+      const negative = rows.filter(item => String(item.sentiment).toLowerCase() === 'negative').length;
+      const neutral = rows.filter(item => String(item.sentiment).toLowerCase() === 'neutral').length;
+      const averageNsr = rows.length ? rows.reduce((sum, item) => sum + Number(item.sentiment_score ?? item.score ?? 0), 0) / rows.length : 0;
+      const categories = rows.reduce((acc, item) => { const key = item.category || 'Uncategorized'; acc[key] = (acc[key] || 0) + 1; return acc; }, {});
+      const reportLines = [
+        'Technical Report',
+        '================',
+        `Total articles: ${rows.length}`,
+        `Average NSR: ${averageNsr.toFixed(3)}`,
+        `Positive signals: ${positive}`,
+        `Negative signals: ${negative}`,
+        `Neutral signals: ${neutral}`,
+        '',
+        'Risk distribution by category:',
+        ...Object.entries(categories).map(([name, count]) => `- ${name}: ${count}`)
+      ];
+      downloadFile(reportLines.join('\n'), 'Technical_Report.txt', 'text/plain;charset=utf-8;');
+    }
+
+    const chartTheme = {
+      line: { borderColor: '#3ecf8e', bg: 'rgba(62, 207, 142, 0.14)' },
+      positive: '#3ecf8e',
+      neutral: '#9a9a9a',
+      negative: '#ff2201',
+      warning: '#ffdb13',
+      grid: 'rgba(112, 112, 112, 0.16)',
+      text: '#707070'
+    };
+
+    const MOCK_DATA = {
+      'tsmc-yield': {
+        title: 'Geopolitics & Export Control Summary',
+        positive: 18,
+        neutral: 12,
+        negative: 9,
+        trend: [0.41, 0.47, 0.52, 0.38, 0.71, 0.66, 0.59, 0.63, 0.67, 0.71, 0.68, 0.74],
+        labels: ['Oct 1', 'Oct 2', 'Oct 3', 'Oct 4', 'Oct 5', 'Oct 6', 'Oct 7', 'Oct 8', 'Oct 9', 'Oct 10', 'Oct 11', 'Oct 12'],
+        notes: ['Oct 2: 75 high-risk signals', 'Oct 5: export license review', 'Oct 9: fab capacity watchlist'],
+        breakdown: { supply: 68, price: 54, logistics: 72 },
+        samples: [
+          { title: 'TSMC defers advanced packaging expansion', excerpt: 'Executives cited equipment bottlenecks and supply chain pressure from tightening export controls.' },
+          { title: 'Intel delays Ohio mega-fab', excerpt: 'Analysts expect the delay to strengthen TSMC’s bargaining position in high-performance compute.' },
+          { title: 'Foundry clients raise inventory buffers', excerpt: 'Customers are preparing for prolonged lead times and tighter allocation windows.' }
+        ]
+      },
+      'export-controls': {
+        title: 'Export Control Escalation',
+        positive: 9,
+        neutral: 14,
+        negative: 21,
+        trend: [0.18, 0.24, 0.16, 0.22, 0.13, 0.07, -0.04, -0.11, -0.09, -0.06, -0.03, 0.01],
+        labels: ['Oct 1', 'Oct 2', 'Oct 3', 'Oct 4', 'Oct 5', 'Oct 6', 'Oct 7', 'Oct 8', 'Oct 9', 'Oct 10', 'Oct 11', 'Oct 12'],
+        notes: ['Oct 3: customs review backlog', 'Oct 8: EUV export restriction update', 'Oct 12: OEM shipment re-route'],
+        breakdown: { supply: 78, price: 62, logistics: 84 },
+        samples: [
+          { title: 'China export rules tighten semiconductor equipment flows', excerpt: 'Industry sources report fresh restrictions affecting advanced packaging equipment routes.' },
+          { title: 'Freight lanes rerouted near Taiwan Strait', excerpt: 'Logistics teams are adjusting transshipment plans after rapid policy changes.' }
+        ]
+      },
+      'samsung-capacity': {
+        title: 'Samsung Foundry Capacity Watch',
+        positive: 14,
+        neutral: 11,
+        negative: 6,
+        trend: [0.33, 0.41, 0.47, 0.38, 0.49, 0.55, 0.61, 0.58, 0.64, 0.69, 0.72, 0.74],
+        labels: ['Oct 1', 'Oct 2', 'Oct 3', 'Oct 4', 'Oct 5', 'Oct 6', 'Oct 7', 'Oct 8', 'Oct 9', 'Oct 10', 'Oct 11', 'Oct 12'],
+        notes: ['Oct 4: production ramp-up stable', 'Oct 8: demand confidence rebounding', 'Oct 12: packaging capacity improving'],
+        breakdown: { supply: 42, price: 38, logistics: 48 },
+        samples: [
+          { title: 'Samsung increases 3nm capacity guidance', excerpt: 'The foundry announced additional tooling to support high-volume production in late Q4.' },
+          { title: 'Customers diversify wafer allocation', excerpt: 'Several customers are shifting orders to hedge against regional bottlenecks.' }
+        ]
+      }
+    };
+
+    let modalCharts = {};
+
+    function updateThemeToggleButton(theme) {
+      const button = document.getElementById('themeToggle');
+      if (!button) return;
+
+      const icon = button.querySelector('i');
+      const label = button.querySelector('span');
+      if (!icon || !label) return;
+
+      if (theme === 'dark') {
+        icon.setAttribute('data-lucide', 'moon');
+        label.textContent = 'Dark mode';
+        button.setAttribute('aria-label', 'Switch to light mode');
+      } else {
+        icon.setAttribute('data-lucide', 'sun');
+        label.textContent = 'Light mode';
+        button.setAttribute('aria-label', 'Switch to dark mode');
+      }
+
+      if (window.lucide) {
+        window.lucide.createIcons({ attrs: { 'stroke-width': 1.7 } });
+      }
+    }
+
+    function applyTheme(theme) {
+      const normalizedTheme = theme === 'dark' ? 'dark' : 'light';
+      document.documentElement.classList.toggle('dark', normalizedTheme === 'dark');
+      localStorage.setItem('theme', normalizedTheme);
+      updateThemeToggleButton(normalizedTheme);
+    }
+
+    function initTheme() {
+      const storedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = storedTheme === 'dark' || (!storedTheme && prefersDark) ? 'dark' : 'light';
+      applyTheme(theme);
+    }
+
+    function toggleTheme() {
+      const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+      applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    }
+
+    function setMobileNavOpen(isOpen) {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const menuButton = document.getElementById('mobileMenuBtn');
+      if (!sidebar || !backdrop || !menuButton) return;
+      const shouldOpen = Boolean(isOpen) && window.innerWidth < 1024;
+      sidebar.classList.toggle('hidden', !shouldOpen);
+      backdrop.classList.toggle('hidden', !shouldOpen);
+      menuButton.setAttribute('aria-expanded', String(shouldOpen));
+      document.body.classList.toggle('overflow-hidden', shouldOpen);
+    }
+
+    function destroyCharts() {
+      Object.values(modalCharts).forEach(chart => chart?.destroy());
+      modalCharts = {};
+    }
+
+    function openModal(issueId) {
+      const issue = MOCK_DATA[issueId];
+      if (!issue) return;
+      document.getElementById('modalTitle').textContent = issue.title;
+      document.getElementById('kpiPositive').textContent = issue.positive;
+      document.getElementById('kpiNeutral').textContent = issue.neutral;
+      document.getElementById('kpiNegative').textContent = issue.negative;
+      document.getElementById('modalOverlay').classList.remove('hidden');
+      document.getElementById('modalOverlay').classList.add('flex');
+      requestAnimationFrame(() => {
+        document.getElementById('modalPanel').classList.remove('translate-x-full');
+        document.getElementById('modalPanel').classList.add('translate-x-0');
+      });
+      renderModalCharts(issue);
+      renderAccordion(issue.samples);
+    }
+
+    function closeModal() {
+      document.getElementById('modalPanel').classList.remove('translate-x-0');
+      document.getElementById('modalPanel').classList.add('translate-x-full');
+      setTimeout(() => {
+        document.getElementById('modalOverlay').classList.add('hidden');
+        document.getElementById('modalOverlay').classList.remove('flex');
+      }, 220);
+      destroyCharts();
+    }
+
+    function renderAccordion(samples) {
+      const container = document.getElementById('accordionList');
+      container.innerHTML = samples.map((item, index) => `
+        <div class="panel-flat p-4">
+          <button class="flex w-full items-center justify-between gap-3 text-left" data-index="${index}" aria-expanded="false" aria-controls="sample-panel-${index}">
+            <span class="font-medium text-[#171717]">${item.title}</span>
+            <i data-lucide="chevron-down" class="h-4 w-4 shrink-0 text-[#9a9a9a]" aria-hidden="true"></i>
+          </button>
+          <div id="sample-panel-${index}" class="mt-3 hidden text-sm leading-6 text-[#707070]" data-panel="${index}">${item.excerpt}</div>
+        </div>
+      `).join('');
+      if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.7 } });
+
+      container.querySelectorAll('button').forEach(button => {
+        button.addEventListener('click', () => {
+          const panel = container.querySelector(`[data-panel="${button.dataset.index}"]`);
+          const isOpen = !panel.classList.contains('hidden');
+          panel.classList.toggle('hidden', isOpen);
+          button.setAttribute('aria-expanded', String(!isOpen));
+        });
+      });
+    }
+
+    function renderModalCharts(issue) {
+      destroyCharts();
+
+      modalCharts.line = new Chart(document.getElementById('modalLineChart'), {
+        type: 'line',
+        data: {
+          labels: issue.labels,
+          datasets: [{
+            label: 'NSR',
+            data: issue.trend,
+            borderColor: chartTheme.line.borderColor,
+            backgroundColor: chartTheme.line.bg,
+            fill: true,
+            tension: 0.35,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { x: { grid: { display: false } }, y: { min: -0.2, max: 0.9, ticks: { stepSize: 0.2 } } },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: context => `${context.raw.toFixed(2)} NSR • ${issue.notes[context.dataIndex] || 'signal update'}`
+              }
+            }
+          }
+        }
+      });
+
+      const radialOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '72%',
+        plugins: { legend: { display: false }, tooltip: { enabled: true } }
+      };
+
+      modalCharts.supply = new Chart(document.getElementById('radialSupply'), {
+        type: 'doughnut',
+        data: { labels: ['Impact', 'Rest'], datasets: [{ data: [issue.breakdown.supply, 100 - issue.breakdown.supply], backgroundColor: [chartTheme.line.borderColor, '#ededed'] }] },
+        options: radialOptions,
+        plugins: [{ id: 'centerText', beforeDraw(chart) { const {ctx, chartArea: {width, height}} = chart; ctx.save(); ctx.font = '500 16px Inter'; ctx.fillStyle = '#171717'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(`${issue.breakdown.supply}%`, width / 2, height / 2); ctx.restore(); } }]
+      });
+
+      modalCharts.price = new Chart(document.getElementById('radialPrice'), {
+        type: 'doughnut',
+        data: { labels: ['Impact', 'Rest'], datasets: [{ data: [issue.breakdown.price, 100 - issue.breakdown.price], backgroundColor: [chartTheme.positive, '#ededed'] }] },
+        options: radialOptions,
+        plugins: [{ id: 'centerText', beforeDraw(chart) { const {ctx, chartArea: {width, height}} = chart; ctx.save(); ctx.font = '500 16px Inter'; ctx.fillStyle = '#171717'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(`${issue.breakdown.price}%`, width / 2, height / 2); ctx.restore(); } }]
+      });
+
+      modalCharts.logistics = new Chart(document.getElementById('radialLogistics'), {
+        type: 'doughnut',
+        data: { labels: ['Impact', 'Rest'], datasets: [{ data: [issue.breakdown.logistics, 100 - issue.breakdown.logistics], backgroundColor: [chartTheme.warning, '#ededed'] }] },
+        options: radialOptions,
+        plugins: [{ id: 'centerText', beforeDraw(chart) { const {ctx, chartArea: {width, height}} = chart; ctx.save(); ctx.font = '500 16px Inter'; ctx.fillStyle = '#171717'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(`${issue.breakdown.logistics}%`, width / 2, height / 2); ctx.restore(); } }]
+      });
+    }
+
+    function initializeCharts() {
+      const miniCharts = [
+        ['miniSentimentChart', [55, 68, 72, 70, 76, 79]],
+        ['miniSignalsChart', [18, 24, 26, 31, 35, 39]],
+        ['miniRiskChart', [12, 17, 21, 24, 27, 29]]
+      ];
+
+      miniCharts.forEach(([id, values]) => {
+        new Chart(document.getElementById(id), {
+          type: 'line',
+          data: { labels: ['1', '2', '3', '4', '5', '6'], datasets: [{ data: values, borderColor: chartTheme.line.borderColor, borderWidth: 2, pointRadius: 0, tension: 0.35, fill: false }] },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } } }
+        });
+      });
+
+      new Chart(document.getElementById('donutChart'), {
+        type: 'doughnut',
+        data: { labels: ['Opportunities', 'Risks'], datasets: [{ data: [64, 36], backgroundColor: [chartTheme.positive, chartTheme.warning], borderColor: '#ffffff', borderWidth: 2 }] },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '78%', plugins: { legend: { position: 'bottom', labels: { color: chartTheme.text, usePointStyle: true, boxWidth: 8 } } } }
+      });
+
+      new Chart(document.getElementById('trendBarChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          datasets: [
+            { label: 'Positive', data: [24, 28, 33, 31, 35, 39, 41, 44, 47, 49, 52, 58], backgroundColor: chartTheme.positive },
+            { label: 'Neutral', data: [12, 14, 16, 15, 16, 18, 19, 17, 18, 19, 17, 15], backgroundColor: chartTheme.neutral },
+            { label: 'Negative', data: [11, 13, 10, 12, 13, 12, 11, 9, 10, 8, 7, 6], backgroundColor: chartTheme.negative }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: chartTheme.text, usePointStyle: true, boxWidth: 8 } } }, scales: { x: { grid: { color: chartTheme.grid }, ticks: { color: chartTheme.text } }, y: { beginAtZero: true, grid: { color: chartTheme.grid }, ticks: { color: chartTheme.text } } } }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      if (window.lucide) window.lucide.createIcons();
+      initializeCharts();
+      initFilter();
+      renderTable(dataset, currentCategoryFilter, '');
+      renderSourcePerformance();
+      switchView('dashboard');
+
+      document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
+      document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
+        const isOpen = document.getElementById('mobileMenuBtn')?.getAttribute('aria-expanded') === 'true';
+        setMobileNavOpen(!isOpen);
+      });
+      document.getElementById('sidebarBackdrop')?.addEventListener('click', () => setMobileNavOpen(false));
+      document.getElementById('btnExportReport')?.addEventListener('click', exportReport);
+      document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
+      document.getElementById('closeArticleDrawerBtn')?.addEventListener('click', closeArticleDrawer);
+      document.getElementById('modalOverlay')?.addEventListener('click', event => {
+        if (event.target.id === 'modalOverlay') closeModal();
+      });
+      document.getElementById('articleDrawerOverlay')?.addEventListener('click', event => {
+        if (event.target.id === 'articleDrawerOverlay') closeArticleDrawer();
+      });
+      document.getElementById('chatForm')?.addEventListener('submit', async event => {
+        event.preventDefault();
+        const value = document.getElementById('chatInput')?.value?.trim() || '';
+        if (!value) return;
+
+        const chatResponse = document.getElementById('chatResponse');
+        if (chatResponse) chatResponse.textContent = 'AI is analyzing supply chain impact...';
+
+        // Optional production hook:
+        // const response = await fetch('https://api.example.com/llm', { method: 'POST', body: JSON.stringify({ prompt: value }) });
+        // const data = await response.json();
+
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        if (chatResponse) {
+          chatResponse.textContent = `Based on recent alerts, this disruption requires diversified foundry allocation and tighter logistics contingency planning for the next 14 days.`;
+        }
+        document.getElementById('chatInput').value = '';
+      });
+      document.querySelectorAll('[data-issue]').forEach(button => {
+        button.addEventListener('click', () => openModal(button.dataset.issue));
+      });
+      document.querySelectorAll('.sidebar-btn').forEach(button => {
+        button.addEventListener('click', () => switchView(button.dataset.view || 'dashboard'));
+      });
+      const settingsForm = document.getElementById('settingsForm');
+      const riskThreshold = document.getElementById('riskThreshold');
+      const riskOutput = document.querySelector('output[for="riskThreshold"]');
+      riskThreshold?.addEventListener('input', () => { if (riskOutput) riskOutput.value = riskThreshold.value; });
+      settingsForm?.addEventListener('submit', event => {
+        event.preventDefault();
+        localStorage.setItem('riskThreshold', riskThreshold?.value || '72');
+        const status = document.getElementById('settingsSaveStatus');
+        if (status) status.textContent = 'Saved just now';
+        showToast('Preferences saved');
+      });
+      const savedThreshold = localStorage.getItem('riskThreshold');
+      if (savedThreshold && riskThreshold && riskOutput) { riskThreshold.value = savedThreshold; riskOutput.value = savedThreshold; }
+      document.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') return;
+        setMobileNavOpen(false);
+        if (!document.getElementById('modalOverlay')?.classList.contains('hidden')) closeModal();
+        if (!document.getElementById('articleDrawerOverlay')?.classList.contains('hidden')) closeArticleDrawer();
+      });
+    });
+  </script>
+</body>
+</html>
