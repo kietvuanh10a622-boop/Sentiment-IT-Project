@@ -38,6 +38,12 @@
     .modal-exit-active { opacity: 0; transform: translateY(16px) scale(0.98); }
     .slider-card { transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease; }
     .slider-card:hover { transform: translateY(-2px); box-shadow: 0 18px 36px -20px rgba(37, 99, 235, 0.4); }
+    .density-compact .panel { border-radius: 1rem; }
+    .density-compact .panel.p-6 { padding: 1rem !important; }
+    .settings-surface { border-top: 1px solid rgba(226, 232, 240, 0.95); padding: 1.5rem 0; }
+    .dark .settings-surface { border-top-color: rgba(51, 65, 85, 0.95); }
+    .settings-actions { border-top: 1px solid rgba(226, 232, 240, 0.95); padding-top: 1.5rem; }
+    .dark .settings-actions { border-top-color: rgba(51, 65, 85, 0.95); }
     canvas { display: block; width: 100% !important; height: 100% !important; }
   </style>
 </head>
@@ -62,11 +68,13 @@
 
       <div class="mt-auto space-y-3 border-t border-slate-800 pt-5 text-sm">
         <button id="btn-settings" data-view="settings" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-slate-300 hover:bg-slate-800/70 hover:text-white">⚙ Settings</button>
-        <button id="btn-help" data-view="settings" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-slate-300 hover:bg-slate-800/70 hover:text-white">❓ Help Center</button>
+        <button id="btn-help" data-view="help" class="sidebar-btn flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-slate-300 hover:bg-slate-800/70 hover:text-white">❓ Help Center</button>
         <div class="flex items-center gap-3 rounded-2xl bg-slate-900/70 px-4 py-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-indigo-500 text-sm font-semibold text-white">KV</div>
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-indigo-500 text-sm font-semibold text-white">
+            <img src="kise.jpg" alt="User Avatar" class="h-full w-full rounded-full object-cover">
+          </div>
           <div>
-            <p class="font-semibold text-white">Kiet FemBoy</p>
+            <p class="font-semibold text-white">Kise Beta</p>
             <p class="text-xs text-slate-400">Principal Analyst</p>
           </div>
         </div>
@@ -200,7 +208,7 @@
           </div>
         </section>
 
-        <section class="panel overflow-hidden p-6">
+        <section id="sourcePerformanceSection" class="panel overflow-hidden p-6">
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
               <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Source Performance</p>
@@ -312,7 +320,7 @@
                     <span class="font-semibold text-rose-800 dark:text-rose-200">Critical: Factory Fire</span>
                     <span class="text-sm text-rose-600 dark:text-rose-400">15 minutes ago</span>
                   </div>
-                  <p class="mt-2 text-sm text-rose-700 dark:text-rose-300">A fire has been reported at a major packaging facility in Taiwan. Production is halted.</p>
+                  <p class="mt-2 text-sm text-rose-700 dark:text-rose-300">A fire has been reported at a major packaging facility in Taiwan. Production is halted. <a href="https://example.com/fire-alert" target="_blank" class="text-sky-600 hover:underline">Read more</a></p>
                 </div>
                 <!-- Mock Alert 2 -->
                 <div class="p-4 rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-900/30 dark:bg-amber-900/15">
@@ -320,7 +328,7 @@
                     <span class="font-semibold text-amber-800 dark:text-amber-200">High: Port Congestion</span>
                     <span class="text-sm text-amber-600 dark:text-amber-400">2 hours ago</span>
                   </div>
-                  <p class="mt-2 text-sm text-amber-700 dark:text-amber-300">Severe congestion at the Port of Singapore is causing shipping delays of up to 72 hours.</p>
+                  <p class="mt-2 text-sm text-amber-700 dark:text-amber-300">Severe congestion at the Port of Singapore is causing shipping delays of up to 72 hours. <a href="https://example.com/port-congestion" target="_blank" class="text-sky-600 hover:underline">Read more</a></p>
                 </div>
                 <!-- Mock Alert 3 -->
                 <div class="p-4 rounded-lg border border-sky-200 bg-sky-50 dark:border-sky-900/30 dark:bg-sky-900/15">
@@ -328,8 +336,7 @@
                     <span class="font-semibold text-sky-800 dark:text-sky-200">Medium: Material Shortage</span>
                     <span class="text-sm text-sky-600 dark:text-sky-400">8 hours ago</span>
                   </div>
-                  <p class="mt-2 text-sm text-sky-700 dark:text-sky-300">A key supplier of photoresist is reporting a production slowdown, potentially impacting wafer starts next quarter.</p>
-                </div>
+                  <p class="mt-2 text-sm text-sky-700 dark:text-sky-300">A key supplier of photoresist is reporting a production slowdown, potentially impacting wafer starts next quarter. <a href="https://example.com/material-shortage" target="_blank" class="text-sky-600 hover:underline">Read more</a></p>
               </div>
             </div>
 
@@ -407,11 +414,168 @@
           </div>
         </section>
 
+        <section id="view-help" class="hidden">
+          <div class="panel p-8">
+            <div class="text-center">
+              <p class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Help Center</p>
+              <h3 class="mt-3 text-2xl font-semibold">How can we help you?</h3>
+              <p class="mt-3 text-slate-500 dark:text-slate-400">Find answers to your questions and learn how to use GlobalPulse AI.</p>
+              <div class="mt-6 mx-auto max-w-lg">
+                <label class="flex flex-1 items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                  <span>🔎</span>
+                  <input type="text" placeholder="Search for help articles..." class="w-full bg-transparent outline-none" />
+                </label>
+              </div>
+            </div>
+
+            <div class="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-950/70">
+                <h4 class="font-semibold">Getting Started</h4>
+                <ul class="mt-3 space-y-2 text-sm text-sky-600 dark:text-sky-400">
+                  <li><a href="#" class="hover:underline">First steps with GlobalPulse</a></li>
+                  <li><a href="#" class="hover:underline">Understanding the dashboard</a></li>
+                  <li><a href="#" class="hover:underline">Setting up your profile</a></li>
+                </ul>
+              </div>
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-950/70">
+                <h4 class="font-semibold">Managing Alerts</h4>
+                <ul class="mt-3 space-y-2 text-sm text-sky-600 dark:text-sky-400">
+                  <li><a href="#" class="hover:underline">Configuring alert thresholds</a></li>
+                  <li><a href="#" class="hover:underline">Understanding alert types</a></li>
+                  <li><a href="#" class="hover:underline">Snoozing and resolving alerts</a></li>
+                </ul>
+              </div>
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-950/70">
+                <h4 class="font-semibold">Data & Integrations</h4>
+                <ul class="mt-3 space-y-2 text-sm text-sky-600 dark:text-sky-400">
+                  <li><a href="#" class="hover:underline">Connecting to data sources</a></li>
+                  <li><a href="#" class="hover:underline">Using the Slack integration</a></li>
+                  <li><a href="#" class="hover:underline">API access and usage</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="mt-10 text-center">
+              <h4 class="font-semibold">Can't find what you're looking for?</h4>
+              <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Our support team is here to help you with any questions.</p>
+              <button class="mt-4 rounded-2xl bg-sky-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-500">Contact Support</button>
+            </div>
+          </div>
+        </section>
+
         <section id="view-settings" class="hidden">
-          <div class="panel p-8 text-center">
-            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Settings</p>
-            <h3 class="mt-3 text-2xl font-semibold">Personalize alert thresholds and workspace preferences</h3>
-            <p class="mt-3 text-slate-500 dark:text-slate-400">Tune signal scoring, export cadence, and display preferences for your team.</p>
+          <div class="mx-auto max-w-6xl">
+            <header class="flex flex-col gap-5 border-b border-slate-200 pb-6 dark:border-slate-800 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <h2 class="text-3xl font-semibold tracking-tight">Tune your intelligence workspace</h2>
+                <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">Set the signal sensitivity, report delivery, and dashboard preferences that shape your daily operating rhythm.</p>
+              </div>
+              <div id="settingsSyncBadge" class="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-300">
+                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                <span>No unsaved changes</span>
+              </div>
+            </header>
+
+            <form id="settingsForm" class="mt-6 space-y-6" novalidate>
+              <div class="grid gap-6 lg:grid-cols-2">
+                <fieldset class="settings-surface">
+                  <legend class="text-lg font-semibold">Alert thresholds</legend>
+                  <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">Control when supply-chain signals become actionable alerts.</p>
+                  <div class="mt-6 space-y-5">
+                    <div>
+                      <label for="riskThreshold" class="flex items-center justify-between text-sm font-semibold text-slate-900 dark:text-slate-100">
+                        <span>Risk score threshold</span>
+                        <span class="font-mono text-xs font-medium text-slate-500">0–100</span>
+                      </label>
+                      <div class="mt-2 flex items-center gap-3">
+                        <input id="riskThreshold" name="riskThreshold" type="number" min="0" max="100" step="5" inputmode="numeric" value="70" aria-describedby="riskThresholdHelp riskThresholdError" class="w-28 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-900 outline-none transition placeholder:text-slate-400 focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100" />
+                        <span class="text-sm text-slate-500">points or higher</span>
+                      </div>
+                      <p id="riskThresholdHelp" class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">Higher values reduce noise while keeping critical disruptions visible.</p>
+                      <p id="riskThresholdError" class="mt-1 hidden text-xs font-medium text-rose-600 dark:text-rose-400" role="alert"></p>
+                    </div>
+                    <div>
+                      <label for="alertCadence" class="text-sm font-semibold text-slate-900 dark:text-slate-100">Alert delivery</label>
+                      <select id="alertCadence" name="alertCadence" aria-describedby="alertCadenceHelp" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+                        <option value="instant">Instant for every qualifying signal</option>
+                        <option value="fifteen-minutes">Digest every 15 minutes</option>
+                        <option value="hourly">Hourly digest</option>
+                      </select>
+                      <p id="alertCadenceHelp" class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">Use instant delivery for active incidents; digests are calmer for routine monitoring.</p>
+                    </div>
+                  </div>
+                </fieldset>
+
+                <fieldset class="settings-surface">
+                  <legend class="text-lg font-semibold">Report delivery</legend>
+                  <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">Choose how often your operating summaries should be prepared.</p>
+                  <div class="mt-6 space-y-5">
+                    <div>
+                      <label for="exportCadence" class="text-sm font-semibold text-slate-900 dark:text-slate-100">Report cadence</label>
+                      <select id="exportCadence" name="exportCadence" aria-describedby="exportCadenceHelp" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+                        <option value="on-demand">On demand only</option>
+                        <option value="daily">Daily at 08:00</option>
+                        <option value="weekly">Every Monday at 08:00</option>
+                      </select>
+                      <p id="exportCadenceHelp" class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">Scheduled exports use the current filters and workspace defaults.</p>
+                    </div>
+                    <div>
+                      <label for="exportFormat" class="text-sm font-semibold text-slate-900 dark:text-slate-100">Default export package</label>
+                      <select id="exportFormat" name="exportFormat" aria-describedby="exportFormatHelp" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+                        <option value="csv-json">CSV and JSON data</option>
+                        <option value="technical-report">Technical report</option>
+                        <option value="full-package">Full data and report package</option>
+                      </select>
+                      <p id="exportFormatHelp" class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">This controls the default action used by the Export Report shortcut.</p>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+
+              <fieldset class="settings-surface">
+                <legend class="text-lg font-semibold">Workspace preferences</legend>
+                <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">Shape the first screen and density of the analyst console.</p>
+                <div class="mt-6 grid gap-5 md:grid-cols-2">
+                  <div>
+                    <label for="landingView" class="text-sm font-semibold text-slate-900 dark:text-slate-100">Start on</label>
+                    <select id="landingView" name="landingView" aria-describedby="landingViewHelp" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+                      <option value="dashboard">Dashboard</option>
+                      <option value="insights">Insights</option>
+                      <option value="signals">Market Signals</option>
+                      <option value="alerts">Risk Alerts</option>
+                    </select>
+                    <p id="landingViewHelp" class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">Applied the next time GlobalPulse is opened.</p>
+                  </div>
+                  <div>
+                    <label for="density" class="text-sm font-semibold text-slate-900 dark:text-slate-100">Workspace density</label>
+                    <select id="density" name="density" aria-describedby="densityHelp" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+                      <option value="comfortable">Comfortable</option>
+                      <option value="compact">Compact for data review</option>
+                    </select>
+                    <p id="densityHelp" class="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">Compact mode reduces the vertical rhythm across dashboard panels.</p>
+                  </div>
+                  <label class="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm dark:border-slate-800 dark:bg-slate-900/70">
+                    <input id="showSourceCoverage" name="showSourceCoverage" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-2 focus:ring-sky-500/40 dark:border-slate-600 dark:bg-slate-800" />
+                    <span><span class="font-semibold text-slate-900 dark:text-slate-100">Show source coverage</span><span class="mt-1 block text-xs leading-5 text-slate-500 dark:text-slate-400">Keep the source health panel visible on the dashboard.</span></span>
+                  </label>
+                  <label class="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm dark:border-slate-800 dark:bg-slate-900/70">
+                    <input id="keyboardShortcuts" name="keyboardShortcuts" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-2 focus:ring-sky-500/40 dark:border-slate-600 dark:bg-slate-800" />
+                    <span><span class="font-semibold text-slate-900 dark:text-slate-100">Enable keyboard shortcuts</span><span class="mt-1 block text-xs leading-5 text-slate-500 dark:text-slate-400">Press <kbd class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-[11px] dark:border-slate-700 dark:bg-slate-800">/</kbd> to focus global search.</span></span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <div class="settings-actions flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p id="settingsStatus" class="text-sm font-semibold text-slate-700 dark:text-slate-200" role="status" aria-live="polite">No unsaved changes</p>
+                  <p id="settingsLastSaved" class="mt-1 text-xs text-slate-500 dark:text-slate-400">Using the default workspace preferences.</p>
+                </div>
+                <div class="flex flex-col-reverse gap-3 sm:flex-row">
+                  <button id="resetSettingsBtn" type="button" class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">Reset to defaults</button>
+                  <button id="saveSettingsBtn" type="submit" disabled class="rounded-xl bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/40 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600 disabled:shadow-none dark:disabled:bg-slate-700 dark:disabled:text-slate-400">Save changes</button>
+                </div>
+              </div>
+            </form>
           </div>
         </section>
       </main>
@@ -503,7 +667,7 @@
     let currentCategoryFilter = 'All';
 
     function switchView(viewId) {
-      const views = ['dashboard', 'insights', 'signals', 'alerts', 'integrations', 'settings'];
+      const views = ['dashboard', 'insights', 'signals', 'alerts', 'integrations', 'settings', 'help'];
       views.forEach(id => {
         const view = document.getElementById(`view-${id}`);
         if (view) view.classList.toggle('hidden', id !== viewId);
@@ -516,6 +680,174 @@
         button.classList.toggle('font-semibold', isActive);
         button.classList.toggle('text-slate-300', !isActive);
       });
+    }
+
+    const SETTINGS_STORAGE_KEY = 'globalpulse-settings-v1';
+    const SETTINGS_SAVED_AT_KEY = 'globalpulse-settings-saved-at-v1';
+    const SETTINGS_DEFAULTS = Object.freeze({
+      riskThreshold: 70,
+      alertCadence: 'instant',
+      exportCadence: 'on-demand',
+      exportFormat: 'technical-report',
+      landingView: 'dashboard',
+      density: 'comfortable',
+      showSourceCoverage: true,
+      keyboardShortcuts: true
+    });
+    let currentSettings = { ...SETTINGS_DEFAULTS };
+
+    function settingsEqual(left, right) {
+      return Object.keys(SETTINGS_DEFAULTS).every(key => left[key] === right[key]);
+    }
+
+    function readSettingsForm() {
+      const thresholdValue = document.getElementById('riskThreshold')?.value ?? '';
+      return {
+        riskThreshold: thresholdValue === '' ? NaN : Number(thresholdValue),
+        alertCadence: document.getElementById('alertCadence')?.value || SETTINGS_DEFAULTS.alertCadence,
+        exportCadence: document.getElementById('exportCadence')?.value || SETTINGS_DEFAULTS.exportCadence,
+        exportFormat: document.getElementById('exportFormat')?.value || SETTINGS_DEFAULTS.exportFormat,
+        landingView: document.getElementById('landingView')?.value || SETTINGS_DEFAULTS.landingView,
+        density: document.getElementById('density')?.value || SETTINGS_DEFAULTS.density,
+        showSourceCoverage: Boolean(document.getElementById('showSourceCoverage')?.checked),
+        keyboardShortcuts: Boolean(document.getElementById('keyboardShortcuts')?.checked)
+      };
+    }
+
+    function applySettingsToForm(settings) {
+      const values = { ...SETTINGS_DEFAULTS, ...settings };
+      const threshold = document.getElementById('riskThreshold');
+      if (threshold) threshold.value = values.riskThreshold;
+      ['alertCadence', 'exportCadence', 'exportFormat', 'landingView', 'density'].forEach(id => {
+        const field = document.getElementById(id);
+        if (field) field.value = values[id];
+      });
+      const sourceCoverage = document.getElementById('showSourceCoverage');
+      const shortcuts = document.getElementById('keyboardShortcuts');
+      if (sourceCoverage) sourceCoverage.checked = values.showSourceCoverage;
+      if (shortcuts) shortcuts.checked = values.keyboardShortcuts;
+    }
+
+    function validateSettings(showMessage = false) {
+      const field = document.getElementById('riskThreshold');
+      const error = document.getElementById('riskThresholdError');
+      if (!field || !error) return true;
+      const value = Number(field.value);
+      const valid = field.value !== '' && Number.isInteger(value) && value >= 0 && value <= 100;
+      field.classList.toggle('border-rose-500', !valid);
+      field.classList.toggle('focus-visible:border-rose-500', !valid);
+      error.classList.toggle('hidden', valid || !showMessage);
+      error.textContent = valid ? '' : 'Enter a whole number from 0 to 100.';
+      return valid;
+    }
+
+    function updateSettingsStatus(message, tone = 'neutral') {
+      const status = document.getElementById('settingsStatus');
+      const badge = document.getElementById('settingsSyncBadge');
+      const badgeText = badge?.querySelector('span:last-child');
+      const badgeDot = badge?.querySelector('span:first-child');
+      if (status) {
+        status.textContent = message;
+        status.classList.remove('text-slate-700', 'dark:text-slate-200', 'text-amber-700', 'dark:text-amber-300', 'text-emerald-700', 'dark:text-emerald-300', 'text-rose-700', 'dark:text-rose-300');
+        status.classList.add(tone === 'error' ? 'text-rose-700' : tone === 'success' ? 'text-emerald-700' : tone === 'dirty' ? 'text-amber-700' : 'text-slate-700');
+        status.dataset.tone = tone;
+      }
+      if (badgeText) badgeText.textContent = tone === 'dirty' ? 'Unsaved changes' : tone === 'error' ? 'Save failed' : tone === 'success' ? 'Changes saved' : 'No unsaved changes';
+      if (badgeDot) {
+        badgeDot.classList.remove('bg-emerald-500', 'bg-amber-500', 'bg-rose-500');
+        badgeDot.classList.add(tone === 'error' ? 'bg-rose-500' : tone === 'dirty' ? 'bg-amber-500' : 'bg-emerald-500');
+      }
+    }
+
+    function applySettingsPresentation(settings) {
+      document.querySelector('main')?.classList.toggle('density-compact', settings.density === 'compact');
+      document.getElementById('sourcePerformanceSection')?.classList.toggle('hidden', settings.showSourceCoverage === false);
+    }
+
+    function updateSettingsFormState() {
+      const draft = readSettingsForm();
+      const valid = validateSettings(false);
+      applySettingsPresentation(draft);
+      const dirty = !settingsEqual(draft, currentSettings);
+      const saveButton = document.getElementById('saveSettingsBtn');
+      if (saveButton) saveButton.disabled = !dirty || !valid;
+      if (dirty) updateSettingsStatus('Unsaved changes', 'dirty');
+      else if (document.getElementById('settingsStatus')?.dataset.tone !== 'success') updateSettingsStatus('No unsaved changes', 'neutral');
+    }
+
+    function initSettings() {
+      const form = document.getElementById('settingsForm');
+      if (!form) return;
+      let storedSettings = null;
+      try {
+        storedSettings = JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY) || 'null');
+      } catch (error) {
+        storedSettings = null;
+      }
+      currentSettings = { ...SETTINGS_DEFAULTS, ...(storedSettings || {}) };
+      applySettingsToForm(currentSettings);
+      applySettingsPresentation(currentSettings);
+      const savedAt = localStorage.getItem(SETTINGS_SAVED_AT_KEY);
+      const lastSaved = document.getElementById('settingsLastSaved');
+      if (lastSaved && savedAt) lastSaved.textContent = `Last saved on this device: ${new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(savedAt))}`;
+
+      form.querySelectorAll('input, select').forEach(field => {
+        field.addEventListener('input', updateSettingsFormState);
+        field.addEventListener('change', updateSettingsFormState);
+      });
+      document.getElementById('riskThreshold')?.addEventListener('blur', () => validateSettings(true));
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        if (!validateSettings(true)) {
+          updateSettingsStatus('Fix the highlighted field before saving', 'error');
+          return;
+        }
+        const saveButton = document.getElementById('saveSettingsBtn');
+        if (saveButton) {
+          saveButton.disabled = true;
+          saveButton.textContent = 'Saving…';
+        }
+        try {
+          const nextSettings = readSettingsForm();
+          await new Promise(resolve => setTimeout(resolve, 300));
+          localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(nextSettings));
+          localStorage.setItem(SETTINGS_SAVED_AT_KEY, new Date().toISOString());
+          currentSettings = nextSettings;
+          applySettingsPresentation(currentSettings);
+          if (lastSaved) lastSaved.textContent = `Last saved on this device: ${new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date())}`;
+          updateSettingsStatus('Changes saved', 'success');
+          showToast('Settings saved on this device');
+        } catch (error) {
+          updateSettingsStatus('Could not save settings. Try again.', 'error');
+          showToast('Settings could not be saved');
+        } finally {
+          if (saveButton) {
+            saveButton.textContent = 'Save changes';
+            updateSettingsFormState();
+            if (document.getElementById('settingsStatus')?.dataset.tone === 'success') updateSettingsStatus('Changes saved', 'success');
+          }
+        }
+      });
+      document.getElementById('resetSettingsBtn')?.addEventListener('click', () => {
+        applySettingsToForm(SETTINGS_DEFAULTS);
+        validateSettings(false);
+        updateSettingsStatus('Defaults restored in form', 'dirty');
+        const savedLine = document.getElementById('settingsLastSaved');
+        if (savedLine) savedLine.textContent = 'Save changes to keep the defaults on this device.';
+        updateSettingsFormState();
+      });
+      if (!window.__settingsShortcutsBound) {
+        document.addEventListener('keydown', event => {
+          const target = event.target;
+          const isTyping = target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement;
+          if (currentSettings.keyboardShortcuts && event.key === '/' && !isTyping) {
+            event.preventDefault();
+            document.getElementById('searchInput')?.focus();
+          }
+        });
+        window.__settingsShortcutsBound = true;
+      }
+      updateSettingsFormState();
     }
 
     function normalizeArticleLink(link) {
@@ -654,6 +986,14 @@
     }
 
     function exportReport() {
+      const preferredFormat = currentSettings.exportFormat || SETTINGS_DEFAULTS.exportFormat;
+      if (preferredFormat === 'csv-json') {
+        exportCSV();
+        exportJSON();
+        showToast('Exported CSV and JSON package');
+        return;
+      }
+
       const rows = Array.isArray(dataset) ? dataset : [];
       const positive = rows.filter(item => String(item.sentiment).toLowerCase() === 'positive').length;
       const negative = rows.filter(item => String(item.sentiment).toLowerCase() === 'negative').length;
@@ -673,6 +1013,11 @@
         ...Object.entries(categories).map(([name, count]) => `- ${name}: ${count}`)
       ];
       downloadFile(reportLines.join('\n'), 'Technical_Report.txt', 'text/plain;charset=utf-8;');
+      if (preferredFormat === 'full-package') {
+        exportCSV();
+        exportJSON();
+        showToast('Exported full data and report package');
+      }
     }
 
     const chartTheme = {
@@ -694,9 +1039,9 @@
         notes: ['Oct 2: 75 high-risk signals', 'Oct 5: export license review', 'Oct 9: fab capacity watchlist'],
         breakdown: { supply: 68, price: 54, logistics: 72 },
         samples: [
-          { title: 'TSMC defers advanced packaging expansion', excerpt: 'Executives cited equipment bottlenecks and supply chain pressure from tightening export controls.' },
-          { title: 'Intel delays Ohio mega-fab', excerpt: 'Analysts expect the delay to strengthen TSMC’s bargaining position in high-performance compute.' },
-          { title: 'Foundry clients raise inventory buffers', excerpt: 'Customers are preparing for prolonged lead times and tighter allocation windows.' }
+          { title: 'TSMC defers advanced packaging expansion', excerpt: 'Executives cited equipment bottlenecks and supply chain pressure from tightening export controls.', link: 'https://example.com/tsmc-expansion-delay' },
+          { title: 'Intel delays Ohio mega-fab', excerpt: 'Analysts expect the delay to strengthen TSMC’s bargaining position in high-performance compute.', link: 'https://example.com/intel-fab-delay' },
+          { title: 'Foundry clients raise inventory buffers', excerpt: 'Customers are preparing for prolonged lead times and tighter allocation windows.', link: 'https://example.com/foundry-buffers' }
         ]
       },
       'export-controls': {
@@ -709,8 +1054,8 @@
         notes: ['Oct 3: customs review backlog', 'Oct 8: EUV export restriction update', 'Oct 12: OEM shipment re-route'],
         breakdown: { supply: 78, price: 62, logistics: 84 },
         samples: [
-          { title: 'China export rules tighten semiconductor equipment flows', excerpt: 'Industry sources report fresh restrictions affecting advanced packaging equipment routes.' },
-          { title: 'Freight lanes rerouted near Taiwan Strait', excerpt: 'Logistics teams are adjusting transshipment plans after rapid policy changes.' }
+          { title: 'China export rules tighten semiconductor equipment flows', excerpt: 'Industry sources report fresh restrictions affecting advanced packaging equipment routes.', link: 'https://example.com/china-export-rules' },
+          { title: 'Freight lanes rerouted near Taiwan Strait', excerpt: 'Logistics teams are adjusting transshipment plans after rapid policy changes.', link: 'https://example.com/taiwan-strait-reroute' }
         ]
       },
       'samsung-capacity': {
@@ -723,8 +1068,8 @@
         notes: ['Oct 4: production ramp-up stable', 'Oct 8: demand confidence rebounding', 'Oct 12: packaging capacity improving'],
         breakdown: { supply: 42, price: 38, logistics: 48 },
         samples: [
-          { title: 'Samsung increases 3nm capacity guidance', excerpt: 'The foundry announced additional tooling to support high-volume production in late Q4.' },
-          { title: 'Customers diversify wafer allocation', excerpt: 'Several customers are shifting orders to hedge against regional bottlenecks.' }
+          { title: 'Samsung increases 3nm capacity guidance', excerpt: 'The foundry announced additional tooling to support high-volume production in late Q4.', link: 'https://example.com/samsung-3nm-capacity' },
+          { title: 'Customers diversify wafer allocation', excerpt: 'Several customers are shifting orders to hedge against regional bottlenecks.', link: 'https://example.com/wafer-diversification' }
         ]
       }
     };
@@ -780,7 +1125,9 @@
       container.innerHTML = samples.map((item, index) => `
         <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-950">
           <button class="flex w-full items-center justify-between text-left" data-index="${index}">
-            <span class="font-semibold text-slate-900 dark:text-slate-100">${item.title}</span>
+            <span class="font-semibold text-slate-900 dark:text-slate-100">
+              <a href="${escapeHtml(item.link || '#')}" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:underline">${item.title}</a>
+            </span>
             <span class="text-slate-400">▾</span>
           </button>
           <div class="mt-3 hidden text-sm leading-6 text-slate-600 dark:text-slate-300" data-panel="${index}">${item.excerpt}</div>
@@ -897,7 +1244,8 @@
       initializeCharts();
       initFilter();
       renderTable(dataset, currentCategoryFilter, '');
-      switchView('dashboard');
+      initSettings();
+      switchView(currentSettings.landingView || 'dashboard');
 
       document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
       document.getElementById('mobileMenuBtn')?.addEventListener('click', () => document.getElementById('sidebar')?.classList.toggle('hidden'));
