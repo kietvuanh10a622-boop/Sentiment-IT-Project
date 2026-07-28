@@ -1,22 +1,53 @@
-# GlobalPulse AI: Semiconductor Intelligence Dashboard
-**Project ID:** TEC004/02
+GlobalPulse AI: Multilingual News Aggregator & Sentiment Analysis Dashboard
 
-## 1. System Requirements
-- Python 3.9+
-- OS: Windows / Linux / macOS
-- Internet connection for API and Web Scraping.
+Project ID: TEC004/02
+Domain: Semiconductor Supply Chain Intelligence
 
-## 2. Installation Steps
-1. Extract the ZIP archive and navigate to the project directory.
-2. Open terminal and install dependencies:
-   `pip install -r requirements.txt`
+1. Overview
 
-## 3. Execution Procedures
-1. To reset the database and run the full pipeline (SP1 to SP6):
-   `python reset_and_run.py`
-2. To run only the crawling and analysis process:
-   `python main.py`
-3. To view the UI Dashboard, open `index.html` in any modern web browser.
+GlobalPulse AI is an enterprise-grade data pipeline that automatically crawls, cleans, analyzes, and visualizes global news related to the semiconductor industry. It utilizes multi-threading for rapid ingestion, Generative AI for sentiment scoring, and a Zero-Server Single Page Application (SPA) for the frontend dashboard.
 
-## 4. Sample Usage
-Upon executing `main.py`, the system will output logs indicating the scraping progress. The processed relational data will be stored in `dataset/news_database.db`. Automated CSV/JSON backups and technical reports will be generated in the `reports/` folder.
+2. System Requirements & Dependencies
+
+OS: Windows / macOS / Linux
+
+Python: Version 3.9 or higher
+
+Key Dependencies: requests, beautifulsoup4, pandas, matplotlib, google-generativeai (Refer to requirements.txt for the full list).
+
+3. Installation Steps
+
+Extract the ZIP archive: GlobalPulse_TEC004_02.zip
+
+Open your terminal/command prompt and navigate to the extracted directory.
+
+Install the required Python packages:
+
+pip install -r requirements.txt
+
+
+4. Execution Procedures
+
+There are two ways to execute the backend pipeline:
+
+Option A: Full System Reset (Recommended for clean run)
+This will wipe the existing database and reports, then run a fresh extraction:
+
+python reset_and_run.py
+
+
+Option B: Standard Execution
+This will run the pipeline and append new data to the existing database:
+
+python main.py
+
+
+5. Sample Usage & Frontend Dashboard
+
+Upon running the backend pipeline, the crawlers/ module will fetch targeted articles.
+
+Processed relational data is saved to news_database.db.
+
+Automated CSV/JSON backups and charts will be generated in the reports/ folder.
+
+To view the Dashboard: Simply double-click index.html to open it in any modern web browser (Chrome/Edge). The dashboard uses Vanilla JS to fetch the exported JSON/CSV data directly, requiring no local backend server.
