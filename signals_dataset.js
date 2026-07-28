@@ -1,0 +1,1043 @@
+var dataset = [
+  {
+    "date": "2026-07-23",
+    "title": "2 days ago China's Moonshot AI stole from Anthropic, Trump tech adviser says The allegations come as Chinese AI companies are facing increased US government scrutiny. 2 days ago",
+    "link": "https://www.bbc.com/news/articles/c5ye2gyz0x4o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "2 days ago Lawmakers push for AI 'kill switch' after OpenAI models go rogue A new bill would let the US government order the shutdown of AI models that pose a public threat. 2 days ago",
+    "link": "https://www.bbc.com/news/articles/cx2vqj2e9x8o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "Lawmakers push for AI 'kill switch' after OpenAI models go rogue",
+    "link": "https://www.bbc.co.uk/news/articles/cx2vqj2e9x8o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "UK mortgage rates rise to highest level for a month",
+    "link": "https://www.bbc.co.uk/news/articles/c70gknr7z1eo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "UK complacent about war threat, warns BAE boss",
+    "link": "https://www.bbc.co.uk/news/articles/cx2lpjjpny9o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "US hits dozens of countries with new wave of tariffs",
+    "link": "https://www.bbc.co.uk/news/articles/cvgj61j6l08o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Positive",
+    "sentiment_score": 1.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "We split money equally even when one of us earned a lot more",
+    "link": "https://www.bbc.co.uk/news/articles/cz05rdn1n80o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "Tourist tax introduced in Edinburgh: How much is it and who pays?",
+    "link": "https://www.bbc.co.uk/news/articles/cvgl8j37839o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "Oil prices hit $100 for the first time since May",
+    "link": "https://www.bbc.co.uk/news/articles/cx2djnzrqk2o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "Gary Lineker among millionaires asking Andy Burnham to tax them more",
+    "link": "https://www.bbc.co.uk/news/articles/cvgjp79m42go?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "Pubs cheer business rates relief while other firms 'left out in the cold'",
+    "link": "https://www.bbc.co.uk/news/articles/clyvnz4489wo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "Burnham says 20% business rates cut for English pubs 'a first step'",
+    "link": "https://www.bbc.co.uk/news/articles/cq6dg816464o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Negative",
+    "sentiment_score": -1.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "Big bosses reveal the secret to getting hired",
+    "link": "https://www.bbc.co.uk/news/videos/cvgxelx3y78o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "Firm hacked by rogue OpenAI models says it is 'a wake-up call'",
+    "link": "https://www.bbc.co.uk/news/articles/cdrvy3pn3r0o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Positive",
+    "sentiment_score": 1.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "China's Moonshot AI stole from Anthropic, Trump tech adviser says",
+    "link": "https://www.bbc.co.uk/news/articles/c5ye2gyz0x4o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "What we know about 20% cut to some business rates",
+    "link": "https://www.bbc.co.uk/news/videos/ce34n2lgkz0o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Negative",
+    "sentiment_score": -1.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "What about cuts for cafes and hotels?",
+    "link": "https://www.bbc.co.uk/news/videos/cwy4ek4n15vo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Negative",
+    "sentiment_score": -1.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "CJP protest: The youth movement India's Modi didn't see coming",
+    "link": "https://www.bbc.co.uk/news/articles/c07rgpxe51no?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "Indonesian babies were trafficked to Singapore. What happens to them now?",
+    "link": "https://www.bbc.co.uk/news/articles/c7vgeredvlgo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-23",
+    "title": "Houthi attacks raise fears of wider Middle East conflict and more global economic damage",
+    "link": "https://www.bbc.co.uk/news/articles/cvgve0vxy1yo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "TP HCM thành lập khu thương mại tự do hơn 4.170 ha",
+    "link": "https://vnexpress.net/tp-hcm-thanh-lap-khu-thuong-mai-tu-do-hon-4-170-ha-5101353.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Có thể 'giữ lại tiền trong 24 giờ' nếu chuyển tới tài khoản lạ",
+    "link": "https://vnexpress.net/co-the-giu-lai-tien-trong-24-gio-neu-chuyen-toi-tai-khoan-la-5101220.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "PC1 có tân chủ tịch sinh năm 1999",
+    "link": "https://vnexpress.net/pc1-co-tan-chu-tich-sinh-nam-1999-5101293.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Trump vows to investigate EU over fining of US tech companies The US president says fines against Google, as well as Apple, Meta and Amazon, should be \"entirely reversed.\" 18 hrs ago Technology",
+    "link": "https://www.bbc.com/news/articles/cvgjenp4680o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Positive",
+    "sentiment_score": 1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Tech titan ordered to pay ex-wife $644m in divorce settlement The divorce, involving the chairman of one of South Korea's biggest companies, has gripped the nation. 1 day ago Asia",
+    "link": "https://www.bbc.com/news/articles/ckg68jky65eo",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Analysis: The UK's Trump trade deal no longer looks world-beating While the US tariffs imposed on the UK are effectively unchanged, other countries now have a better deal. 1 day ago Business",
+    "link": "https://www.bbc.com/news/articles/c9v4ymwddwgo",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "ADHD has rewired the workplace. This is what it means for bosses and workers As ADHD diagnoses rise, have workplaces caught up with the needs of the workforce? 15 hrs ago BBC InDepth",
+    "link": "https://www.bbc.com/news/articles/c70gq125xweo",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Positive",
+    "sentiment_score": 1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Paramount and Warner Bros pause $110bn merger amid legal challenge Until a judge reaches a final verdict – or until 1 June 2027 – the Hollywood studios will remain completely separate, competing operations. 16 hrs ago Business",
+    "link": "https://www.bbc.com/news/articles/c8en74yz5e7o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Students tell us how to keep graduation outfit costs down Four newly graduated students tell us how they kept the cost of their dresses and suits down.",
+    "link": "https://www.bbc.com/news/articles/cn8n9lzj136o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "We split money equally even when one of us earned a lot more Hannah and Max continued to pool finances after Max was made redundant but took \"drastic measures\" to cut spending.",
+    "link": "https://www.bbc.com/news/articles/cz05rdn1n80o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Negative",
+    "sentiment_score": -1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Why are UK fuel prices rising again? UK petrol and diesel prices are going up again as the price of oil returns to around $100 a barrel.",
+    "link": "https://www.bbc.com/news/articles/c20zgjzz0e4o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Positive",
+    "sentiment_score": 1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "UK mortgage rates rise to highest level for a month Renewed tensions in the Middle East feed through to the costs faced by lenders, pushing up borrowing costs.",
+    "link": "https://www.bbc.com/news/articles/c70gknr7z1eo",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Positive",
+    "sentiment_score": 1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "What tariffs has Trump introduced and why? Trump's volatile trade policy has thrown the world economy into chaos, and put some US prices up.",
+    "link": "https://www.bbc.com/news/articles/cn93e12rypgo",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Positive",
+    "sentiment_score": 1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "'It eats away at my body': The human cost of S Korea's ultra-convenient overnight deliveries Night-time deliveries are ubiquitous in hyper-connected Korea, stirring a debate about working conditions. 16 hrs ago Asia",
+    "link": "https://www.bbc.com/news/articles/cq6dgz7e4m8o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Zelensky tries to fix crisis over removal of defence minister and counts the cost Protests have continued over Zelensky's decision to dismiss Mykhailo Fedorov, and some commentators believe he has been damaged politically. 15 hrs ago Europe",
+    "link": "https://www.bbc.com/news/articles/c1d1gz3n99ro",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Negative",
+    "sentiment_score": -1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Four Palestinians and two Israelis killed in West Bank shooting Palestinians say villagers came under attack by settlers, while the Israeli military says a Palestinian stole a weapon and opened fire on hikers. 15 hrs ago Middle East",
+    "link": "https://www.bbc.com/news/articles/cx2rxmye4k3o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Negative",
+    "sentiment_score": -1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "ICC top prosecutor removed over sexual misconduct allegations Karim Khan denies allegations of engaging in an improper sexual relationship with a junior ICC staff member and seeking to stop her pursuing her complaint.",
+    "link": "https://www.bbc.com/news/articles/cqjxddx12qqo",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Negative",
+    "sentiment_score": -1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "US hits dozens of countries with new wave of tariffs Imposed citing forced labour concerns, the levies replace a temporary global duty brought in after the US Supreme Court struck down tariffs in February.",
+    "link": "https://www.bbc.com/news/articles/cvgj61j6l08o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Positive",
+    "sentiment_score": 0.33
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Indonesian babies were trafficked to Singapore. What happens to them now? At least 12 babies have been trafficked from Indonesia to Singapore, but what will happen to them remains unclear.",
+    "link": "https://www.bbc.com/news/articles/c7vgeredvlgo",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "The pop band who went from playing for rescue dogs to selling out arenas The group discuss disastrous gigs, putting political action into music and the meaning of \"queer pop\".",
+    "link": "https://www.bbc.com/news/articles/ce85j65r4l2o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "South Africa's president wins bid to temporarily halt impeachment inquiry over 'Farmgate' Ramaphosa has faced scrutiny following the theft of large sums of cash from his private farm in 2020.",
+    "link": "https://www.bbc.com/news/articles/cwymj9lkx13o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Trump vows to investigate EU over fining of US tech companies",
+    "link": "https://www.bbc.co.uk/news/articles/cvgjenp4680o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Positive",
+    "sentiment_score": 1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "ADHD has rewired the workplace. This is what it means for bosses and workers",
+    "link": "https://www.bbc.co.uk/news/articles/c70gq125xweo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Long overdue, life-changing or frivolous? Your thoughts on wedding rule changes",
+    "link": "https://www.bbc.co.uk/news/articles/cvg8wlwzjx9o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Faisal Islam: The UK's Trump trade deal no longer looks world-beating",
+    "link": "https://www.bbc.co.uk/news/articles/c9v4ymwddwgo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Watch: Another day, more Trump tariffs - but are they working?",
+    "link": "https://www.bbc.co.uk/news/videos/c5yw2xgnv2jo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Scotch whisky levy lifted as Trump imposes new wave of US tariffs",
+    "link": "https://www.bbc.co.uk/news/articles/c7vgz680977o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Positive",
+    "sentiment_score": 1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Tech titan ordered to pay ex-wife $644m in divorce settlement",
+    "link": "https://www.bbc.co.uk/news/articles/ckg68jky65eo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Students tell us how to keep graduation outfit costs down",
+    "link": "https://www.bbc.co.uk/news/articles/cn8n9lzj136o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Negative",
+    "sentiment_score": -1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "New figures show costs rising for pensioners",
+    "link": "https://www.bbc.co.uk/news/articles/cj637z28xnyo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Positive",
+    "sentiment_score": 1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "How much money do you give for a wedding gift?",
+    "link": "https://www.bbc.co.uk/news/videos/c0jlnw825w8o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Ten killed in Russian attack on drone exhibition near Kyiv",
+    "link": "https://www.bbc.co.uk/news/articles/cj637zd1k1ko?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Zelensky tries to fix crisis over removal of defence minister and counts the cost",
+    "link": "https://www.bbc.co.uk/news/articles/c1d1gz3n99ro?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Negative",
+    "sentiment_score": -1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Four Palestinians and two Israelis killed in West Bank shooting",
+    "link": "https://www.bbc.co.uk/news/articles/cx2rxmye4k3o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Negative",
+    "sentiment_score": -1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "ICC top prosecutor removed over sexual misconduct allegations",
+    "link": "https://www.bbc.co.uk/news/articles/cqjxddx12qqo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Negative",
+    "sentiment_score": -1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Nigeria's president approves largest military expansion in recent times",
+    "link": "https://www.bbc.co.uk/news/articles/cwymjx3nrxvo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "World chess chief faces endgame after EU announces Russia war sanctions",
+    "link": "https://www.bbc.co.uk/news/articles/cewrk58k2k4o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "South Africa's president wins bid to temporarily halt impeachment inquiry over 'Farmgate'",
+    "link": "https://www.bbc.co.uk/news/articles/cwymj9lkx13o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "The pop band who went from playing for rescue dogs to selling out arenas",
+    "link": "https://www.bbc.co.uk/news/articles/ce85j65r4l2o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Negative",
+    "sentiment_score": -1.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "India cockroach protests: Videos show officers firing 'pellet guns'",
+    "link": "https://www.bbc.co.uk/news/videos/cgje5l292g2o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Watch: Wildfires rage across Spain and France",
+    "link": "https://www.bbc.co.uk/news/videos/cz641jd4p4lo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-24",
+    "title": "Families still search for bodies a month after Venezuela earthquakes",
+    "link": "https://www.bbc.co.uk/news/videos/cwylplxk8nko?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Cựu CEO Techcombank làm Chủ tịch Eximbank",
+    "link": "https://vnexpress.net/cuu-ceo-techcombank-lam-chu-tich-eximbank-5101585.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Market Economy",
+    "sentiment": "Negative",
+    "sentiment_score": -1.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Tàu dầu tốn thêm hàng triệu USD khi né khu vực chiến sự Trung Đông",
+    "link": "https://vnexpress.net/tau-dau-ton-them-hang-trieu-usd-khi-ne-khu-vuc-chien-su-trung-dong-5101295.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Nỗ lực dựng lại hàng rào thuế quan của ông Trump",
+    "link": "https://vnexpress.net/no-luc-dung-lai-hang-rao-thue-quan-cua-ong-trump-5101452.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Tuần tồi tệ của cựu tỷ phú nghìn tỷ Elon Musk",
+    "link": "https://vnexpress.net/tuan-toi-te-cua-cuu-ty-phu-nghin-ty-elon-musk-5101520.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Loạt nhà máy pin mặt trời Ấn Độ đóng cửa vì thiếu linh kiện Trung Quốc",
+    "link": "https://vnexpress.net/loat-nha-may-pin-mat-troi-an-do-dong-cua-vi-thieu-linh-kien-trung-quoc-5101508.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Bị giải chấp cổ phiếu, chủ tịch công ty địa ốc mất tư cách cổ đông lớn",
+    "link": "https://vnexpress.net/bi-giai-chap-co-phieu-chu-tich-cong-ty-dia-oc-mat-tu-cach-co-dong-lon-5101421.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Bất ổn Biển Đỏ - mối đe dọa mới của giá dầu",
+    "link": "https://vnexpress.net/bat-on-bien-do-moi-de-doa-moi-cua-gia-dau-5101621.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Hàng loạt sếp doanh nghiệp muốn 'bắt đáy' cổ phiếu",
+    "link": "https://vnexpress.net/hang-loat-sep-doanh-nghiep-muon-bat-day-co-phieu-5101398.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Vinamilk: từ ba nhà máy dừng hoạt động đến thương hiệu sữa tỷ USD",
+    "link": "https://vnexpress.net/vinamilk-tu-ba-nha-may-dung-hoat-dong-den-thuong-hieu-sua-ty-usd-5101622.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Trung Quốc phát triển công nghệ chip nhớ tiết kiệm điện",
+    "link": "https://vnexpress.net/trung-quoc-phat-trien-cong-nghe-chip-nho-tiet-kiem-dien-5101310.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Semiconductor",
+    "sentiment": "Positive",
+    "sentiment_score": 1.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Samsung kỳ vọng tạo 'cách mạng' trải nghiệm qua Galaxy Z8 Series",
+    "link": "https://vnexpress.net/samsung-ky-vong-tao-cach-mang-trai-nghiem-qua-galaxy-z8-series-5101272.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Semiconductor",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Nga - Ukraine tố nhau tập kích khu du lịch, trạm chuyển phát",
+    "link": "https://vnexpress.net/nga-ukraine-to-nhau-tap-kich-khu-du-lich-tram-chuyen-phat-5101626.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Houthi tuyên bố phóng tên lửa trả đũa Arab Saudi",
+    "link": "https://vnexpress.net/houthi-tuyen-bo-phong-ten-lua-tra-dua-arab-saudi-5101583.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Bộ trưởng Giáo dục Ấn Độ từ chức sau bê bối lộ đề thi",
+    "link": "https://vnexpress.net/bo-truong-giao-duc-an-do-tu-chuc-sau-be-boi-lo-de-thi-5101618.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Nhân chứng kể giây phút tên lửa Nga đánh trúng triển lãm drone Ukraine",
+    "link": "https://vnexpress.net/nhan-chung-ke-giay-phut-ten-lua-nga-danh-trung-trien-lam-drone-ukraine-5101555.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Ông Trump dần cạn hy vọng đàm phán với Iran",
+    "link": "https://vnexpress.net/ong-trump-dan-can-hy-vong-dam-phan-voi-iran-5101237.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Ông Trump đổi chuyên cơ sau hội nghị NATO có thể vì mối đe dọa tên lửa",
+    "link": "https://vnexpress.net/ong-trump-doi-chuyen-co-sau-hoi-nghi-nato-co-the-vi-moi-de-doa-ten-lua-5101524.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Tổ hợp Pantsir Nga bắn nổ UAV Ukraine đang lao xuống mục tiêu",
+    "link": "https://vnexpress.net/to-hop-pantsir-nga-ban-no-uav-ukraine-dang-lao-xuong-muc-tieu-5101536.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Việt Nam lên tiếng về việc Mỹ áp mức thuế mới 12,5%",
+    "link": "https://vnexpress.net/viet-nam-len-tieng-ve-viec-my-ap-muc-thue-moi-12-5-5101563.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Ông Hùng Cao đình chỉ công tác quan chức 'nói xấu' ông Trump",
+    "link": "https://vnexpress.net/ong-hung-cao-dinh-chi-cong-tac-quan-chuc-noi-xau-ong-trump-5101553.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "EU có thể bán dầu tịch thu từ tàu Nga bị chặn bắt",
+    "link": "https://vnexpress.net/eu-co-the-ban-dau-tich-thu-tu-tau-nga-bi-chan-bat-5101518.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Khoảnh khắc 'tên lửa Patriot' quay đầu, bổ nhào xuống đất",
+    "link": "https://vnexpress.net/khoanh-khac-ten-lua-patriot-quay-dau-bo-nhao-xuong-dat-5101474.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Nữ kiến trúc sư điều hành 'cỗ máy drone' của Ukraine",
+    "link": "https://vnexpress.net/nu-kien-truc-su-dieu-hanh-co-may-drone-cua-ukraine-5101454.html",
+    "source": "VnExpress",
+    "source_name": "VnExpress",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "What you need to know as two major London stations shut for three weeks London Charing Cross and Waterloo East will be closed from Sunday until Monday 17 August. 7 hrs ago London",
+    "link": "https://www.bbc.com/news/articles/cj63zn1edj5o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Warning shot or publicity stunt - how worried should we be about the OpenAI hack? Hugging Face said the hack was done at superhuman speed by an AI with little or no human guidance. 4 hrs ago",
+    "link": "https://www.bbc.com/news/articles/cd9w22n9e4go",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Positive",
+    "sentiment_score": 1.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "5 hrs ago What do teens think about the social media ban? Teens at Latitude speak about the proposals, as experts have contrasting views on the idea. 5 hrs ago",
+    "link": "https://www.bbc.com/news/articles/cj63zlr7y8do",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Semiconductor",
+    "sentiment": "Negative",
+    "sentiment_score": -1.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Trump takes swipes at press during White House Correspondents' Dinner The event celebrated press freedom after the first dinner was cancelled by a shooting in April. 28 mins ago US & Canada",
+    "link": "https://www.bbc.com/news/articles/cd7le4ylev2o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Iran-backed Houthis claim missile attack on Saudi Arabia US military says it disabled a tanker that was attempting to evade the American blockade on Iranian ports. 8 hrs ago World",
+    "link": "https://www.bbc.com/news/articles/cj9d27v70j1o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Ten killed in Russian attack on drone exhibition near Kyiv The event, attended by prominent members of the Ukrainian defence industry, was hit by ballistic missiles in the middle of the day. 14 hrs ago Europe",
+    "link": "https://www.bbc.com/news/articles/cj637zd1k1ko",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Texts reveal 14-year-old allegedly murdered by singer D4vd had pregnancy and abortion Prosecutors allege D4vd started abusing the girl when she was 13 and she had threatened to expose him.",
+    "link": "https://www.bbc.com/news/articles/cr592qdj1ldo",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Negative",
+    "sentiment_score": -1.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Trump orders Smithsonian to post warnings about 'inaccurate' US history The Trump administration has often accused the world's largest research museum of harbouring an anti-American bias.",
+    "link": "https://www.bbc.com/news/articles/c1w10gwnj74o",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "CJP protest: The youth movement India's Modi didn't see coming The CJP protest began with exam paper leaks. It became India's biggest student movement in years - why?",
+    "link": "https://www.bbc.com/news/articles/c07rgpxe51no",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "5 hrs ago Woman dies and child injured in collision between car and truck A car collided with a truck on the R162 in Shercock, County Cavan, after 17:00 local time on Friday. 5 hrs ago",
+    "link": "https://www.bbc.com/news/articles/cx2j0r92j0eo",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Just now Tourists tell BBC how their holiday turned into race to escape fires Families visiting France have told the BBC how their holidays have become evacuation missions. Just now",
+    "link": "https://www.bbc.com/news/articles/c80ny93xlrvo",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "What does the South make of the King of the North?",
+    "link": "https://www.bbc.co.uk/news/articles/czekpx8yzj0o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "'We feel the pressure juggling holiday logistics'",
+    "link": "https://www.bbc.co.uk/news/articles/c7vg3gnzn6mo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Supply Chain",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Business Daily",
+    "link": "https://www.bbc.co.uk/sounds/play/w3ct8g9k?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Market Economy",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Trump takes swipes at press during White House Correspondents' Dinner",
+    "link": "https://www.bbc.co.uk/news/articles/cd7le4ylev2o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Iran-backed Houthis claim missile attack on Saudi Arabia",
+    "link": "https://www.bbc.co.uk/news/articles/cj9d27v70j1o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Trump orders Smithsonian to post warnings about 'inaccurate' US history",
+    "link": "https://www.bbc.co.uk/news/articles/c1w10gwnj74o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Texts reveal 14-year-old allegedly murdered by singer D4vd had pregnancy and abortion",
+    "link": "https://www.bbc.co.uk/news/articles/cr592qdj1ldo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  },
+  {
+    "date": "2026-07-25",
+    "title": "Protesters celebrate resignation of India's education minister",
+    "link": "https://www.bbc.co.uk/news/videos/cly949k3g1do?at_medium=RSS&at_campaign=rss",
+    "source": "BBC",
+    "source_name": "BBC",
+    "category": "Geopolitics",
+    "sentiment": "Neutral",
+    "sentiment_score": 0.0
+  }
+];
+window.__signalsDataset = dataset;

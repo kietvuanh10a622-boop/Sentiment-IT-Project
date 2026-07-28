@@ -1,0 +1,11 @@
+{
+    "date": "2026-07-15",
+    "total_articles_crawled": 33,
+    "sentiment_breakdown": {
+        "positive": 5,
+        "negative": 7,
+        "neutral": 21
+    },
+    "average_sentiment_score": -0.039,
+    "articles_by_source": {}
+}
