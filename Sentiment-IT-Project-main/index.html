@@ -16,6 +16,7 @@
   <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: { sans: ['Inter', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'] },
@@ -70,6 +71,24 @@
       --motion-ease: cubic-bezier(.2, 0, 0, 1);
     }
 
+    html.dark {
+      color-scheme: dark;
+      --color-ink: #f8fafc;
+      --color-ink-secondary: #e2e8f0;
+      --color-ink-muted: #cbd5e1;
+      --color-ink-tertiary: #94a3b8;
+      --color-ink-faint: #64748b;
+      --color-canvas: #0b1220;
+      --color-canvas-soft: #111827;
+      --color-canvas-night: #020617;
+      --color-canvas-night-soft: #111827;
+      --color-hairline: #334155;
+      --color-hairline-strong: #475569;
+      --color-hairline-cool: #1f2937;
+      --color-hairline-cool-2: #334155;
+      --color-hairline-cool-3: #475569;
+    }
+
     * { box-sizing: border-box; }
     html { background: var(--color-canvas); }
     body { font-family: Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif; color: var(--color-ink); background: var(--color-canvas); }
@@ -81,6 +100,7 @@
     .app-sidebar { background: var(--color-canvas); border-right: 1px solid var(--color-hairline); }
     .app-main { min-width: 0; background: var(--color-canvas); }
     .app-header { background: rgba(255, 255, 255, 0.96); border-bottom: 1px solid var(--color-hairline); }
+    html.dark .app-header { background: rgba(15, 23, 42, 0.94); }
     .page-canvas { background: var(--color-canvas-soft); }
     .panel {
       border-radius: var(--radius-lg);
@@ -118,9 +138,9 @@
     .bg-sky-600 { background-color: var(--color-primary) !important; }
     .hover\\:bg-sky-500:hover { background-color: var(--color-primary-deep) !important; }
     .text-sky-600, .text-sky-700 { color: var(--color-ink-secondary) !important; }
-    .dark\\:bg-slate-950, .dark\\:bg-slate-900, .dark\\:bg-slate-800 { background-color: var(--color-canvas) !important; }
-    .dark\\:text-slate-100, .dark\\:text-slate-200 { color: var(--color-ink) !important; }
-    .dark\\:text-slate-300, .dark\\:text-slate-400 { color: var(--color-ink-muted) !important; }
+    html.dark .dark\\:bg-slate-950, html.dark .dark\\:bg-slate-900, html.dark .dark\\:bg-slate-800 { background-color: #0f172a !important; }
+    html.dark .dark\\:text-slate-100, html.dark .dark\\:text-slate-200 { color: #f8fafc !important; }
+    html.dark .dark\\:text-slate-300, html.dark .dark\\:text-slate-400 { color: #cbd5e1 !important; }
     .modal-enter { opacity: 0; transform: translateY(12px) scale(.99); }
     .modal-enter-active { opacity: 1; transform: translateY(0) scale(1); }
     .modal-exit { opacity: 1; transform: translateY(0) scale(1); }
@@ -191,7 +211,7 @@
               <option>YTD</option>
             </select>
           </label>
-          <button id="themeToggle" class="secondary-action hidden items-center gap-2 px-3 py-2.5 text-sm font-medium sm:inline-flex" aria-label="Theme setting"><i data-lucide="sun" class="h-4 w-4" aria-hidden="true"></i><span>Light mode</span></button>
+          <button id="themeToggle" class="secondary-action inline-flex items-center gap-2 px-3 py-2.5 text-sm font-medium" aria-label="Toggle theme"><i data-lucide="sun" class="h-4 w-4" aria-hidden="true"></i><span>Light mode</span></button>
           <button id="btnExportReport" type="button" onclick="exportReport()" class="primary-action inline-flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium"><i data-lucide="download" class="h-4 w-4" aria-hidden="true"></i><span>Export report</span></button>
         </div>
       </header>
@@ -968,19 +988,12 @@
       const button = document.getElementById('themeToggle');
       if (!button) return;
 
-      const icon = button.querySelector('i');
-      const label = button.querySelector('span');
-      if (!icon || !label) return;
+      const iconName = theme === 'dark' ? 'sun' : 'moon';
+      const buttonText = theme === 'dark' ? 'Light mode' : 'Dark mode';
+      const ariaLabel = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
 
-      if (theme === 'dark') {
-        icon.setAttribute('data-lucide', 'moon');
-        label.textContent = 'Dark mode';
-        button.setAttribute('aria-label', 'Switch to light mode');
-      } else {
-        icon.setAttribute('data-lucide', 'sun');
-        label.textContent = 'Light mode';
-        button.setAttribute('aria-label', 'Switch to dark mode');
-      }
+      button.setAttribute('aria-label', ariaLabel);
+      button.innerHTML = `<i data-lucide="${iconName}" class="h-4 w-4" aria-hidden="true"></i><span>${buttonText}</span>`;
 
       if (window.lucide) {
         window.lucide.createIcons({ attrs: { 'stroke-width': 1.7 } });
@@ -1241,3 +1254,4 @@
   </script>
 </body>
 </html>
+  
